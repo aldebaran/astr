@@ -1,7 +1,7 @@
 //Modules
 var express = require('express');
 var app = express();
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8000;
 var mongoose = require('mongoose');
 var Test = require('./api/models/test_model');
 var bodyParser = require('body-parser');
