@@ -1,0 +1,21 @@
+{
+  "name": "astr",
+  "version": "1.0.0",
+  "description": "archiving system of test results",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.aldebaran.lan:hardware-test/astr.git"
+  },
+  "author": "guillaume fradet",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "mongodb": "^3.0.6",
+    "mongoose": "^5.0.14",
+    "nodemon": "^1.17.3"
+  }
+}
