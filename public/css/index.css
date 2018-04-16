@@ -455,8 +455,8 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
   max-width: 40rem;
 }
 
-.card-body {
-  height: 6em;
+.card-body.tests {
+  height: 10em;
   overflow: auto;
 }
 

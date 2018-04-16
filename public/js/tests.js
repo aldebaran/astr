@@ -5,7 +5,7 @@
     tests.forEach(function(test){
       $('#tests-grid').append('<div class="col-3"><div class="card mb-3">' +
         '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
-        '<div class="card-body" id="' + test['_id'] + '">' +
+        '<div class="card-body tests" id="' + test['_id'] + '">' +
         '</div>' +
         '<div class="card-footer small text-muted">id: ' + test['_id'] + '</div>' +
       '</div></div>');

@@ -13,6 +13,17 @@ exports.getAllTests = (req, res) => {
   });
 };
 
+exports.getTestsByQuery = (req, res) => {
+  Test.find(req.body, (err, data) => {
+    if (err) {
+      res.send(err);
+    }
+    else {
+      res.json(data);
+    }
+  });
+};
+
 exports.addTest = (req, res) => {
   var newTest = new Test(req.body);
   newTest.save((err, data) => {
@@ -42,7 +53,6 @@ exports.getTest = (id, res) => {
 }
 
 exports.updateTest = (id, body, res) => {
-
   Test.findByIdAndUpdate(id, body, (err, data) => {
     if (err) {
       res.send(err);

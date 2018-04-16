@@ -8,7 +8,8 @@ module.exports = function(app) {
   });
 
   app.route('/api/tests')
-    .get(test.getAllTests);
+    .get(test.getAllTests)
+    .post(test.getTestsByQuery);
 
   app.route('/api/tests/add')
     .post(test.addTest);
