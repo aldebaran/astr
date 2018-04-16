@@ -1,5 +1,5 @@
 module.exports = function(app) {
-  var film = require('../controllers/test_controller');
+  var test = require('../controllers/test_controller');
 
   app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -8,11 +8,26 @@ module.exports = function(app) {
   });
 
   app.route('/api/tests')
-    .get(film.getAllTests);
+    .get(test.getAllTests);
+
+  app.route('/api/tests/add')
+    .post(test.addTest);
 
   app.get('/api/tests/:id', (req, res) => {
     const id = req.params.id;
-    film.getTest(id, res);
+    test.getTest(id, res);
   });
+
+  app.post('/api/tests/:id', (req, res) => {
+    const id = req.params.id;
+    const body = req.body;
+    test.updateTest(id, body, res);
+  });
+
+  app.delete('/api/tests/:id', (req, res) => {
+    const id = req.params.id;
+    test.deleteTest(id, res);
+  });
+
 
 };
