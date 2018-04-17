@@ -27,6 +27,14 @@ var UserSchema = new mongoose.Schema({
   passwordConf: {
     type: String,
     required: false,
+  },
+  write_permission: {
+    type: Boolean,
+    required: false,
+  },
+  master: {
+    type: Boolean,
+    required: false,
   }
 });
 

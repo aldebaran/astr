@@ -47,7 +47,7 @@
     if(data.name) {
       $('#navbar-top').html('' +
       '<li class="nav-item">' +
-        '<a class="nav-link"> Signed as ' + data.name + '</a>' +
+        '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + data.name + '</a>' +
       '</li>' +
       '<li class="nav-item">' +
         '<a class="nav-link" href="/api/user/logout">' +

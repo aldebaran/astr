@@ -29,6 +29,8 @@ module.exports = function(app) {
         firstname: req.body.firstname[0].toUpperCase() + req.body.firstname.substring(1).toLowerCase(),
         lastname: req.body.lastname.toUpperCase(),
         password: req.body.password,
+        write_permission: false,
+        master: false,
       }
 
       User.create(userData, function (error, user) {
@@ -36,7 +38,7 @@ module.exports = function(app) {
           return next(error);
         } else {
           req.session.userId = user._id;
-          return res.redirect('/api/user/profile');
+          return res.redirect('/');
         }
       });
 

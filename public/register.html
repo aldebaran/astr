@@ -21,22 +21,34 @@
 <body class="bg-dark">
   <div class="container">
     <div class="card card-login mx-auto mt-5">
-      <div class="card-header">Login</div>
+      <div class="card-header">Register</div>
       <div class="card-body">
         <form action="api/user" method="post">
           <div class="form-group">
             <label for="inputEmail">Email address</label>
-            <input class="form-control" id="inputEmail" type="email" name="logemail" aria-describedby="emailHelp" placeholder="Enter email" required>
+            <input class="form-control" id="inputEmail" type="email" name="email" aria-describedby="emailHelp" placeholder="Enter email" required>
+          </div>
+          <div class="form-group">
+            <label for="inputFirstName">First name</label>
+            <input class="form-control" id="inputFirstName" type="text" name="firstname" placeholder="Enter first name" required>
+          </div>
+          <div class="form-group">
+            <label for="inputFirstName">Last name</label>
+            <input class="form-control" id="inputFirstName" type="text" name="lastname" placeholder="Enter last name" required>
           </div>
           <div class="form-group">
             <label for="inputPassword">Password</label>
-            <input class="form-control" id="inputPassword" type="password" name="logpassword" placeholder="Password" required>
+            <input class="form-control" id="inputPassword" type="password" name="password" placeholder="Password" required>
+          </div>
+          <div class="form-group">
+            <label for="inputPasswordConf">Confirm Password</label>
+            <input class="form-control" id="inputPasswordConf" type="password" name="passwordConf" placeholder="Password" required>
           </div>
           <br>
-          <input class="btn btn-primary btn-block" type="submit" value="Login">
+          <input class="btn btn-primary btn-block" type="submit" value="Register">
         </form>
         <div class="text-center">
-          <a class="d-block small mt-3" href="register.html">Register an Account</a>
+          <a class="d-block small mt-3" href="login.html">Already an account ?</a>
         </div>
       </div>
     </div>
