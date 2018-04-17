@@ -73,11 +73,55 @@
         <li class="breadcrumb-item">
           <a href="tests.html">Tests</a>
         </li>
-        <li class="breadcrumb-item active">All Tests</li>
+        <li class="breadcrumb-item active">Test Subjects</li>
       </ol>
 
-
-      <div id="tests-grid" class="row">
+      <div class="row">
+        <div class="col test-subject-card">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5>Existing test subjects</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="form-group">
+                  <label for="selectSubject">Select a subject</label>
+                  <select class="form-control" id="selectSubject">
+                    <option>Motor Control</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col test-subject-card">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5>Create a new test subject</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="form-group">
+                  <label for="inputName">Name</label>
+                  <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="Enter the subject name" required>
+                  <small id="nameHelp" class="form-text text-muted">Example: Motor Control</small>
+                </div>
+                <div class="form-group" id="formConfig">
+                  <label for="inputConfig">Configuration</label>
+                  <input type="text" class="form-control config" id="inputConfig" aria-describedby="configHelp" placeholder="Enter a configuration of your subject" required>
+                  <small id="configHelp" class="form-text text-muted">Example: Robot version</small>
+                </div>
+                <button type="button" class="btn btn-outline-primary" id="buttonMoreConfig">+</button>
+                <br><br>
+                <input type="submit" value="Submit" class="btn btn-info">
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
 
 
@@ -105,7 +149,7 @@
     <!-- Custom scripts for all pages-->
     <script src="js/index.js"></script>
     <!-- Specific script for tests-->
-    <script src="js/tests.js"></script>
+    <script src="js/test-subjects.js"></script>
   </div>
 </body>
 

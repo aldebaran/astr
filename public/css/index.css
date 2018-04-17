@@ -510,3 +510,8 @@ span.value {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
 	background-color: rgba(0,0,0,0.1);
 }
+
+.test-subject-card {
+  padding-left: 30px;
+  padding-right: 30px;
+}
