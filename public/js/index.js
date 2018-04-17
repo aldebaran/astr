@@ -42,4 +42,26 @@
     }, 1000, 'easeInOutExpo');
     event.preventDefault();
   });
+
+  $.get('api/user/profile', function(data){
+    if(data.name) {
+      $('#navbar-top').html('' +
+      '<li class="nav-item">' +
+        '<a class="nav-link"> Signed as ' + data.name + '</a>' +
+      '</li>' +
+      '<li class="nav-item">' +
+        '<a class="nav-link" href="/api/user/logout">' +
+          '<i class="fa fa-fw fa-sign-out"></i>Logout</a>' +
+      '</li>')
+    }
+    else {
+      $('#navbar-top').html('' +
+      '<li class="nav-item">' +
+        '<a class="nav-link" href="login.html">' +
+          '<i class="fa fa-fw fa-sign-in"></i>Login</a>' +
+      '</li>')
+    }
+  })
+
+
 })(jQuery); // End of use strict
