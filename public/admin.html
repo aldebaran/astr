@@ -71,30 +71,26 @@
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="index.html">Dashboard</a>
+          <a href="index.html">Admin</a>
         </li>
-        <li class="breadcrumb-item active">My Dashboard</li>
+        <li class="breadcrumb-item active">Users</li>
       </ol>
 
-      <!-- Icon Cards-->
-      <div class="row">
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-primary o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-list"></i>
-              </div>
-              <div class="mr-5" id="numberOfTests"></div>
-            </div>
-            <a class="card-footer text-white clearfix small z-1" href="tests.html">
-              <span class="float-left">View Details</span>
-              <span class="float-right">
-                <i class="fa fa-angle-right"></i>
-              </span>
-            </a>
-          </div>
-        </div>
-      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Firstname</th>
+            <th scope="col">Lastname</th>
+            <th scope="col">Email</th>
+            <th scope="col">Write permission</th>
+            <th scope="col">Master</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+
 
     </div>
 
@@ -120,7 +116,7 @@
     <!-- Custom scripts for all pages-->
     <script src="js/index.js"></script>
     <!-- Specific script for the dashboard-->
-    <script src="js/dashboard.js"></script>
+    <script src="js/admin.js"></script>
   </div>
 </body>
 

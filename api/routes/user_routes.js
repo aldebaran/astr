@@ -7,6 +7,17 @@ module.exports = function(app) {
     next();
   });
 
+  app.get('/api/user', function(req, res){
+    User.find({},{password:0}, (err, data) => {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json(data);
+      }
+    });
+  })
+
 
   //POST route for updating data
   app.post('/api/user', function (req, res, next) {
@@ -73,8 +84,11 @@ module.exports = function(app) {
             })
           } else {
             return res.json({
+              id: user['_id'],
               name: user.firstname + ' ' + user.lastname,
-              email: user.email
+              email: user.email,
+              write_permission: user.write_permission,
+              master: user.master,
             })
           }
         }
@@ -94,7 +108,5 @@ module.exports = function(app) {
       });
     }
   });
-
-
 
 };

@@ -43,16 +43,30 @@
     event.preventDefault();
   });
 
-  $.get('api/user/profile', function(data){
-    if(data.name) {
-      $('#navbar-top').html('' +
-      '<li class="nav-item">' +
-        '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + data.name + '</a>' +
-      '</li>' +
-      '<li class="nav-item">' +
-        '<a class="nav-link" href="/api/user/logout">' +
-          '<i class="fa fa-fw fa-sign-out"></i>Logout</a>' +
-      '</li>')
+  $.get('api/user/profile', function(user){
+    if(user.name) {
+      if(user.master === true) {
+        $('#navbar-top').html('' +
+        '<li class="nav-item">' +
+          '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + user.name + ' (master)</a>' +
+        '</li>' +
+        '<li class="nav-item">' +
+          '<a class="nav-link" href="admin.html"> Admin</a>' +
+        '</li>' +
+        '<li class="nav-item">' +
+          '<a class="nav-link" href="/api/user/logout">' +
+            '<i class="fa fa-fw fa-sign-out"></i>Logout</a>' +
+        '</li>');
+      } else {
+        $('#navbar-top').html('' +
+        '<li class="nav-item">' +
+          '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + user.name + '</a>' +
+        '</li>' +
+        '<li class="nav-item">' +
+          '<a class="nav-link" href="/api/user/logout">' +
+            '<i class="fa fa-fw fa-sign-out"></i>Logout</a>' +
+        '</li>');
+      }
     }
     else {
       $('#navbar-top').html('' +
