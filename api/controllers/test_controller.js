@@ -1,4 +1,3 @@
-var ObjectID = require('mongodb').ObjectID;
 var mongoose = require('mongoose'),
   Test = mongoose.model('Test');
 

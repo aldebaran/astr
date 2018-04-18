@@ -68,9 +68,6 @@ module.exports = function(app) {
           return next(error);
         } else {
           if (user === null) {
-            // var err = new Error('Not authorized! Go back!');
-            // err.status = 400;
-            // return next(err);
             return res.json({
               error: 'Not connected'
             })

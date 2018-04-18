@@ -515,3 +515,7 @@ span.value {
   padding-left: 30px;
   padding-right: 30px;
 }
+
+.row.config {
+  margin-top: 1em;
+}

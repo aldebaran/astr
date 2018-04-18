@@ -1,4 +1,3 @@
-//Modules
 var express = require('express');
 var app = express();
 var port = process.env.PORT || 8000;
@@ -6,8 +5,11 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
+
 var Test = require('./api/models/test_model');
 Test = mongoose.model('Test');
+var TestSubject = require('./api/models/test_subject_model');
+TestSubject = mongoose.model('TestSubject');
 
 
 //Connection to mongoDB
@@ -30,9 +32,14 @@ app.use(session({
 }));
 
 //Routes for the mongoDB API
-var testRoutes = require('./api/routes/test_routes'); //importing route
-var userRoutes = require('./api/routes/user_routes')
-testRoutes(app); //register the route
+//importing route
+var testRoutes = require('./api/routes/test_routes');
+var testSubjectRoutes = require('./api/routes/test_subject_routes');
+var userRoutes = require('./api/routes/user_routes');
+
+//register the route
+testRoutes(app);
+testSubjectRoutes(app);
 userRoutes(app);
 
 //Start the server
