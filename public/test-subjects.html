@@ -87,14 +87,12 @@
                 <div class="form-group">
                   <label for="selectSubject">Select a subject</label>
                   <select class="form-control" id="selectSubject">
-                    <option>Motor Control</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
+                    <option value="default"></option>
                   </select>
                 </div>
               </form>
+              <div id="infoSubject">
+              </div>
             </div>
           </div>
         </div>
@@ -104,7 +102,7 @@
               <h5>Create a new test subject</h5>
             </div>
             <div class="card-body">
-              <form>
+              <form id="submitNewSubject">
                 <div class="form-group">
                   <label for="inputName">Name</label>
                   <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="Enter the subject name" required>
@@ -114,11 +112,11 @@
                   <label for="inputConfig">Configuration</label>
                   <div class="row config">
                     <div class="col">
-                      <input type="text" class="form-control" id="inputConfig1" aria-describedby="configHelp" placeholder="Enter a configuration of your subject" required>
+                      <input type="text" class="form-control inputConfig" id="inputConfig1" aria-describedby="configHelp" placeholder="Enter a configuration of your subject" required>
                       <small id="configHelp" class="form-text text-muted">Example: Robot version</small>
                     </div>
                     <div class="col">
-                      <input class="form-control" id="configName1" type="text" placeholder="" disabled>
+                      <input class="form-control configName" id="configName1" type="text" placeholder="" disabled>
                     </div>
                   </div>
 
