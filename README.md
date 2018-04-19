@@ -1,8 +1,14 @@
 # Archiving System of Test Results (A.S.T.R.)
 
+## Installation
+
+Todo
+
 ## API
 
 ### Endpoints
+
+#### Test
 
 1. [/api/tests](http://10.0.160.147:8000/api/tests)
     - GET: Returns the list of all the tests
@@ -15,3 +21,11 @@
     - DELETE: Delete the test with the associated ID
 
 *Try the queries with [Postman](https://www.getpostman.com/)!*
+
+#### Test subject 
+
+Todo
+
+#### User 
+
+Todo
