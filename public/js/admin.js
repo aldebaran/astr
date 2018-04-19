@@ -14,10 +14,21 @@
             '<td>' + user.firstname + '</td>'+
             '<td>' + user.lastname + '</td>' +
             '<td>' + user.email + '</td>' +
-            '<td>' + user.write_permission + '<button type="button" class="btn btn-info admin-user" id="modifyWritePermission">Modify</button></td>' +
-            '<td>' + user.master + '<button type="button" class="btn btn-info admin-user" id="modifyMaster">Modify</button></td>' +
+            '<td id="write_permission'+user['_id']+'">' + user.write_permission + '<button type="button" class="btn btn-info admin-user" id="modifyWritePermission">Modify</button></td>' +
+            '<td id="master'+user['_id']+'">' + user.master + '<button type="button" class="btn btn-info admin-user" id="modifyMaster">Modify</button></td>' +
             '<td><button type="button" class="btn btn-danger admin-user" id="deleteUser">Delete</button></td>' +
           '</tr>');
+          if(user.write_permission === true) {
+            $('#write_permission'+user['_id']).css('color','green');
+          } else {
+            $('#write_permission'+user['_id']).css('color','red');
+          }
+          if(user.master === true) {
+            $('#master'+user['_id']).css('color','green');
+          } else {
+            $('#master'+user['_id']).css('color','red');
+          }
+
         })
       })
 
