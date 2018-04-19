@@ -26,7 +26,6 @@
         var r = confirm('Please confirm that you want to modify the write permission of this user.');
         if(r === true){
           $.post('api/user/id/' + $(this).parent().parent().attr('value'), {"write_permission": !$(this).parent().html().includes('true')}, function(data){
-            //alert(JSON.stringify(data, null, 2));
             location.reload();
           })
         }
@@ -35,7 +34,6 @@
         var r = confirm('Please confirm that you want to modify the master status of this user.');
         if(r === true){
           $.post('api/user/id/' + $(this).parent().parent().attr('value'), {"master": !$(this).parent().html().includes('true')}, function(data){
-            //alert(JSON.stringify(data, null, 2));
             location.reload();
           })
         }
@@ -47,7 +45,6 @@
             url: 'api/user/id/' + $(this).parent().parent().attr('value'),
             type: 'DELETE',
             success: function(data){
-              //alert(JSON.stringify(data, null, 2));
               location.reload();
             }
           })

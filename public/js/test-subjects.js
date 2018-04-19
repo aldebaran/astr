@@ -74,12 +74,32 @@
   $('#selectSubject').change(function(){
     if($('#selectSubject').val() !== "default"){
       $.get('api/test-subjects/' + $('#selectSubject').val(), function(data){
+        $('#infoSubject').attr('val', data['_id']);
         $('#infoSubject').html('' +
         '<span class="key"> Name: </span><span class="value">' + data.name + '</span><br>' +
-        '<span class="key"> Author: </span><span class="value">' + data.author + '</span><br>' +
+        '<span class="key"> Author: </span><span class="value" id="subjectAuthor">' + data.author + '</span><br>' +
         '<span class="key"> Configuration parameters:</span><br>');
         data.configuration.forEach(function(config){
           $('#infoSubject').append('<li><span class="value">' + config + '</span></li>');
+        })
+
+        // user can delete the subject if he is the owner or a master
+        $.get('api/user/profile', function(user){
+          if(user.master === true || (user.name === $('#subjectAuthor').html())) {
+            $('#infoSubject').append('<br><button type="button" class="btn btn-danger" id="deleteTestSubject">Delete</button>');
+            $('#deleteTestSubject').click(function(){
+              var r = confirm("Please confirm that you want to delete this test subject.");
+              if(r === true){
+                $.ajax({
+                  url: 'api/test-subjects/' + $(this).parent().attr('val'),
+                  type: 'DELETE',
+                  success: function(data){
+                    location.reload();
+                  }
+                })
+              }
+            })
+          }
         })
 
       })
