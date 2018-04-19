@@ -7,6 +7,7 @@ module.exports = function(app) {
     next();
   });
 
+  //GET all users
   app.get('/api/user', function(req, res){
     User.find({},{password:0}, (err, data) => {
       if (err) {
@@ -18,6 +19,52 @@ module.exports = function(app) {
     });
   })
 
+  //GET specific user specifying the ID
+  app.get('/api/user/id/:id', (req, res) => {
+    const id = req.params.id;
+    User.findById(id, {password: 0}, (err, data) => {
+      if (err) {
+        res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
+      }
+      else {
+        res.json(data);
+      }
+    });
+  });
+
+  //POST: modify value of write_permission and master
+  app.post('/api/user/id/:id', (req, res) => {
+    const id = req.params.id;
+    const body = req.body;
+    if(body['write_permission'] || body.master){
+      User.findByIdAndUpdate(id, body, {select: {password:0}},(err, data) => {
+        if (err) {
+          res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
+        }
+        else {
+          res.json({name: 'Success', message: 'User successfully modified', modified: body, before: data});
+        }
+      });
+    } else {
+      res.json({name: 'Failed', message: 'Only the variable "write_permission" and "master" can be modified'});
+    }
+  });
+
+  //GET specific user specifying the ID
+  app.delete('/api/user/id/:id', (req, res) => {
+    const id = req.params.id;
+    User.findByIdAndRemove(id, {password: 0}, (err, data) => {
+      if (err) {
+        res.send(err);
+      }
+      if(data === null) {
+        res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
+      }
+      else {
+        res.json({name: 'Success', message: 'User successfully deleted', user: data});
+      }
+    });
+  });
 
   //POST route for updating data
   app.post('/api/user', function (req, res, next) {
@@ -108,5 +155,6 @@ module.exports = function(app) {
       });
     }
   });
+
 
 };

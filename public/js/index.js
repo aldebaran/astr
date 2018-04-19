@@ -44,7 +44,7 @@
   });
 
   $.get('api/user/profile', function(user){
-    if(user.name) {
+    if(user.email) {
       if(user.master === true) {
         $('#navbar-top').html('' +
         '<li class="nav-item">' +
