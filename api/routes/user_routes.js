@@ -19,6 +19,18 @@ module.exports = function(app) {
     });
   })
 
+  //GET all masters
+  app.get('/api/user/master', function(req, res){
+    User.find({master: true},{password:0}, (err, data) => {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json(data);
+      }
+    });
+  })
+
   //GET specific user specifying the ID
   app.get('/api/user/id/:id', (req, res) => {
     const id = req.params.id;

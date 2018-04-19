@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Archiving System of Test Results (A.S.T.R.)](#archiving-system-of-test-results-astr)
+  - [Installation](#installation)
+  - [API](#api)
+    - [Endpoints](#endpoints)
+      - [Test](#test)
+      - [Test subject](#test-subject)
+      - [User](#user)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Archiving System of Test Results (A.S.T.R.)
 
 ## Installation

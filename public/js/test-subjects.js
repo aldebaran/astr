@@ -30,7 +30,7 @@
     e.preventDefault();
     $.get('api/user/profile', function(user){
       // check if the user is logged
-      if(user.name) {
+      if(user.email && user['write_permission'] === true) {
         var subject = {
           name: $('#inputName').val().trim().replace(/\s+/g, ' '),
           configuration: [],
@@ -44,12 +44,21 @@
 
         // send the new subject
         $.post('api/test-subjects', subject, function(data){
-          alert(JSON.stringify(data, null, 2))
+          alert(JSON.stringify(data, null, 2));
           location.reload();
         })
 
+      } else if(user['write_permission'] === false) {
+        $.get('api/user/master', function(masters){
+          var masterNames = "";
+          masters.forEach(function(master){
+            masterNames += master.firstname + ' ' + master.lastname + '\n';
+          })
+          alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + masterNames);
+        })
+
       } else {
-        alert('Please login to add a new test subject !')
+        alert('Please login to add a new test subject !');
       }
     });
   });
