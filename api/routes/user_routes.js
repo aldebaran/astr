@@ -47,7 +47,11 @@ module.exports = function(app) {
   //POST: modify value of write_permission and master
   app.post('/api/user/id/:id', (req, res) => {
     const id = req.params.id;
-    const body = req.body;
+    var body = req.body;
+    if(body.master == 'true') {
+      body['write_permission'] = true;
+      console.log(body)
+    }
     if(body['write_permission'] || body.master){
       User.findByIdAndUpdate(id, body, {select: {password:0}},(err, data) => {
         if (err) {
