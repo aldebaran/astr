@@ -82,7 +82,22 @@ Now, check that the database is in the list of existing dbs:
 show dbs
 ```
 
+**4. Install Node.js**
 
+:warning: Install the lastest version of Node.js, don't take the LTS version.
+
+Follow [this](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) tutorial.
+
+**5. Clone the repository**
+
+**6. Install the modules**
+
+- With your terminal, move to the folder of the repository
+- To install the project modules (listed in [package.json](https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/package.json)), run:
+
+```
+npm install
+```
 
 ## API
 
