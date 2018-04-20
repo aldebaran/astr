@@ -42,6 +42,48 @@ On the server:
 - [Debian 7 or 8](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
 - [Debian 9](https://www.globo.tech/learning-center/install-mongodb-debian-9/)
 
+**2. Launch MongoDB**
+
+Open a terminal and enter: 
+
+```
+sudo service mongod start
+```
+
+Or (on Debian 9):
+
+```
+systemctl start mongodb
+```
+
+**3. Create the database**
+
+Open a Mongo Client in the terminal: 
+
+```
+mongo
+```
+
+Create the database: 
+
+```
+use ASTR
+```
+
+We need to insert a document to complete the creation of the database. Let's insert an empty document in the collection "uselesscollection": 
+
+```
+db.uselesscollection.insert({})
+```
+
+Now, check that the database is in the list of existing dbs:
+
+```
+show dbs
+```
+
+
+
 ## API
 
 ### Endpoints
