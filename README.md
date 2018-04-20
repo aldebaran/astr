@@ -31,7 +31,16 @@
 
 ## Installation
 
-Todo
+To deploy the application on a server, follow these steps.
+
+On the server:
+
+**1. Install MongoDB**
+
+:warning: The installation process will differ depending of the Linux distribution. Follow the tutorial corresponding to yours: 
+- [Ubuntu](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
+- [Debian 7 or 8](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
+- [Debian 9](https://www.globo.tech/learning-center/install-mongodb-debian-9/)
 
 ## API
 
