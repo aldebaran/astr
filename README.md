@@ -13,6 +13,22 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## Techs used
+
+- NoSQL database: [MongoDB](https://www.mongodb.com/)
+- [Node.js](https://nodejs.org/en/)
+    - [express](https://www.npmjs.com/package/express) *(to build web application and API)*
+    - [express-session](https://www.npmjs.com/package/express-session) *(to handle user session and cookies)*
+    - [mongodb](https://www.npmjs.com/package/mongodb) and [connect-mongo](https://www.npmjs.com/package/connect-mongo) *(to access the database)*
+    - [mongoose](https://www.npmjs.com/package/mongoose) *(to easily make queries on the database)*
+    - [bcrypt](https://www.npmjs.com/package/bcrypt) *(to encrypt passwords)*
+    - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
+
+## Useful tools
+
+- [Postman](https://www.getpostman.com/) *(best GUI to make HTTP requests, useful to try queries on the API)*
+- [Robo 3T](https://robomongo.org/) *(GUI for MongoDB)*
+
 ## Installation
 
 Todo
