@@ -44,13 +44,13 @@ On the server:
 
 **2. Launch MongoDB**
 
-Open a terminal and enter: 
+- Open a terminal and run
 
 ```
 sudo service mongod start
 ```
 
-Or (on Debian 9):
+- Or (on Debian 9)
 
 ```
 systemctl start mongodb
@@ -58,25 +58,25 @@ systemctl start mongodb
 
 **3. Create the database**
 
-Open a Mongo Client in the terminal: 
+- Open a Mongo Client in the terminal
 
 ```
 mongo
 ```
 
-Create the database: 
+- Create the database
 
 ```
 use ASTR
 ```
 
-We need to insert a document to complete the creation of the database. Let's insert an empty document in the collection "uselesscollection": 
+- We need to insert a document to complete the creation of the database. Let's insert an empty document in the collection "uselesscollection"
 
 ```
 db.uselesscollection.insert({})
 ```
 
-Now, check that the database is in the list of existing dbs:
+- Now, check that the database is in the list of existing dbs
 
 ```
 show dbs
@@ -86,17 +86,37 @@ show dbs
 
 :warning: Install the lastest version of Node.js, don't take the LTS version.
 
-Follow [this](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) tutorial.
+- Follow [this](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) tutorial.
 
 **5. Clone the repository**
 
+```
+git clone git@gitlab.aldebaran.lan:hardware-test/astr.git
+```
+
 **6. Install the modules**
 
-- With your terminal, move to the folder of the repository
-- To install the project modules (listed in [package.json](https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/package.json)), run:
+- In your terminal, move to the folder of the repository
+- At the root of the folder run
 
 ```
 npm install
+```
+
+- It will install all the Node.js modules used in the application (listed in [package.json](https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/package.json))
+
+**7. Launch the application**
+
+- At the root of the folder run
+
+```
+npm start
+```
+
+- Or (for development)
+
+```
+npm run dev
 ```
 
 ## API
