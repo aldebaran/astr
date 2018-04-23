@@ -7,6 +7,13 @@
 - [Techs used](#techs-used)
 - [Useful tools](#useful-tools)
 - [Installation](#installation)
+  - [1. Install MongoDB](#1-install-mongodb)
+  - [2. Launch MongoDB](#2-launch-mongodb)
+  - [3. Create the database](#3-create-the-database)
+  - [4. Install Node.js](#4-install-nodejs)
+  - [5. Clone the repository](#5-clone-the-repository)
+  - [6. Install the modules](#6-install-the-modules)
+  - [7. Launch the application](#7-launch-the-application)
 - [API](#api)
   - [Endpoints](#endpoints)
     - [Test](#test)
@@ -37,14 +44,14 @@ To deploy the application on a server, follow these steps.
 
 On the server:
 
-**1. Install MongoDB**
+### 1. Install MongoDB
 
 :warning: The installation process will differ depending of the Linux distribution. Follow the tutorial corresponding to yours: 
 - [Ubuntu](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
 - [Debian 7 or 8](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
 - [Debian 9](https://www.globo.tech/learning-center/install-mongodb-debian-9/)
 
-**2. Launch MongoDB**
+### 2. Launch MongoDB
 
 - Open a terminal and run
 
@@ -58,7 +65,7 @@ sudo service mongod start
 systemctl start mongodb
 ```
 
-**3. Create the database**
+### 3. Create the database
 
 - Open a Mongo Client in the terminal
 
@@ -84,19 +91,19 @@ db.uselesscollection.insert({})
 show dbs
 ```
 
-**4. Install Node.js**
+### 4. Install Node.js
 
 :warning: Install the lastest version of Node.js, don't take the LTS version.
 
 - Follow [this](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) tutorial.
 
-**5. Clone the repository**
+### 5. Clone the repository
 
 ```
 git clone git@gitlab.aldebaran.lan:hardware-test/astr.git
 ```
 
-**6. Install the modules**
+### 6. Install the modules
 
 - In your terminal, move to the folder of the repository
 - At the root of the folder run
@@ -107,7 +114,7 @@ npm install
 
 - It will install all the Node.js modules used in the application (listed in [package.json](https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/package.json))
 
-**7. Launch the application**
+### 7. Launch the application
 
 - At the root of the folder run
 

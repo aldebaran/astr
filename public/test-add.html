@@ -74,28 +74,43 @@
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="index.html">Dashboard</a>
+          <a href="tests.html">Tests</a>
         </li>
-        <li class="breadcrumb-item active">My Dashboard</li>
+        <li class="breadcrumb-item active">Add a new test</li>
       </ol>
 
-      <!-- Icon Cards-->
       <div class="row">
-        <div class="col-xl-3 col-sm-6 mb-3">
-          <div class="card text-white bg-primary o-hidden h-100">
-            <div class="card-body">
-              <div class="card-body-icon">
-                <i class="fa fa-fw fa-list"></i>
-              </div>
-              <div class="mr-5" id="numberOfTests"></div>
+        <div class="col">
+          <div class="card mb-3">
+            <div class="card-header">
+              New test
             </div>
-            <a class="card-footer text-white clearfix small z-1" href="tests.html">
-              <span class="float-left">View Details</span>
-              <span class="float-right">
-                <i class="fa fa-angle-right"></i>
-              </span>
-            </a>
+            <div class="card-body">
+              <ul>
+                <form>
+                  <div class="form-group">
+                    <label for="selectSubject">Select the test subject</label>
+                    <select class="form-control" id="selectSubject">
+                      <option value="default"></option>
+                    </select>
+                  </div>
+                  <a class="btn btn-outline-primary" href="test-subjects.html" style="margin-bottom: 2em;">Create a new test subject</a>
+                  <div class="form-group">
+                    <label for="inputDate">Date of the test</label>
+                    <input type="date" id="date" max="2100-12-31" min="2010-01-01" class="form-control" required>
+                  </div>
+                  <div id="config" style="margin-top: 2em;">
+                  </div>
+
+
+                </form>
+
+              </ul>
+            </div>
           </div>
+        </div>
+        <div class="col">
+          <!-- drag and drop -->
         </div>
       </div>
 
@@ -122,8 +137,8 @@
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="js/index.js"></script>
-    <!-- Specific script for the dashboard-->
-    <script src="js/dashboard.js"></script>
+    <!-- Specific script for tests-->
+    <script src="js/test-add.js"></script>
   </div>
 </body>
 
