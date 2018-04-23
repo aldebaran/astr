@@ -19,7 +19,7 @@
             '<input type="text" class="form-control inputConfig" name="' + config + '" required>' +
           '</div>');
         })
-        $('#config').append('<input type="submit" class="btn btn-info">')
+        $('#config').append('<input type="submit" value="Submit" class="btn btn-info">')
       });
     } else {
       $('#config').html('');
