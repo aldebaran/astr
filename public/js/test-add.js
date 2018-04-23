@@ -4,7 +4,7 @@
   // get the list of existing subjects
   $.get('api/test-subjects', function(subjects){
     subjects.forEach(function(subject){
-      $('#selectSubject').append('<option value="' + subject['_id'] + '" name="' + subject.name + '">' + subject.name + '</option>');
+      $('#selectSubject').append('<option value="' + subject['_id'] + '">' + subject.name + '</option>');
     })
   })
 
@@ -28,11 +28,90 @@
 
   $('form').submit(function(e){
     e.preventDefault();
-    var test = {
-      type: $('#selectSubject').attr('name'),
-      date: $('#date').val(),
+
+    if(isConnected() && hasWritePermission()){
+      var test = {
+        type: $('#selectSubject option:selected').html(),
+        date: $('#date').val(),
+        author: getUserName(),
+      }
+      console.log(test)
+    } else if(isConnected()) {
+      alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
+    } else {
+      alert('Please log in to submit new tests !')
     }
-    console.log(test)
+
   })
+
+
+  // -------------------------- Functions -------------------------- //
+
+  function isConnected() {
+    var res = false;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = !user.error;
+      }
+    })
+    return res;
+  }
+
+  function hasWritePermission() {
+    var res = false;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user['write_permission'];
+      }
+    })
+    return res;
+  }
+
+  function isMaster() {
+    var res = false;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.master;
+      }
+    })
+    return res;
+  }
+
+  function getUserName() {
+    var res;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.name;
+      }
+    })
+    return res;
+  }
+
+  function getMasterList() {
+    var res = "";
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/master',
+      async: false,
+      success: function(masters) {
+        masters.forEach(function(master){
+          res += master.firstname + ' ' + master.lastname + '\n';
+        })
+      }
+    })
+    return res;
+  }
 
 })(jQuery);

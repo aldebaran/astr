@@ -50,7 +50,6 @@ module.exports = function(app) {
     var body = req.body;
     if(body.master == 'true') {
       body['write_permission'] = true;
-      console.log(body)
     }
     if(body['write_permission'] || body.master){
       User.findByIdAndUpdate(id, body, {select: {password:0}},(err, data) => {

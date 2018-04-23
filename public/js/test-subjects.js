@@ -28,39 +28,33 @@
 
   $('#submitNewSubject').submit(function(e){
     e.preventDefault();
-    $.get('api/user/profile', function(user){
-      // check if the user is logged
-      if(user.email && user['write_permission'] === true) {
-        var subject = {
-          name: $('#inputName').val().trim().replace(/\s+/g, ' '),
-          configuration: [],
-          author: user.name,
-        }
-        $('.configName').each(function(){
-          if($(this).attr('placeholder') !== ''){
-            subject.configuration.push($(this).attr('placeholder'));
-          }
-        })
 
-        // send the new subject
-        $.post('api/test-subjects', subject, function(data){
-          alert(JSON.stringify(data, null, 2));
-          location.reload();
-        })
-
-      } else if(user['write_permission'] === false) {
-        $.get('api/user/master', function(masters){
-          var masterNames = "";
-          masters.forEach(function(master){
-            masterNames += master.firstname + ' ' + master.lastname + '\n';
-          })
-          alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + masterNames);
-        })
-
-      } else {
-        alert('Please login to add a new test subject !');
+    // if the user is logged and has permission
+    if(isConnected() && hasWritePermission()) {
+      var subject = {
+        name: $('#inputName').val().trim().replace(/\s+/g, ' '),
+        configuration: [],
+        author: getUserName(),
       }
-    });
+      $('.configName').each(function(){
+        if($(this).attr('placeholder') !== ''){
+          subject.configuration.push($(this).attr('placeholder'));
+        }
+      })
+
+      // send the new subject
+      $.post('api/test-subjects', subject, function(data){
+        alert(JSON.stringify(data, null, 2));
+        location.reload();
+      })
+
+    } else if(isConnected()) {
+      // if the user is logged but without permission
+      alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
+    } else {
+      // if the user isn't logged
+      alert('Please log in to add a new test subject !');
+    }
   });
 
 
@@ -84,29 +78,95 @@
         })
 
         // user can delete the subject if he is the owner or a master
-        $.get('api/user/profile', function(user){
-          if(user.master === true || (user.name === $('#subjectAuthor').html())) {
-            $('#infoSubject').append('<br><button type="button" class="btn btn-danger" id="deleteTestSubject">Delete</button>');
-            $('#deleteTestSubject').click(function(){
-              var r = confirm("Please confirm that you want to delete this test subject.");
-              if(r === true){
-                $.ajax({
-                  url: 'api/test-subjects/' + $(this).parent().attr('val'),
-                  type: 'DELETE',
-                  success: function(data){
-                    location.reload();
-                  }
-                })
-              }
-            })
-          }
-        })
-
+        if(isMaster() || getUserName() === $('#subjectAuthor').html()) {
+          $('#infoSubject').append('<br><button type="button" class="btn btn-danger" id="deleteTestSubject">Delete</button>');
+          $('#deleteTestSubject').click(function(){
+            var r = confirm("Please confirm that you want to delete this test subject.");
+            if(r === true){
+              $.ajax({
+                url: 'api/test-subjects/' + $(this).parent().attr('val'),
+                type: 'DELETE',
+                success: function(data){
+                  location.reload();
+                }
+              })
+            }
+          })
+        }
       })
     } else {
       $('#infoSubject').html('');
     }
 
   })
+
+  // -------------------------- Functions -------------------------- //
+
+  function isConnected() {
+    var res = false;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = !user.error;
+      }
+    })
+    return res;
+  }
+
+  function hasWritePermission() {
+    var res = false;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user['write_permission'];
+      }
+    })
+    return res;
+  }
+
+  function isMaster() {
+    var res = false;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.master;
+      }
+    })
+    return res;
+  }
+
+  function getUserName() {
+    var res;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.name;
+      }
+    })
+    return res;
+  }
+
+  function getMasterList() {
+    var res = "";
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/master',
+      async: false,
+      success: function(masters) {
+        masters.forEach(function(master){
+          res += master.firstname + ' ' + master.lastname + '\n';
+        })
+      }
+    })
+    return res;
+  }
 
 })(jQuery);

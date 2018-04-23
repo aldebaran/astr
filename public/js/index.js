@@ -43,39 +43,103 @@
     event.preventDefault();
   });
 
-  $.get('api/user/profile', function(user){
-    if(user.email) {
-      if(user.master === true) {
-        $('#navbar-top').html('' +
-        '<li class="nav-item">' +
-          '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + user.name + ' (master)</a>' +
-        '</li>' +
-        '<li class="nav-item">' +
-          '<a class="nav-link" href="admin.html"> Admin</a>' +
-        '</li>' +
-        '<li class="nav-item">' +
-          '<a class="nav-link" href="/api/user/logout">' +
-            '<i class="fa fa-fw fa-sign-out"></i>Logout</a>' +
-        '</li>');
-      } else {
-        $('#navbar-top').html('' +
-        '<li class="nav-item">' +
-          '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + user.name + '</a>' +
-        '</li>' +
-        '<li class="nav-item">' +
-          '<a class="nav-link" href="/api/user/logout">' +
-            '<i class="fa fa-fw fa-sign-out"></i>Logout</a>' +
-        '</li>');
-      }
-    }
-    else {
-      $('#navbar-top').html('' +
-      '<li class="nav-item">' +
-        '<a class="nav-link" href="login.html">' +
-          '<i class="fa fa-fw fa-sign-in"></i>Login</a>' +
-      '</li>')
-    }
-  })
+  if(isConnected() && isMaster()) {
+    $('#navbar-top').html('' +
+    '<li class="nav-item">' +
+      '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + getUserName() + ' (master)</a>' +
+    '</li>' +
+    '<li class="nav-item">' +
+      '<a class="nav-link" href="admin.html"> Admin</a>' +
+    '</li>' +
+    '<li class="nav-item">' +
+      '<a class="nav-link" href="/api/user/logout">' +
+        '<i class="fa fa-fw fa-sign-out"></i>Logout</a>' +
+    '</li>');
+  } else if(isConnected()) {
+    $('#navbar-top').html('' +
+    '<li class="nav-item">' +
+      '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + getUserName() + '</a>' +
+    '</li>' +
+    '<li class="nav-item">' +
+      '<a class="nav-link" href="/api/user/logout">' +
+        '<i class="fa fa-fw fa-sign-out"></i>Logout</a>' +
+    '</li>');
+  } else {
+    $('#navbar-top').html('' +
+    '<li class="nav-item">' +
+      '<a class="nav-link" href="login.html">' +
+        '<i class="fa fa-fw fa-sign-in"></i>Login</a>' +
+    '</li>')
+  }
+  
 
+  // -------------------------- Functions -------------------------- //
+
+  function isConnected() {
+    var res = false;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = !user.error;
+      }
+    })
+    return res;
+  }
+
+  function hasWritePermission() {
+    var res = false;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user['write_permission'];
+      }
+    })
+    return res;
+  }
+
+  function isMaster() {
+    var res = false;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.master;
+      }
+    })
+    return res;
+  }
+
+  function getUserName() {
+    var res;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.name;
+      }
+    })
+    return res;
+  }
+
+  function getMasterList() {
+    var res = "";
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/master',
+      async: false,
+      success: function(masters) {
+        masters.forEach(function(master){
+          res += master.firstname + ' ' + master.lastname + '\n';
+        })
+      }
+    })
+    return res;
+  }
 
 })(jQuery); // End of use strict
