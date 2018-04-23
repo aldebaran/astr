@@ -491,6 +491,12 @@ span.value {
   color: #0db1e2;
 }
 
+li.config {
+  color: #fc6914;
+  font-weight: 500;
+}
+
+
 .card-body::-webkit-scrollbar-track
 {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
@@ -522,6 +528,7 @@ span.value {
 
 button.admin-user {
   float: right;
+  margin-right: 5px;
 }
 
 #config {
