@@ -16,7 +16,7 @@
           $('#config').append('' +
           '<div class="form-group">' +
             '<label for="inputConfig">' + config + '</label>' +
-            '<input type="text" class="form-control" id="inputConfig" name="' + config + '" required>' +
+            '<input type="text" class="form-control inputConfig" name="' + config + '" required>' +
           '</div>');
         })
         $('#config').append('<input type="submit" class="btn btn-info">')
@@ -28,14 +28,37 @@
 
   $('form').submit(function(e){
     e.preventDefault();
+    var okayToPush = true;
 
     if(isConnected() && hasWritePermission()){
       var test = {
         type: $('#selectSubject option:selected').html(),
-        date: $('#date').val(),
+        date: $('#inputDate').val(),
         author: getUserName(),
+        location: $('#inputLocation').val().trim(),
+        configuration: [],
+      };
+      $('.inputConfig').each(function(){
+        if($(this).val().trim() === ""){
+          okayToPush = false;
+        } else {
+          test.configuration.push({
+            name: $(this).attr('name'),
+            value: $(this).val().trim()
+          });
+        }
+      })
+
+      if(okayToPush === true) {
+        $.post('api/tests/add', test, function(data){
+          alert(JSON.stringify(data, null, 2));
+          location.reload();
+        });
+      } else {
+        alert("Your test was not added because you left an empty field.");
       }
-      console.log(test)
+
+
     } else if(isConnected()) {
       alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
     } else {

@@ -523,3 +523,7 @@ span.value {
 button.admin-user {
   float: right;
 }
+
+#config {
+  margin-top: 2em;
+}
