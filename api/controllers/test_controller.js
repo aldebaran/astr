@@ -85,3 +85,25 @@ exports.deleteTest = (id, res) => {
     }
   });
 }
+
+exports.getDistinctAuthors = (req, res) => {
+  Test.distinct('author', {}, (err, data) => {
+    if (err) {
+      res.send(err);
+    }
+    else {
+      res.json(data);
+    }
+  });
+};
+
+exports.getDistinctSubjects = (req, res) => {
+  Test.distinct('type', {}, (err, data) => {
+    if (err) {
+      res.send(err);
+    }
+    else {
+      res.json(data);
+    }
+  });
+};

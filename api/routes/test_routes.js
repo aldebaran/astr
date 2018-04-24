@@ -14,21 +14,27 @@ module.exports = function(app) {
   app.route('/api/tests/add')
     .post(test.addTest);
 
-  app.get('/api/tests/:id', (req, res) => {
+  app.get('/api/tests/id/:id', (req, res) => {
     const id = req.params.id;
     test.getTest(id, res);
   });
 
-  app.post('/api/tests/:id', (req, res) => {
+  app.post('/api/tests/id/:id', (req, res) => {
     const id = req.params.id;
     const body = req.body;
     test.updateTest(id, body, res);
   });
 
-  app.delete('/api/tests/:id', (req, res) => {
+  app.delete('/api/tests/id/:id', (req, res) => {
     const id = req.params.id;
     test.deleteTest(id, res);
   });
+
+  app.route('/api/tests/authors')
+    .get(test.getDistinctAuthors);
+
+  app.route('/api/tests/subjects')
+    .get(test.getDistinctSubjects);
 
 
 };
