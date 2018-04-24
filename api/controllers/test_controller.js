@@ -25,6 +25,8 @@ exports.getTestsByQuery = (req, res) => {
 
 exports.addTest = (req, res) => {
   var newTest = new Test(req.body);
+  newTest.created = Date.now();
+  newTest.lastModification = Date.now();
   newTest.save((err, data) => {
     if (err) {
       res.send(err);
@@ -52,6 +54,7 @@ exports.getTest = (id, res) => {
 }
 
 exports.updateTest = (id, body, res) => {
+  body.lastModification = Date.now();
   Test.findByIdAndUpdate(id, body, (err, data) => {
     if (err) {
       res.send(err);

@@ -20,6 +20,11 @@ var TestSubjectSchema = new Schema({
     required: true,
     trim: true
   },
+  created: {
+    type: Date,
+    default: Date.Now,
+    required: true
+  },
 });
 
 var TestSubject = mongoose.model('TestSubject', TestSubjectSchema);

@@ -31,23 +31,25 @@
 
     // if the user is logged and has permission
     if(isConnected() && hasWritePermission()) {
-      var subject = {
-        name: $('#inputName').val().trim().replace(/\s+/g, ' '),
-        configuration: [],
-        author: getUserName(),
-      }
-      $('.configName').each(function(){
-        if($(this).attr('placeholder') !== ''){
-          subject.configuration.push($(this).attr('placeholder'));
+      var r = confirm('Please confirm that you want to add this new test subject.')
+      if(r === true){
+        var subject = {
+          name: $('#inputName').val().trim().replace(/\s+/g, ' '),
+          configuration: [],
+          author: getUserName(),
         }
-      })
+        $('.configName').each(function(){
+          if($(this).attr('placeholder') !== ''){
+            subject.configuration.push($(this).attr('placeholder'));
+          }
+        })
 
-      // send the new subject
-      $.post('api/test-subjects', subject, function(data){
-        alert(JSON.stringify(data, null, 2));
-        location.reload();
-      })
-
+        // send the new subject
+        $.post('api/test-subjects', subject, function(data){
+          //alert(JSON.stringify(data, null, 2));
+          location.reload();
+        })
+      }
     } else if(isConnected()) {
       // if the user is logged but without permission
       alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
@@ -72,6 +74,7 @@
         $('#infoSubject').html('' +
         '<span class="key"> Name: </span><span class="value">' + data.name + '</span><br>' +
         '<span class="key"> Author: </span><span class="value" id="subjectAuthor">' + data.author + '</span><br>' +
+        '<span class="key"> Created: </span><span class="value">' + new Date(data.created).toLocaleDateString() + '</span><br>' +
         '<span class="key"> Configuration parameters:</span><br>');
         data.configuration.forEach(function(config){
           $('#infoSubject').append('<li><span class="value">' + config + '</span></li>');
@@ -81,7 +84,7 @@
         if(isMaster() || getUserName() === $('#subjectAuthor').html()) {
           $('#infoSubject').append('<br><button type="button" class="btn btn-danger" id="deleteTestSubject">Delete</button>');
           $('#deleteTestSubject').click(function(){
-            var r = confirm("Please confirm that you want to delete this test subject.");
+            var r = confirm('Please confirm that you want to delete this test subject.');
             if(r === true){
               $.ajax({
                 url: 'api/test-subjects/' + $(this).parent().attr('val'),

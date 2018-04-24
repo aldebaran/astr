@@ -534,3 +534,7 @@ button.admin-user {
 #config {
   margin-top: 2em;
 }
+
+#info-footer {
+  float: left;
+}

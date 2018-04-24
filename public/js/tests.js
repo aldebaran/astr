@@ -13,7 +13,7 @@
             '<span class="key">Location: </span><span class="value">' + test.location + '</span><br>' +
             '<span class="key">Configuration</span>' +
           '</div>' +
-          '<div class="card-footer small text-muted" id="footer' + test['_id'] + '">id: ' + test['_id'] +
+          '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
             '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
             '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
           '</div>' +
@@ -35,7 +35,7 @@
             '<span class="key">Location: </span><span class="value">' + test.location + '</span><br>' +
             '<span class="key">Configuration</span>' +
           '</div>' +
-          '<div class="card-footer small text-muted" id="footer' + test['_id'] + '">id: ' + test['_id'] +
+          '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
           '</div>' +
         '</div></div>');
 
@@ -60,7 +60,7 @@
             '<span class="key">Location: </span><span class="value">' + test.location + '</span><br>' +
             '<span class="key">Configuration</span>' +
           '</div>' +
-          '<div class="card-footer small text-muted" id="footer' + test['_id'] + '">id: ' + test['_id'] +
+          '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
           '</div>' +
         '</div></div>');
 
@@ -84,6 +84,7 @@
       }
     })
 
+    // Edit a test
     $('#tests-grid').on('click', '#editTest', function(){
       $.get('api/tests/' + $(this).parent().parent().attr('id'), function(test){
         $('.modal-body').html('' +
@@ -135,7 +136,7 @@
 
         if(okayToPush === true) {
           $.post('api/tests/' + $('form').attr('id'), test, function(data){
-            alert(JSON.stringify(data, null, 2));
+            //alert(JSON.stringify(data, null, 2));
             location.reload();
           });
         } else {

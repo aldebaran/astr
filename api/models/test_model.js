@@ -29,7 +29,17 @@ var TestSchema = new Schema({
   configuration: [{
     name: { type: String, lowercase: true, trim: true },
     value: { type: Schema.Types.Mixed, lowercase: true, trim: true }
-  }]
+  }],
+  created: {
+    type: Date,
+    default: Date.Now,
+    required: true
+  },
+  lastModification: {
+    type: Date,
+    default: Date.Now,
+    required: true
+  },
 });
 
 module.exports = mongoose.model('Test', TestSchema);

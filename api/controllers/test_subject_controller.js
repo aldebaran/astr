@@ -14,6 +14,7 @@ exports.getAllTestSubjects = (req, res) => {
 
 exports.addTestSubject = (req, res) => {
   var newTestSubject = new TestSubject(req.body);
+  newTestSubject.created = Date.now();
   newTestSubject.save((err, data) => {
     if (err) {
       res.send(err);
