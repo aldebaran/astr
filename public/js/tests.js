@@ -76,7 +76,7 @@
       if(r === true){
         $.ajax({
           method: 'DELETE',
-          url: 'api/tests/' + $(this).parent().parent().attr('id'),
+          url: 'api/tests/' + $(this).parent().parent().parent().attr('id'),
           success: function(data){
             location.reload();
           }
@@ -86,7 +86,7 @@
 
     // Edit a test
     $('#tests-grid').on('click', '#editTest', function(){
-      $.get('api/tests/' + $(this).parent().parent().attr('id'), function(test){
+      $.get('api/tests/' + $(this).parent().parent().parent().attr('id'), function(test){
         $('.modal-body').html('' +
         '<div class="form-group">' +
           '<label for="inputDate">Date</label>' +
