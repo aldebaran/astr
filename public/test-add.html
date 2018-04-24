@@ -88,13 +88,24 @@
             <div class="card-body">
               <ul>
                 <form>
-                  <div class="form-group">
-                    <label for="selectSubject">Select the test subject</label>
-                    <select class="form-control" id="selectSubject">
-                      <option value="default"></option>
-                    </select>
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="selectSubject">Select the test subject</label>
+                        <select class="form-control" id="selectSubject">
+                          <option value="default"></option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-auto">
+                      <div class="form-group">
+                        <label for="selectSubject">Or</label><br>
+                        <a class="btn btn-outline-primary" href="test-subjects.html">Create a new one</a>
+                      </div>
+
+                    </div>
                   </div>
-                  <a class="btn btn-outline-primary" href="test-subjects.html" style="margin-bottom: 2em;">Create a new test subject</a>
+
                   <div class="form-group">
                     <label for="inputDate">Date of the test</label>
                     <input type="date" id="inputDate" max="2100-12-31" min="2010-01-01" class="form-control" required>

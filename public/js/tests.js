@@ -15,7 +15,7 @@
           '</div>' +
           '<div class="card-footer small text-muted" id="footer' + test['_id'] + '">id: ' + test['_id'] +
             '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
-            '<button type="button" class="btn btn-info admin-user" id="editTest"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
+            '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
           '</div>' +
         '</div></div>');
 
@@ -46,7 +46,7 @@
         if(username === test.author) {
           $('#footer'+test['_id']).append(''+
           '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
-          '<button type="button" class="btn btn-info admin-user" id="editTest"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>');
+          '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>');
         }
       })
     } else {
@@ -81,6 +81,67 @@
             location.reload();
           }
         })
+      }
+    })
+
+    $('#tests-grid').on('click', '#editTest', function(){
+      $.get('api/tests/' + $(this).parent().parent().attr('id'), function(test){
+        $('.modal-body').html('' +
+        '<div class="form-group">' +
+          '<label for="inputDate">Date</label>' +
+          '<input type="date" id="inputDate" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date + '" required>' +
+        '</div>' +
+        '<div class="form-group">' +
+          '<label for="inputLocation">Location</label>' +
+          '<input type="text" id="inputLocation" class="form-control" value="' + test.location + '" required>' +
+        '</div>'
+        );
+        test.configuration.forEach(function(config){
+          $('.modal-body').append('' +
+          '<div class="form-group">' +
+            '<label for="inputConfig">' + config.name + '</label>' +
+            '<input type="text" id="inputConfig" class="form-control inputConfig" value="' + config.value + '" name="' + config.name + '" required>' +
+          '</div>'
+          );
+        })
+        $('.modal-footer').html('' +
+          '<input type="submit" value="Apply" class="btn btn-info" id="submit-edit">' +
+          '<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>'
+        );
+        $('form').attr('id', test['_id']);
+      })
+    })
+
+    $('form').submit(function(e){
+      e.preventDefault();
+      var r = confirm('Please confirm that you want to modify this test.');
+      if(r === true) {
+        var okayToPush = true;
+        var test = {
+          date: $('#inputDate').val(),
+          location: $('#inputLocation').val().trim(),
+          configuration: [],
+        };
+        $('.inputConfig').each(function(){
+          if($(this).val().trim() === ""){
+            okayToPush = false;
+          } else {
+            test.configuration.push({
+              name: $(this).attr('name'),
+              value: $(this).val().trim()
+            });
+          }
+        })
+
+        if(okayToPush === true) {
+          $.post('api/tests/' + $('form').attr('id'), test, function(data){
+            alert(JSON.stringify(data, null, 2));
+            location.reload();
+          });
+        } else {
+          alert("Your test was not added because you left an empty field.");
+        }
+
       }
     })
 
