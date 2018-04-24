@@ -5,7 +5,7 @@
     if(isConnected() && isMaster()){
       //if the user is Master
       tests.forEach(function(test){
-        $('#tests-grid').append('<div class="col-3"><div class="card mb-3" id="' + test['_id'] + '">' +
+        $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
           '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
           '<div class="card-body tests" id="body' + test['_id'] + '">' +
             '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
@@ -14,8 +14,8 @@
             '<span class="key">Configuration</span>' +
           '</div>' +
           '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
-            '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
-            '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
+            '<div id="button-footer"><button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
+            '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button></div>' +
           '</div>' +
         '</div></div>');
 
@@ -27,7 +27,7 @@
       //if the user is connected but not a user --> can only modify his own tests
       const username = getUserName();
       tests.forEach(function(test){
-        $('#tests-grid').append('<div class="col-3"><div class="card mb-3" id="' + test['_id'] + '">' +
+        $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
           '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
           '<div class="card-body tests" id="body' + test['_id'] + '">' +
             '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
@@ -44,15 +44,15 @@
         });
 
         if(username === test.author) {
-          $('#footer'+test['_id']).append(''+
-          '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
-          '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>');
+          $('#footer'+test['_id']).append('' +
+          '<div id="button-footer"><button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
+          '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button></div>');
         }
       })
     } else {
       //if the user isn't logged
       tests.forEach(function(test){
-        $('#tests-grid').append('<div class="col-3"><div class="card mb-3" id="' + test['_id'] + '">' +
+        $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
           '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
           '<div class="card-body tests" id="body' + test['_id'] + '">' +
             '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +

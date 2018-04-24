@@ -43,6 +43,7 @@
     event.preventDefault();
   });
 
+  // navigation menu (top)
   if(isConnected() && isMaster()) {
     $('#navbar-top').html('' +
     '<li class="nav-item">' +
@@ -71,7 +72,7 @@
         '<i class="fa fa-fw fa-sign-in"></i>Login</a>' +
     '</li>')
   }
-  
+
 
   // -------------------------- Functions -------------------------- //
 
