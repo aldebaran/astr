@@ -96,6 +96,7 @@ module.exports = function(app) {
       req.body.lastname &&
       req.body.password &&
       req.body.passwordConf) {
+      //Add a new user
 
       var userData = {
         email: req.body.email,
@@ -116,6 +117,7 @@ module.exports = function(app) {
       });
 
     } else if (req.body.logemail && req.body.logpassword) {
+      //Connection
       User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
         if (error || !user) {
           var err = new Error('Wrong email or password.');
@@ -133,7 +135,7 @@ module.exports = function(app) {
     }
   })
 
-  // GET route after registering
+  // GET route: information about the logged user
   app.get('/api/user/profile', function (req, res, next) {
     User.findById(req.session.userId)
       .exec(function (error, user) {
@@ -157,7 +159,7 @@ module.exports = function(app) {
       });
   });
 
-  // GET for logout logout
+  // GET for logout
   app.get('/api/user/logout', function (req, res, next) {
     if (req.session) {
       // delete session object
