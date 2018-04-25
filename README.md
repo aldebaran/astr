@@ -128,9 +128,7 @@ npm start
 npm run dev
 ```
 
-## API
-
-### Endpoints
+## API endpoints
 
 #### Test
 
@@ -139,17 +137,41 @@ npm run dev
     - POST: Returns the list of tests that match with the parameters given in the body request
 2. [/api/tests/add](http://10.0.160.147:8000/api/tests/add)
     - POST: Add a new test in the DB in function of the parameters given in the body request
-3. [/api/tests/:id](http://10.0.160.147:8000/api/tests/5ad4acca99c34a25b3d34ae0)
+3. [/api/tests/id/:id](http://10.0.160.147:8000/api/tests/id/5adf356dda64c157e53c6b18)
     - GET: Returns the test with the associated ID
     - POST: Update the test with the associated ID in function of the parameters given in the body request
     - DELETE: Delete the test with the associated ID
-
-*Try the queries with [Postman](https://www.getpostman.com/)!*
+4. [/api/tests/authors](http://10.0.160.147:8000/api/tests/authors)
+    - GET: Returns the list of test authors (that wrote at least one test)
+5. [/api/tests/subjects](http://10.0.160.147:8000/api/tests/subjects)
+    - GET: Returns the list of test subjects (used at least by one test)
 
 #### Test subject 
 
-Todo
+1. [/api/test-subjects](http://10.0.160.147:8000/api/test-subjects)
+    - GET: Returns the list of all the test subjects
+    - POST:  Add a new test subject in the DB in function of the parameters given in the body request
+2. [/api/test-subjects/:id](http://10.0.160.147:8000/api/test-subjects/5adf3559da64c157e53c6b17)
+    - GET: Returns the test subject with the associated ID
+    - POST:  Update the test subject with the associated ID in function of the parameters given in the body request
+    - DELETE: Delete the test subject with the associated ID
 
 #### User 
 
-Todo
+1. [/api/user](http://10.0.160.147:8000/api/user)
+    - GET: Returns the list of all the users
+    - POST: Used for connection if the body contains *logemail* and *logpassword*; or for adding a new user if the body contains *email*, *firstname*, *lastname*, *password* and *passwordConf*
+2. [/api/user/master](http://10.0.160.147:8000/api/user/master)
+    - GET: Returns the list of all the masters
+3. [/api/user/id/:id](http://10.0.160.147:8000/api/user/id/5ad8aad45aa7dd1b0f17e7f9)
+    - GET: Returns the user with the associated ID
+    - POST:  Update the user with the associated ID in function of the parameters given in the body request (only the variable *write_permission* and *master* can be modified)
+    - DELETE: Delete the user with the associated ID
+4. [/api/user/profile](http://10.0.160.147:8000/api/user/profile)
+    - GET: Returns the information about the user logged in the machine
+5. [/api/user/logout](http://10.0.160.147:8000/api/user/logout)
+    - GET: Log out the user logged in the machine
+
+
+
+
