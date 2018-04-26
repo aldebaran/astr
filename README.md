@@ -144,6 +144,10 @@ npm run dev
     - GET: Returns the list of test authors (that wrote at least one test)
 5. [/api/tests/subjects](http://10.0.160.147:8000/api/tests/subjects)
     - GET: Returns the list of test subjects (used at least by one test)
+6. [/api/tests/configurations](http://10.0.160.147:8000/api/tests/configurations)
+    - GET: Returns the list of configurations (used at least by one test)
+7. [/api/tests/configurations/:subject](http://10.0.160.147:8000/api/tests/configurations/CAMERA)
+    - GET: Returns the list of configurations of the associated subject (used at least by one test)
 
 #### Test subject 
 
