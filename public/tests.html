@@ -86,7 +86,11 @@
               Search Box <i class="fa fa-search" aria-hidden="true"></i>
             </div>
             <div class="card-body">
-              <form>
+              <form id="form-search">
+                <div class="form-group">
+                  <label for="inputDate">Date</label>
+                  <input type="date" id="inputDate" max="2100-12-31" min="2010-01-01" class="form-control" required>
+                </div>
                 <div class="form-group">
                   <label for="selectSubject">Test subject</label>
                   <select class="form-control" id="selectSubject">
@@ -98,6 +102,13 @@
                   <select class="form-control" id="selectAuthor">
                     <option value="default">ALL</option>
                   </select>
+                </div>
+                <div class="form-group">
+                  <label for="selectConfig">Configuration</label>
+                  <select class="form-control" id="selectConfig" aria-describedby="configHelp">
+                    <option value="default"></option>
+                  </select>
+                  <small id="configHelp" class="form-text text-muted">Select as many configuration as you like</small>
                 </div>
               </form>
             </div>
@@ -119,13 +130,12 @@
               <h4 class="modal-title">Edit test</h4>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <form id="form-edit">
+            <form class="form-edit">
               <div class="modal-body">
               </div>
               <div class="modal-footer">
               </div>
             </form>
-
           </div>
         </div>
       </div>

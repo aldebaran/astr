@@ -36,5 +36,12 @@ module.exports = function(app) {
   app.route('/api/tests/subjects')
     .get(test.getDistinctSubjects);
 
+  app.route('/api/tests/configurations')
+    .get(test.getDistinctConfigurations);
+
+  app.get('/api/tests/configurations/:subject', (req, res) => {
+    const subject = req.params.subject;
+    test.getConfigurationsOfSubject(subject, res);
+  });
 
 };

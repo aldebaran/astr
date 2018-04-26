@@ -14,20 +14,106 @@
       $('#selectSubject').append('<option>' + subject + '</option>');
     })
   });
+  //get all test configuration
+  $.get('api/tests/configurations', function(configurations){
+    configurations.forEach(function(config){
+      $('#selectConfig').append('<option>' + config + '</option>');
+    })
+  });
 
-  $('form').change(function(){
-    var bodyRequest = {};
+  var selectedConfig = [];
+  $('#selectConfig').change(function(){
+    if($('#selectConfig').val() !== 'default' && !selectedConfig.includes($('#selectConfig').val())){
+      selectedConfig.push($('#selectConfig').val());
+      $('#form-search').append('' +
+      '<div class="form-group config-group">' +
+        '<label for="inputConfig" class="labelConfig">' + $('#selectConfig').val() + '</label>' +
+        '<div class="row">' +
+          '<div class="col">' +
+            '<input type="text" class="form-control inputConfig" id="inputConfig">' +
+          '</div>' +
+          '<div class="col-2">' +
+            '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+      )
+    }
+  })
+
+  $('#form-search').on('click', '.deleteConfig', function(){
+    //remove config from the array
+    selectedConfig.splice(selectedConfig.indexOf($(this).closest('.form-group').find('label').html()), 1);
+    //remove config input from the page
+    $(this).closest('.form-group').remove();
+    $('#form-search').trigger('change');
+  })
+
+  $('#form-search').change(function(){
+    //create the body request
+    var bodyRequest = {
+      '$and': []
+    };
+    //add the author to the body request
     if($('#selectAuthor').val() !== 'default') {
       bodyRequest.author = $('#selectAuthor').val();
     }
+    //add the test subject to the body request
     if($('#selectSubject').val() !== 'default') {
       bodyRequest.type = $('#selectSubject').val();
     }
+    //add the date to the body request
+    if($('#inputDate').val() !== '') {
+      bodyRequest.date = $('#inputDate').val();
+    }
+    //add the configuration to the body request
+    $('.inputConfig').each(function(){
+      if($(this).val() !== ''){
+        bodyRequest['$and'].push({
+          "configuration": {
+            "$elemMatch": {
+              "name": $(this).closest('.form-group').find('label').html(),
+              "value": $(this).val()
+            }
+          }
+        })
+      }
+    })
+
+    //execute the search each time the box search content change
     search(bodyRequest);
   })
 
+  $('#selectSubject').change(function(){
+    if($('#selectSubject').val() !== 'default') {
+      //select only the configuration of the test subject
+      $.get('api/tests/configurations/' + $('#selectSubject').val(), function(configurations){
+        $('#selectConfig').html('<option value="default"></option>');
+        configurations.forEach(function(config){
+          $('#selectConfig').append('<option>' + config + '</option>');
+        })
+      });
+    } else {
+      $.get('api/tests/configurations', function(configurations){
+        $('#selectConfig').html('<option value="default"></option>');
+        configurations.forEach(function(config){
+          $('#selectConfig').append('<option>' + config + '</option>');
+        })
+      });
+    }
+
+    //delete existing configuration
+    $('.config-group').each(function(){
+      $(this).remove();
+    })
+    selectedConfig = [];
+  })
+
+  $('#form-search').submit(function(e){
+    e.preventDefault();
+  })
+
   function search(body) {
-    console.log(body)
     $.post('api/tests', body, function(tests){
       $('#tests-grid').html('');
       if(isConnected() && isMaster()){
@@ -139,11 +225,11 @@
         '<input type="submit" value="Apply" class="btn btn-info" id="submit-edit">' +
         '<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>'
       );
-      $('form').attr('id', test['_id']);
+      $('.form-edit').attr('id', test['_id']);
     })
   })
 
-  $('form').submit(function(e){
+  $('.form-edit').submit(function(e){
     e.preventDefault();
     var r = confirm('Please confirm that you want to modify this test.');
     if(r === true) {
@@ -165,7 +251,7 @@
       })
 
       if(okayToPush === true) {
-        $.post('api/tests/id/' + $('form').attr('id'), test, function(data){
+        $.post('api/tests/id/' + $('.form-edit').attr('id'), test, function(data){
           //alert(JSON.stringify(data, null, 2));
           location.reload();
         });

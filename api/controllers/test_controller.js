@@ -107,3 +107,25 @@ exports.getDistinctSubjects = (req, res) => {
     }
   });
 };
+
+exports.getDistinctConfigurations = (req, res) => {
+  Test.distinct('configuration.name', {}, (err, data) => {
+    if (err) {
+      res.send(err);
+    }
+    else {
+      res.json(data);
+    }
+  });
+};
+
+exports.getConfigurationsOfSubject = (subject, res) => {
+  Test.distinct('configuration.name', {type: subject}, (err, data) => {
+    if (err) {
+      res.send(err);
+    }
+    else {
+      res.json(data);
+    }
+  });
+};
