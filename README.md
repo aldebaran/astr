@@ -30,6 +30,7 @@
     - [mongodb](https://www.npmjs.com/package/mongodb) and [connect-mongo](https://www.npmjs.com/package/connect-mongo) *(to access the database)*
     - [mongoose](https://www.npmjs.com/package/mongoose) *(to easily make queries on the database)*
     - [bcrypt](https://www.npmjs.com/package/bcrypt) *(to encrypt passwords)*
+    - [multer](https://www.npmjs.com/package/multer) *(to upload files on the server)*
     - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
 
 ## Useful tools
