@@ -14,6 +14,7 @@
   <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <!-- Custom style -->
   <link href="css/index.css" rel="stylesheet">
+  <link href="css/dropzone.css" rel="stylesheet">
   <!-- Favicon -->
   <link rel="shortcut icon" href="favicon.ico" />
 </head>
@@ -86,45 +87,41 @@
               <h5>New test</h5>
             </div>
             <div class="card-body">
-              <ul>
-                <form>
-                  <div class="row">
-                    <div class="col">
-                      <div class="form-group">
-                        <label for="selectSubject">Select the test subject</label>
-                        <select class="form-control" id="selectSubject">
-                          <option value="default"></option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="col-md-auto">
-                      <div class="form-group">
-                        <label for="selectSubject">Or</label><br>
-                        <a class="btn btn-outline-primary" href="test-subjects.html">Create a new one</a>
-                      </div>
-
+              <form>
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="selectSubject">Select the test subject</label>
+                      <select class="form-control" id="selectSubject">
+                        <option value="default"></option>
+                      </select>
                     </div>
                   </div>
-
-                  <div class="form-group">
-                    <label for="inputDate">Date of the test</label>
-                    <input type="date" id="inputDate" max="2100-12-31" min="2010-01-01" class="form-control" required>
+                  <div class="col-md-auto">
+                    <div class="form-group">
+                      <label for="selectSubject">Or</label><br>
+                      <a class="btn btn-outline-primary" href="test-subjects.html">Create a new one</a>
+                    </div>
                   </div>
-                  <div class="form-group">
-                    <label for="inputLocation">Location</label>
-                    <input type="text" id="inputLocation" class="form-control" value="SBRE - Paris" required>
-                  </div>
-                  <div id="config">
-                  </div>
-
-                </form>
-
-              </ul>
+                </div>
+                <div class="form-group">
+                  <label for="inputDate">Date of the test</label>
+                  <input type="date" id="inputDate" max="2100-12-31" min="2010-01-01" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="inputLocation">Location</label>
+                  <input type="text" id="inputLocation" class="form-control" value="SBRE - Paris" required>
+                </div>
+                <div id="config">
+                </div>
+              </form>
             </div>
           </div>
         </div>
         <div class="col-sm">
           <!-- drag and drop -->
+          <form id="upload-widget" method="post" action="/upload" class="dropzone">
+          </form>
         </div>
       </div>
 
@@ -153,6 +150,8 @@
     <script src="js/index.js"></script>
     <!-- Specific script for tests-->
     <script src="js/test-add.js"></script>
+    <!-- Specific script to upload file by drag and drop-->
+    <script src="js/dropzone.js"></script>
   </div>
 </body>
 

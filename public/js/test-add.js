@@ -19,7 +19,7 @@
             '<input type="text" class="form-control inputConfig" name="' + config + '" required>' +
           '</div>');
         })
-        $('#config').append('<input type="submit" value="Submit" class="btn btn-info">')
+        $('#config').append('<input type="submit" value="Submit" id="submitTest" class="btn btn-info">')
       });
     } else {
       $('#config').html('');
@@ -54,7 +54,7 @@
         if(okayToPush === true) {
           $.post('api/tests/add', test, function(data){
             //alert(JSON.stringify(data, null, 2));
-            location.reload();
+            //location.reload();
           });
         } else {
           alert("Your test was not added because you left an empty field.");
