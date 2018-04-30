@@ -115,12 +115,18 @@
                 <div id="config">
                 </div>
               </form>
+              <div id="testId" style="display: none;">
+              </div>
+              <input id="isFileUploaded" type="text" style="display: none;" value="false">
             </div>
           </div>
         </div>
         <div class="col-sm">
           <!-- drag and drop -->
-          <form id="upload-widget" method="post" action="/upload" class="dropzone">
+          <form id="upload-widget" method="post" action="/upload" class="dropzone dz-clickable">
+            <div class="dz-message">Drop files here or click to upload.
+              <br> <span class="note">Your files will be zipped.</span>
+            </div>
           </form>
         </div>
       </div>

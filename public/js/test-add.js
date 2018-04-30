@@ -28,43 +28,43 @@
 
   $('form').submit(function(e){
     e.preventDefault();
+
     var okayToPush = true;
 
-    if(isConnected() && hasWritePermission()){
-      var r = confirm('Please confirm that you want to add this new test.')
-      if(r === true){
-        var test = {
-          type: $('#selectSubject option:selected').html(),
-          date: $('#inputDate').val(),
-          author: getUserName(),
-          location: $('#inputLocation').val().trim(),
-          configuration: [],
-        };
-        $('.inputConfig').each(function(){
-          if($(this).val().trim() === ""){
-            okayToPush = false;
-          } else {
-            test.configuration.push({
-              name: $(this).attr('name'),
-              value: $(this).val().trim()
-            });
-          }
-        })
-
-        if(okayToPush === true) {
-          $.post('api/tests/add', test, function(data){
-            //alert(JSON.stringify(data, null, 2));
-            //location.reload();
-          });
+    if(isConnected() && hasWritePermission() && $('#isFileUploaded').val() === 'true'){
+      var test = {
+        type: $('#selectSubject option:selected').html(),
+        date: $('#inputDate').val(),
+        author: getUserName(),
+        location: $('#inputLocation').val().trim(),
+        configuration: [],
+      };
+      $('.inputConfig').each(function(){
+        if($(this).val().trim() === ""){
+          okayToPush = false;
         } else {
-          alert("Your test was not added because you left an empty field.");
+          test.configuration.push({
+            name: $(this).attr('name'),
+            value: $(this).val().trim()
+          });
         }
+      })
+
+      if(okayToPush === true) {
+        $.post('api/tests/add', test, function(data){
+          $('#testId').html(data.test['_id']);
+        });
+      } else {
+        alert("Your test was not added because you left an empty field.");
       }
+    } else if ($('#isFileUploaded').val() !== 'true') {
+      alert('Upload a file to add a new test !');
     } else if(isConnected()) {
       alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
     } else {
       alert('Please log in to submit new tests !')
     }
+
 
   })
 

@@ -205,12 +205,12 @@
     $.get('api/tests/id/' + $(this).parent().parent().parent().attr('id'), function(test){
       $('.modal-body').html('' +
       '<div class="form-group">' +
-        '<label for="inputDate">Date</label>' +
-        '<input type="date" id="inputDate" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date + '" required>' +
+        '<label for="inputDateEdit">Date</label>' +
+        '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date + '" required>' +
       '</div>' +
       '<div class="form-group">' +
-        '<label for="inputLocation">Location</label>' +
-        '<input type="text" id="inputLocation" class="form-control" value="' + test.location + '" required>' +
+        '<label for="inputLocationEdit">Location</label>' +
+        '<input type="text" id="inputLocationEdit" class="form-control" value="' + test.location + '" required>' +
       '</div>'
       );
       test.configuration.forEach(function(config){
@@ -235,8 +235,8 @@
     if(r === true) {
       var okayToPush = true;
       var test = {
-        date: $('#inputDate').val(),
-        location: $('#inputLocation').val().trim(),
+        date: $('#inputDateEdit').val(),
+        location: $('#inputLocationEdit').val().trim(),
         configuration: [],
       };
       $('.inputConfig').each(function(){

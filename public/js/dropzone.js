@@ -420,7 +420,7 @@
           /**
            * The text used before any files are dropped.
            */
-          dictDefaultMessage: "Drop files here to upload",
+          dictDefaultMessage: "Drop files (or click here) to upload on the server",
 
           /**
            * The text that replaces the default message text it the browser is not supported.
@@ -492,24 +492,32 @@
            * You can add event listeners here
            */
           init: function init() {
-            var submitButton = document.querySelector("#submitTest")
-            var myDropzone = this; // closure
+            var myDropzone = this;
 
-            $('form').submit(function(e){
-              e.preventDefault();
-              myDropzone.processQueue(); // Tell Dropzone to process all queued files.
+            myDropzone.on("addedfile", function(file){
+              $('#isFileUploaded').val('true');
             });
 
-            myDropzone.on("sending", function(file) {
-              file.myCustomName = 'aaaaaa';
-                //file.myCustomName = "my-new-name" + file.name;
-                console.log(file.myCustomName);
+            myDropzone.on("sending", function(file, xhr, formData) {
+              //put the test ID in the body request to modify to filename later with the API
+              formData.append("testId", $('#testId').html());
             });
 
             myDropzone.on("complete", function (file) {
               if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                 location.reload();
               }
+            });
+
+            $('form').submit(function(e){
+              e.preventDefault();
+              // wait 200ms to make sure the test is pushed in the DB
+              setTimeout(function(){
+                if($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
+                  console.log($('#testId').html())
+                  myDropzone.processQueue(); // Tell Dropzone to process all queued files.
+                }
+              }, 200);
             });
           },
 
