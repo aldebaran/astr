@@ -35,12 +35,14 @@ var testRoutes = require('./api/routes/test_routes');
 var testSubjectRoutes = require('./api/routes/test_subject_routes');
 var userRoutes = require('./api/routes/user_routes');
 var uploadRoutes = require('./api/routes/upload_routes');
+var downloadRoutes = require('./api/routes/download_routes');
 
 //register the route
 testRoutes(app);
 testSubjectRoutes(app);
 userRoutes(app);
 uploadRoutes(app);
+downloadRoutes(app);
 
 //Start the server
 app.listen(port);

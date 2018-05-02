@@ -550,6 +550,15 @@ button.admin-user {
   margin-right: 5px;
 }
 
+a.download-button {
+  float: right;
+  margin-right: 5px;
+}
+
+.fa-download {
+  color: white;
+}
+
 #config {
   margin-top: 2em;
 }
@@ -559,7 +568,7 @@ button.admin-user {
   word-break: break-all;
 }
 
-#button-footer {
+.button-footer {
   float: right;
   margin-top:10px;
 }

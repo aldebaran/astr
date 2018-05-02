@@ -3531,7 +3531,7 @@
 
 
   Dropzone.options.myDropzone = {
-    url: '/upload',
+    url: '/api/upload',
     //maxFilesize: 5, // MB
     maxFiles: 10,
     autoProcessQueue: false,
