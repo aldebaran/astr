@@ -57,14 +57,13 @@
       } else {
         alert("Your test was not added because you left an empty field.");
       }
+    } else if(!isConnected()){
+      alert('Please log in to submit new tests !')
+    } else if(isConnected() && $('#isFileUploaded').val() === 'true') {
+      alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
     } else if ($('#isFileUploaded').val() !== 'true') {
       alert('Upload a file to add a new test !');
-    } else if(isConnected()) {
-      alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
-    } else {
-      alert('Please log in to submit new tests !')
     }
-
 
   })
 

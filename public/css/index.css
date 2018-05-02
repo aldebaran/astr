@@ -567,7 +567,17 @@ button.admin-user {
 #search-box {
   position: -webkit-sticky;
   position: sticky;
+  max-height: 78vh;
   top: 0px;
+}
+
+#search-box .card-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#deleteConfig {
+  margin-left: -1em;
 }
 
 #table-admin {

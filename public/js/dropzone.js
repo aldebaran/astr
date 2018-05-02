@@ -357,7 +357,7 @@
            * See the [enqueuing file uploads](#enqueuing-file-uploads) documentation
            * section for more information.
            */
-          autoProcessQueue: false,
+          autoProcessQueue: true,
 
           /**
            * If false, files added to the dropzone will not be queued by default.
@@ -491,36 +491,7 @@
            * Called when dropzone initialized
            * You can add event listeners here
            */
-          init: function init() {
-            var myDropzone = this;
-
-            myDropzone.on("addedfile", function(file){
-              $('#isFileUploaded').val('true');
-            });
-
-            myDropzone.on("sending", function(file, xhr, formData) {
-              //put the test ID in the body request to modify to filename later with the API
-              formData.append("testId", $('#testId').html());
-            });
-
-            myDropzone.on("complete", function (file) {
-              if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                location.reload();
-              }
-            });
-
-            $('form').submit(function(e){
-              e.preventDefault();
-              // wait 200ms to make sure the test is pushed in the DB
-              setTimeout(function(){
-                if($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
-                  console.log($('#testId').html())
-                  myDropzone.processQueue(); // Tell Dropzone to process all queued files.
-                }
-              }, 200);
-            });
-          },
-
+          init: function init() {},
 
           /**
            * Can be an **object** of additional parameters to transfer to the server, **or** a `Function`
@@ -3553,4 +3524,52 @@
       return undefined;
     }
   }
+
+  function paramNameForSend() {
+     return "files";
+  }
+
+
+  Dropzone.options.myDropzone = {
+    url: '/upload',
+    //maxFilesize: 5, // MB
+    maxFiles: 10,
+    autoProcessQueue: false,
+    uploadMultiple: true,
+    paramName: paramNameForSend,
+    method: 'post',
+    parallelUploads: 10,
+    init: function() {
+      var myDropzone = this;
+
+      myDropzone.on("addedfile", function(file){
+        $('#isFileUploaded').val('true');
+      });
+
+      myDropzone.on("sending", function(file, xhr, formData) {
+        //put the test ID in the body request to modify to filename later with the API
+        formData.set("testId", $('#testId').html());
+        formData.append("files", file.name);
+      });
+
+      myDropzone.on("complete", function (file) {
+        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+          location.reload();
+        }
+      });
+
+      $('form').submit(function(e){
+        e.preventDefault();
+        // wait 200ms to make sure the test is pushed in the DB
+        setTimeout(function(){
+          if($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
+            console.log($('#testId').html())
+            myDropzone.processQueue(); // Tell Dropzone to process all queued files.
+          }
+        }, 200);
+      });
+    }
+  }
+
+
 })(jQuery)

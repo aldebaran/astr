@@ -4,7 +4,7 @@
   "description": "archiving system of test results",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js --ignore 'archives/'"
   },
   "repository": {
     "type": "git",
@@ -13,6 +13,7 @@
   "author": "guillaume fradet",
   "license": "ISC",
   "dependencies": {
+    "archiver": "^2.1.1",
     "bcrypt": "^2.0.0",
     "connect-mongo": "^2.0.1",
     "express": "^4.16.3",
