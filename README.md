@@ -21,6 +21,10 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## Website
+
+The website is currently hosted on the IVV server at this address: [10.0.160.147:8000](http://10.0.160.147:8000/).
+
 ## Techs used
 
 - NoSQL database: [MongoDB](https://www.mongodb.com/)
@@ -177,6 +181,8 @@ npm run dev
 5. [/api/user/logout](http://10.0.160.147:8000/api/user/logout)
     - GET: Log out the user logged in the machine
 
+#### Upload
 
-
+1. [/upload](http://10.0.160.147:8000/upload)
+    - POST: Upload file(s) to the server
 
