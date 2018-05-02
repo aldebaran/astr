@@ -20,6 +20,7 @@
     - [Test subject](#test-subject)
     - [User](#user)
     - [Upload](#upload)
+    - [Download](#download)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -53,7 +54,7 @@ On the server:
 
 ### 1. Install MongoDB
 
-:warning: The installation process will differ depending of the Linux distribution. Follow the tutorial corresponding to yours: 
+:warning: The installation process will differ depending of the Linux distribution. Follow the tutorial corresponding to yours:
 - [Ubuntu](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
 - [Debian 7 or 8](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
 - [Debian 9](https://www.globo.tech/learning-center/install-mongodb-debian-9/)
@@ -157,7 +158,7 @@ npm run dev
 7. [/api/tests/configurations/:subject](http://10.0.160.147:8000/api/tests/configurations/CAMERA)
     - GET: Returns the list of configurations of the associated subject (used at least by one test)
 
-#### Test subject 
+#### Test subject
 
 1. [/api/test-subjects](http://10.0.160.147:8000/api/test-subjects)
     - GET: Returns the list of all the test subjects
@@ -167,7 +168,7 @@ npm run dev
     - POST:  Update the test subject with the associated ID in function of the parameters given in the body request
     - DELETE: Delete the test subject with the associated ID
 
-#### User 
+#### User
 
 1. [/api/user](http://10.0.160.147:8000/api/user)
     - GET: Returns the list of all the users
@@ -185,6 +186,10 @@ npm run dev
 
 #### Upload
 
-1. [/upload](http://10.0.160.147:8000/upload)
-    - POST: Upload file(s) to the server
+1. [/api/upload](http://10.0.160.147:8000/api/upload)
+    - POST: Upload files to the server in a ZIP. The name of the archive is the ID of the test
 
+#### Download
+
+1. [/api/download/:id](http://10.0.160.147:8000/api/download/5ae9bba1b87b22360cc2e70f)
+    - GET: Download the archive of the test with the associated ID
