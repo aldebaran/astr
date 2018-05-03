@@ -115,10 +115,12 @@
 
   function search(body) {
     $.post('api/tests', body, function(tests){
+      var matchedTests = [];
       $('#tests-grid').html('');
       if(isConnected() && isMaster()){
         //if the user is Master
         tests.forEach(function(test){
+          matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
             '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
@@ -131,7 +133,7 @@
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
                 '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
                 '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
-                '<a class="btn btn-success download-button" href="/api/download/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
+                '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
               '</div>' +
             '</div>' +
           '</div></div>');
@@ -144,6 +146,7 @@
         //if the user is connected but not a master --> can only modify his own tests
         const username = getUserName();
         tests.forEach(function(test){
+          matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
             '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
@@ -154,7 +157,7 @@
             '</div>' +
             '<div class="card-footer small text-muted"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
-                '<a class="btn btn-success download-button" href="/api/download/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
+                '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
               '</div>' +
             '</div>' +
           '</div></div>');
@@ -167,12 +170,13 @@
             $('#button-footer'+test['_id']).html('' +
             '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
             '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
-            '<a class="btn btn-success download-button" href="/api/download/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>');
+            '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>');
           }
         })
       } else {
         //if the user isn't logged
         tests.forEach(function(test){
+          matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
             '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
@@ -183,7 +187,7 @@
             '</div>' +
             '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
-                '<a class="btn btn-success download-button" href="/api/download/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
+                '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
               '</div>' +
             '</div>' +
           '</div></div>');
@@ -193,6 +197,33 @@
           });
         })
       }
+
+      // display number of results
+      if(matchedTests.length > 1){
+        $('#header-result').html('' +
+        '<div class="col-sm">' +
+          '<h5>' + matchedTests.length + ' tests found</h5>' +
+        '</div>' +
+        '<div class="col-sm">'+
+          '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
+        '</div>');
+      } else {
+        $('#header-result').html('' +
+        '<div class="col-sm">' +
+          '<h5>' + matchedTests.length + ' test found</h5>' +
+        '</div>' +
+        '<div class="col-sm">'+
+          '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
+        '</div>');
+      }
+
+      // "Download All" button handler
+      $('#buttonDownloadAll').click(function(){
+        $.post('api/download/multiple', {ids: matchedTests}, function(data){
+          window.location.href = 'api/download/id/multiple';
+        });
+      });
+
     })
   }
 

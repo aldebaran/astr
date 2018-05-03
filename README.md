@@ -191,5 +191,8 @@ npm run dev
 
 #### Download
 
-1. [/api/download/:id](http://10.0.160.147:8000/api/download/5ae9bba1b87b22360cc2e70f)
+1. [/api/download/id/:id](http://10.0.160.147:8000/api/download/id/5ae9bba1b87b22360cc2e70f)
     - GET: Download the archive of the test with the associated ID
+
+2. [/api/download/multiple](http://10.0.160.147:8000/api/download/multiple)
+    - POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.

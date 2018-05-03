@@ -573,6 +573,10 @@ a.download-button {
   margin-top:10px;
 }
 
+#buttonDownloadAll {
+  float: right;
+}
+
 #search-box {
   position: -webkit-sticky;
   position: sticky;
