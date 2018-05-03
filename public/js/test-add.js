@@ -130,7 +130,7 @@
       async: false,
       success: function(masters) {
         masters.forEach(function(master){
-          res += master.firstname + ' ' + master.lastname + '\n';
+          res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
         })
       }
     })
