@@ -9,11 +9,10 @@ var TestSubjectSchema = new Schema({
     trim: true,
     uppercase: true,
   },
-  configuration: {
-    type: [String],
-    unique: false,
-    required: true
-  },
+  configuration: [{
+    name: { type: String, lowercase: true, trim: true },
+    options: [{ type: String, lowercase: true, trim: true }]
+  }],
   author: {
     type: String,
     unique: false,

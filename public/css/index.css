@@ -541,7 +541,7 @@ li.config {
   padding-right: 30px;
 }
 
-.row.config {
+#formConfig {
   margin-top: 1em;
 }
 
@@ -604,6 +604,20 @@ a.download-button {
 
 #header-result h5{
   margin-top: 0.5em;
+}
+
+#buttonMoreOption {
+  float: right;
+  margin-top: 1em;
+}
+
+.inputOption {
+  margin-top: 1em;
+}
+
+.row.config {
+  padding-top: 1em;
+  padding-bottom: 1em; 
 }
 
 #holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}

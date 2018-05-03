@@ -107,24 +107,30 @@
             <div class="card-body">
               <form id="submitNewSubject">
                 <div class="form-group">
-                  <label for="inputName">Name</label>
+                  <h5 for="inputName">Name</h5>
                   <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="Enter the subject name" required>
                   <small id="nameHelp" class="form-text text-muted">Example: Motor Control</small>
                 </div>
-                <div class="form-group" id="formConfig">
-                  <label for="inputConfig">Configuration</label>
-                  <div class="row config">
-                    <div class="col">
-                      <input type="text" class="form-control inputConfig" id="inputConfig1" aria-describedby="configHelp" placeholder="Enter a configuration of your subject" required>
-                      <small id="configHelp" class="form-text text-muted">Example: Robot version</small>
-                    </div>
-                    <div class="col">
-                      <input class="form-control configName" id="configName1" type="text" placeholder="" disabled>
+                <br>
+                <h5>Configuration</h5>
+                <div id="formConfig">
+                  <div class="form-group">
+                    <div class="row config">
+                      <div class="col">
+                        <label id="labelConfigName">Configuration name</label>
+                        <input type="text" class="form-control inputConfigName" placeholder="Enter the configuration name" required>
+                        <small class="form-text text-muted">Example: Robot type</small>
+                      </div>
+                      <div class="col">
+                        <label>Options</label>
+                        <input class="form-control inputOption" type="text" placeholder="Enter an option" style="margin-top: 0px;">
+                        <small class="form-text text-muted">Example: Pepper</small>
+                        <button type="button" class="btn btn-outline-primary" id="buttonMoreOption"><i class="fa fa-plus-circle"></i> Option</button>
+                      </div>
                     </div>
                   </div>
-
                 </div>
-                <button type="button" class="btn btn-outline-primary" id="buttonMoreConfig">+</button>
+                <button type="button" class="btn btn-outline-primary" id="buttonMoreConfig"><i class="fa fa-plus-circle"></i> Configuration</button>
                 <br><br>
                 <input type="submit" value="Submit" class="btn btn-info">
               </form>

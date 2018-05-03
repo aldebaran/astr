@@ -2,18 +2,21 @@
   "use strict";
 
   // Create a new test subject
-  var nbConfig = 1;
   $('#buttonMoreConfig').click(function(){
     // check if the last configuration row is not empty
-    if($('#inputConfig'+nbConfig).val().trim() !== '') {
-      nbConfig++;
+    if($('.inputConfigName:last').val().trim() !== '') {
       $('#formConfig').append('' +
-      '<div class="row config">' +
-        '<div class="col">' +
-          '<input type="text" class="form-control inputConfig" id="inputConfig' + nbConfig + '" placeholder="Enter another configuration">' +
-        '</div>' +
-        '<div class="col">' +
-          '<input class="form-control configName" id="configName' + nbConfig + '" type="text" placeholder="" disabled>' +
+      '<div class="form-group">' +
+        '<div class="row config border-top">' +
+          '<div class="col">' +
+            '<label id="labelConfigName">Configuration name</label>' +
+            '<input type="text" class="form-control inputConfigName" placeholder="Enter the configuration name">' +
+          '</div>' +
+          '<div class="col">' +
+            '<label>Options</label>' +
+            '<input class="form-control inputOption" type="text" placeholder="Enter an option" style="margin-top: 0px;">' +
+            '<button type="button" class="btn btn-outline-primary" id="buttonMoreOption"><i class="fa fa-plus-circle"></i> Option</button>' +
+          '</div>' +
         '</div>' +
       '</div>');
     } else {
@@ -21,9 +24,18 @@
     }
   });
 
+  $('#formConfig').on('click', '#buttonMoreOption', function(){
+    // check if the last option row is not empty
+    if($(this).parent().find('input:last').val().trim() !== '') {
+      $('<input class="form-control inputOption" type="text" placeholder="Enter an option">').insertBefore(this);
+    } else {
+      alert('Fulfill the actual option to add another!')
+    }
+  })
+
   // modify the configuration name
-  $('#submitNewSubject').on('change', '.inputConfig', function(){
-    $(this).parent().parent().find('.configName').attr('placeholder', $(this).val().trim().toLowerCase().replace(/\s+/g, '_'));
+  $('#submitNewSubject').on('change', '.inputConfigName', function(){
+    $(this).closest('.form-group').find('#labelConfigName').html($(this).val().trim().toLowerCase().replace(/\s+/g, '_'));
   });
 
   $('#submitNewSubject').submit(function(e){
@@ -35,12 +47,20 @@
       if(r === true){
         var subject = {
           name: $('#inputName').val().trim().replace(/\s+/g, ' '),
-          configuration: [],
           author: getUserName(),
+          configuration: [],
         }
-        $('.configName').each(function(){
-          if($(this).attr('placeholder') !== ''){
-            subject.configuration.push($(this).attr('placeholder'));
+        $('.inputConfigName').each(function(){
+          var configName = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
+          var options = [];
+          $(this).closest('.row').find('.inputOption').each(function(){
+            options.push($(this).val().trim().toLowerCase().replace(/\s+/g, ' '))
+          })
+          if(configName !== ''){
+            subject.configuration.push({
+              name: configName,
+              options: options
+            });
           }
         })
 
@@ -75,14 +95,20 @@
         '<span class="key"> Name: </span><span class="value">' + data.name + '</span><br>' +
         '<span class="key"> Author: </span><span class="value" id="subjectAuthor">' + data.author + '</span><br>' +
         '<span class="key"> Created: </span><span class="value">' + new Date(data.created).toLocaleDateString() + '</span><br>' +
-        '<span class="key"> Configuration parameters:</span><br>');
+        '<span class="key"> Configuration</span><br>');
         data.configuration.forEach(function(config){
-          $('#infoSubject').append('<li><span class="value">' + config + '</span></li>');
+          $('#infoSubject').append('<li><span class="value">' + config.name + ': [' + config.options.join(', ') + ']' + '</span></li>');
         })
 
-        // user can delete the subject if he is the owner or a master
-        if(isMaster() || getUserName() === $('#subjectAuthor').html()) {
-          $('#infoSubject').append('<br><button type="button" class="btn btn-danger" id="deleteTestSubject">Delete</button>');
+        // master can delete and edit the subject
+        if(isMaster()) {
+          $('#infoSubject').append('' +
+            '<div class="button-footer">' +
+              '<button type="button" class="btn btn-danger admin-user" id="deleteTestSubject"><i class="fa fa-times" aria-hidden="true"></i> Delete</button>' +
+              '<button type="button" class="btn btn-info admin-user" id="deleteTestSubject"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>' +
+            '</div>'
+          );
+
           $('#deleteTestSubject').click(function(){
             var r = confirm('Please confirm that you want to delete this test subject.');
             if(r === true){
