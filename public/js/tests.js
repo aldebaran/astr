@@ -195,19 +195,42 @@
       // display number of results
       if(matchedTests.length > 1){
         $('#header-result').html('' +
-        '<div class="col-sm">' +
-          '<h5>' + matchedTests.length + ' tests found</h5>' +
-        '</div>' +
-        '<div class="col-sm">'+
-          '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
+        '<div class="card mb-3">' +
+          '<div class="card-header">' +
+            '<div class="row">' +
+              '<div class="col-6">' +
+                '<h5>' + matchedTests.length + ' tests found</h5>' +
+              '</div>' +
+              '<div class="col-6">'+
+                '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>');
+      } else if (matchedTests.length === 1){
+        $('#header-result').html('' +
+        '<div class="card mb-3">' +
+          '<div class="card-header">' +
+            '<div class="row">' +
+              '<div class="col-6">' +
+                '<h5>' + matchedTests.length + ' test found</h5>' +
+              '</div>' +
+              '<div class="col-6">'+
+                '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
         '</div>');
       } else {
         $('#header-result').html('' +
-        '<div class="col-sm">' +
-          '<h5>' + matchedTests.length + ' test found</h5>' +
-        '</div>' +
-        '<div class="col-sm">'+
-          '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
+        '<div class="card mb-3">' +
+          '<div class="card-header">' +
+            '<div class="row">' +
+              '<div class="col-6">' +
+                '<h5>No test found</h5>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
         '</div>');
       }
 

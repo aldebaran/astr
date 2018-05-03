@@ -29,8 +29,8 @@
   $('#submitNewSubject').submit(function(e){
     e.preventDefault();
 
-    // if the user is logged and has permission
-    if(isConnected() && hasWritePermission()) {
+    // if the user is logged and is master
+    if(isConnected() && isMaster()) {
       var r = confirm('Please confirm that you want to add this new test subject.')
       if(r === true){
         var subject = {
