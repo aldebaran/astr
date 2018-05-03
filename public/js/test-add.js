@@ -36,7 +36,6 @@
         type: $('#selectSubject option:selected').html(),
         date: $('#inputDate').val(),
         author: getUserName(),
-        location: $('#inputLocation').val().trim(),
         configuration: [],
       };
       $('.inputConfig').each(function(){

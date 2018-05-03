@@ -20,12 +20,6 @@ var TestSchema = new Schema({
     required: true,
     trim: true
   },
-  location: {
-    type: String,
-    unique: false,
-    required: true,
-    trim: true
-  },
   configuration: [{
     name: { type: String, lowercase: true, trim: true },
     value: { type: Schema.Types.Mixed, lowercase: true, trim: true }

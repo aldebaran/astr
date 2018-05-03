@@ -126,8 +126,6 @@
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
               '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
-              '<span class="key">Location: </span><span class="value">' + test.location + '</span><br>' +
-              '<span class="key">Configuration</span>' +
             '</div>' +
             '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
@@ -152,8 +150,6 @@
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
               '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
-              '<span class="key">Location: </span><span class="value">' + test.location + '</span><br>' +
-              '<span class="key">Configuration</span>' +
             '</div>' +
             '<div class="card-footer small text-muted"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
@@ -182,8 +178,6 @@
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
               '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
-              '<span class="key">Location: </span><span class="value">' + test.location + '</span><br>' +
-              '<span class="key">Configuration</span>' +
             '</div>' +
             '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
@@ -248,10 +242,6 @@
       '<div class="form-group">' +
         '<label for="inputDateEdit">Date</label>' +
         '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date + '" required>' +
-      '</div>' +
-      '<div class="form-group">' +
-        '<label for="inputLocationEdit">Location</label>' +
-        '<input type="text" id="inputLocationEdit" class="form-control" value="' + test.location + '" required>' +
       '</div>'
       );
       test.configuration.forEach(function(config){
@@ -277,7 +267,6 @@
       var okayToPush = true;
       var test = {
         date: $('#inputDateEdit').val(),
-        location: $('#inputLocationEdit').val().trim(),
         configuration: [],
       };
       $('.inputConfig').each(function(){

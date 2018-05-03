@@ -513,8 +513,8 @@ span.value {
 li.config {
   color: #fc6914;
   font-weight: 500;
+  list-style-type: none;
 }
-
 
 .card-body::-webkit-scrollbar-track
 {
@@ -596,6 +596,14 @@ a.download-button {
 #table-admin {
   width: 100%;
   overflow-x: auto;
+}
+
+#header-result {
+  margin-bottom: 1em;
+}
+
+#header-result h5{
+  margin-top: 0.5em;
 }
 
 #holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}
