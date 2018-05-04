@@ -563,6 +563,15 @@ a.download-button {
   margin-top: 2em;
 }
 
+#config .form-group {
+  padding-bottom: 1em;
+}
+
+#config label {
+  font-weight: bold;
+  color: green;
+}
+
 #info-footer {
   float: left;
   word-break: break-all;

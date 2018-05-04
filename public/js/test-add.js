@@ -15,9 +15,24 @@
         subject.configuration.forEach(function(config){
           $('#config').append('' +
           '<div class="form-group">' +
-            '<label for="inputConfig">' + config + '</label>' +
-            '<input type="text" class="form-control inputConfig" name="' + config + '" required>' +
+            '<label for="inputConfig">' + config.name + '</label>' +
+            '<select class="form-control selectConfig">' +
+            '</select>' +
+            '<small class="form-text text-muted">Select an option or "Other"</small>' +
+            // '<input type="text" class="form-control inputConfig" name="' + config.name + '" required>' +
           '</div>');
+
+          if(config.options.length > 0) {
+            config.options.forEach(function(option, idx, array){
+              $('#config').find('select:last').append('<option>' + option + '</option>');
+              if (idx === array.length - 1){
+                $('#config').find('select:last').append('<option>Other</option>');
+              }
+            })
+          } else {
+            $('#config').find('select:last').append('<option>Other</option>');
+            $('.form-group:last').append('<input type="text" class="form-control inputConfig" required>');
+          }
         })
         $('#config').append('<input type="submit" value="Submit" id="submitTest" class="btn btn-info">')
       });
@@ -26,11 +41,19 @@
     }
   })
 
+  // add an input if the user select "Other" on a configuration
+  $('#cardAddNewTest').on('change', '.selectConfig', function(){
+    if($(this).val() === 'Other'){
+      $(this).closest('.form-group').append('<input type="text" class="form-control inputConfig" required>');
+    } else {
+      $(this).closest('.form-group').find('.inputConfig').remove();
+    }
+  })
+
+  // Submit event
   $('form').submit(function(e){
     e.preventDefault();
-
     var okayToPush = true;
-
     if(isConnected() && hasWritePermission() && $('#isFileUploaded').val() === 'true'){
       var test = {
         type: $('#selectSubject option:selected').html(),
@@ -43,8 +66,16 @@
           okayToPush = false;
         } else {
           test.configuration.push({
-            name: $(this).attr('name'),
+            name: $(this).closest('.form-group').find('label').html(),
             value: $(this).val().trim()
+          });
+        }
+      })
+      $('.selectConfig').each(function(){
+        if($(this).val() !== 'Other'){
+          test.configuration.push({
+            name: $(this).closest('.form-group').find('label').html(),
+            value: $(this).val()
           });
         }
       })
