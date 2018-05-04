@@ -611,13 +611,21 @@ a.download-button {
   margin-top: 1em;
 }
 
+#buttonMoreOptionEdit {
+  float: right;
+}
+
 .inputOption {
   margin-top: 1em;
 }
 
+.inputOptionEdit {
+  margin-bottom: 1em;
+}
+
 .row.config {
   padding-top: 1em;
-  padding-bottom: 1em; 
+  padding-bottom: 1em;
 }
 
 #holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}

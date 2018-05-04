@@ -80,7 +80,7 @@
       </ol>
 
       <div class="row">
-        <div class="col-sm test-subject-card">
+        <div class="col-sm test-subject-card" id="cardExistingSubject">
           <div class="card mb-3">
             <div class="card-header">
               <h5>Existing test subjects</h5>
@@ -138,6 +138,27 @@
           </div>
         </div>
       </div>
+
+      <!-- modal to edit the subject -->
+      <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Edit test subject</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form class="form-edit">
+              <div class="modal-body">
+              </div>
+              <div class="modal-footer">
+                <input type="submit" value="Submit" class="btn btn-info">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+
 
 
     </div>

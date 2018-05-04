@@ -20,7 +20,7 @@
         '</div>' +
       '</div>');
     } else {
-      alert('Fulfill the actual configuration input to add another!')
+      alert('Fulfill the actual configuration input to add another!');
     }
   });
 
@@ -105,7 +105,7 @@
           $('#infoSubject').append('' +
             '<div class="button-footer">' +
               '<button type="button" class="btn btn-danger admin-user" id="deleteTestSubject"><i class="fa fa-times" aria-hidden="true"></i> Delete</button>' +
-              '<button type="button" class="btn btn-info admin-user" id="deleteTestSubject"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>' +
+              '<button type="button" class="btn btn-info admin-user" id="editTestSubject" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>' +
             '</div>'
           );
 
@@ -113,7 +113,7 @@
             var r = confirm('Please confirm that you want to delete this test subject.');
             if(r === true){
               $.ajax({
-                url: 'api/test-subjects/' + $(this).parent().attr('val'),
+                url: 'api/test-subjects/' + $(this).closest('#infoSubject').attr('val'),
                 type: 'DELETE',
                 success: function(data){
                   location.reload();
@@ -126,7 +126,119 @@
     } else {
       $('#infoSubject').html('');
     }
+  })
 
+  // Edit test subject
+  $('#cardExistingSubject').on('click', '#editTestSubject', function(){
+    $.get('api/test-subjects/' + $(this).closest('.card-body').find('#selectSubject').val(), function(subject){
+      $('.modal-body').html('' +
+      '<div class="form-group">' +
+        '<label for="inputNameEdit">Name</label>' +
+        '<input type="text" id="inputNameEdit" class="form-control" value="' + subject.name + '" required>' +
+      '</div>'
+      );
+      subject.configuration.forEach(function(config){
+        $('.modal-body').append('' +
+        '<div class="form-group">' +
+          '<div class="row config border-top">' +
+            '<div class="col">' +
+              '<label id="labelConfigNameEdit">Configuration name</label>' +
+              '<input type="text" class="form-control inputConfigNameEdit" id="inputConfigNameEdit" value="' + config.name + '">' +
+            '</div>' +
+            '<div class="col">' +
+              '<label id="label' + config.name + '">Options</label>' +
+              '<button type="button" class="btn btn-outline-primary" id="buttonMoreOptionEdit"><i class="fa fa-plus-circle"></i> Option</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>');
+
+        if(config.options.length > 0) {
+          config.options.forEach(function(option){
+            $('<input class="form-control inputOptionEdit" type="text" value="' + option + '">').insertAfter('#label'+config.name);
+          })
+        }
+      })
+
+      // button to add a new config
+      $('<button type="button" class="btn btn-outline-primary" id="buttonMoreConfigEdit"><i class="fa fa-plus-circle"></i> Configuration</button>').insertAfter('.modal-body .form-group:last');
+    })
+  })
+
+  // modal button listener (new config)
+  $('.modal-body').on('click', '#buttonMoreConfigEdit', function(){
+    if($(this).parent().find('.form-group:last').find('#inputConfigNameEdit').val().trim() !== ''){
+      $('' +
+      '<div class="form-group">' +
+        '<div class="row config border-top">' +
+          '<div class="col">' +
+            '<label id="labelConfigNameEdit">Configuration name</label>' +
+            '<input type="text" class="form-control inputConfigNameEdit" id="inputConfigNameEdit" placeholder="Enter the name">' +
+          '</div>' +
+          '<div class="col">' +
+            '<label>Options</label>' +
+            '<input class="form-control inputOptionEdit" type="text" placeholder="Enter an option" style="margin-top: 0px;">' +
+            '<button type="button" class="btn btn-outline-primary" id="buttonMoreOptionEdit"><i class="fa fa-plus-circle"></i> Option</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>').insertBefore('#buttonMoreConfigEdit');
+    } else {
+      alert('Fulfill the actual configuration to add another!')
+    }
+  });
+
+  // modal button listener (new option)
+  $('.modal-body').on('click', '#buttonMoreOptionEdit', function(){
+    if($(this).parent().find('input:last').val().trim() !== '') {
+      $('<input class="form-control inputOptionEdit" type="text" placeholder="Enter an option">').insertBefore(this);
+    } else {
+      alert('Fulfill the actual option to add another!')
+    }
+  });
+
+  // modify configuration name on change
+  $('.modal-body').on('change', '.inputConfigNameEdit', function(){
+    var name = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
+    $(this).val(name);
+  })
+
+  // modify option name on change
+  $('.modal-body').on('change', '.inputOptionEdit', function(){
+    var name = $(this).val().trim().toLowerCase().replace(/\s+/g, ' ');
+    $(this).val(name);
+  })
+
+  // Submit event when editing a subject
+  $('.form-edit').submit(function(e){
+    e.preventDefault();
+    var r = confirm('Please confirm that you want to add this new test subject.')
+    if(r === true){
+      var editedSubject = {
+        name: $('#inputNameEdit').val().replace(/\s+/g, ' '),
+        configuration: []
+      };
+      $('.inputConfigNameEdit').each(function(){
+        if($(this).val().trim() !== ''){
+          var config = {
+            name: $(this).val(),
+            options: []
+          };
+          $(this).closest('.form-group').find('.inputOptionEdit').each(function(){
+            if($(this).val().trim() !== ''){
+              config.options.push($(this).val());
+            }
+          })
+          editedSubject.configuration.push(config);
+        }
+      })
+
+      $.post('api/test-subjects/' + $('#infoSubject').attr('val'), editedSubject, function(data){
+        if(data.name === 'Success') {
+          location.reload();
+        } else {
+          alert('Someting went wrong.')
+        }
+      })
+    }
   })
 
   // -------------------------- Functions -------------------------- //
