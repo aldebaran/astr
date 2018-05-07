@@ -70,7 +70,7 @@
     '<li class="nav-item">' +
       '<a class="nav-link" href="login.html">' +
         '<i class="fa fa-fw fa-sign-in"></i>Login</a>' +
-    '</li>')
+    '</li>');
   }
 
 
@@ -85,7 +85,7 @@
       success: function(user) {
         res = !user.error;
       }
-    })
+    });
     return res;
   }
 
@@ -98,7 +98,7 @@
       success: function(user) {
         res = user['write_permission'];
       }
-    })
+    });
     return res;
   }
 
@@ -111,7 +111,7 @@
       success: function(user) {
         res = user.master;
       }
-    })
+    });
     return res;
   }
 
@@ -124,7 +124,7 @@
       success: function(user) {
         res = user.name;
       }
-    })
+    });
     return res;
   }
 
@@ -137,9 +137,9 @@
       success: function(masters) {
         masters.forEach(function(master){
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
-        })
+        });
       }
-    })
+    });
     return res;
   }
 

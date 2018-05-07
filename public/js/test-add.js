@@ -5,8 +5,8 @@
   $.get('api/test-subjects', function(subjects){
     subjects.forEach(function(subject){
       $('#selectSubject').append('<option value="' + subject['_id'] + '">' + subject.name + '</option>');
-    })
-  })
+    });
+  });
 
   $('#selectSubject').change(function(){
     if($('#selectSubject').val() !== "default"){
@@ -27,13 +27,13 @@
               if (idx === array.length - 1){
                 $('#config').find('select:last').append('<option>Other</option>');
               }
-            })
+            });
           } else {
             $('#config').find('select:last').append('<option>Other</option>');
             $('.form-group:last').append('<input type="text" class="form-control inputConfig" required>');
           }
-        })
-        $('#config').append('<input type="submit" value="Submit" id="submitTest" class="btn btn-info">')
+        });
+        $('#config').append('<input type="submit" value="Submit" id="submitTest" class="btn btn-info">');
       });
     } else {
       $('#config').html('');
@@ -47,7 +47,7 @@
     } else {
       $(this).closest('.form-group').find('.inputConfig').remove();
     }
-  })
+  });
 
   // Submit event
   $('form').submit(function(e){
@@ -69,7 +69,7 @@
             value: $(this).val().trim()
           });
         }
-      })
+      });
       $('.selectConfig').each(function(){
         if($(this).val() !== 'Other'){
           test.configuration.push({
@@ -77,7 +77,7 @@
             value: $(this).val()
           });
         }
-      })
+      });
 
       if(okayToPush === true) {
         $.post('api/tests/add', test, function(data){
@@ -93,8 +93,7 @@
     } else if ($('#isFileUploaded').val() !== 'true') {
       alert('Upload a file to add a new test !');
     }
-
-  })
+  });
 
 
   // -------------------------- Functions -------------------------- //
@@ -108,7 +107,7 @@
       success: function(user) {
         res = !user.error;
       }
-    })
+    });
     return res;
   }
 
@@ -121,7 +120,7 @@
       success: function(user) {
         res = user['write_permission'];
       }
-    })
+    });
     return res;
   }
 
@@ -134,7 +133,7 @@
       success: function(user) {
         res = user.master;
       }
-    })
+    });
     return res;
   }
 
@@ -147,7 +146,7 @@
       success: function(user) {
         res = user.name;
       }
-    })
+    });
     return res;
   }
 
@@ -160,9 +159,9 @@
       success: function(masters) {
         masters.forEach(function(master){
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
-        })
+        });
       }
-    })
+    });
     return res;
   }
 

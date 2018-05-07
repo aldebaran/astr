@@ -29,9 +29,9 @@
     if($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOption" type="text" placeholder="Enter an option">').insertBefore(this);
     } else {
-      alert('Fulfill the actual option to add another!')
+      alert('Fulfill the actual option to add another!');
     }
-  })
+  });
 
   // modify the configuration name
   $('#submitNewSubject').on('change', '.inputConfigName', function(){
@@ -54,15 +54,15 @@
           var configName = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
           var options = [];
           $(this).closest('.row').find('.inputOption').each(function(){
-            options.push($(this).val().trim().toLowerCase().replace(/\s+/g, ' '))
-          })
+            options.push($(this).val().trim().toLowerCase().replace(/\s+/g, ' '));
+          });
           if(configName !== ''){
             subject.configuration.push({
               name: configName,
               options: options
             });
           }
-        })
+        });
 
         // send the new subject
         $.post('api/test-subjects', subject, function(data){
@@ -84,8 +84,8 @@
   $.get('api/test-subjects', function(subjects){
     subjects.forEach(function(subject){
       $('#selectSubject').append('<option value="' + subject['_id'] + '">' + subject.name + '</option>');
-    })
-  })
+    });
+  });
 
   $('#selectSubject').change(function(){
     if($('#selectSubject').val() !== "default"){
@@ -98,7 +98,7 @@
         '<span class="key"> Configuration</span><br>');
         data.configuration.forEach(function(config){
           $('#infoSubject').append('<li><span class="value">' + config.name + ': [' + config.options.join(', ') + ']' + '</span></li>');
-        })
+        });
 
         // master can delete and edit the subject
         if(isMaster()) {
@@ -118,11 +118,11 @@
                 success: function(data){
                   location.reload();
                 }
-              })
+              });
             }
-          })
+          });
         }
-      })
+      });
     } else {
       $('#infoSubject').html('');
     }
@@ -155,14 +155,14 @@
         if(config.options.length > 0) {
           config.options.forEach(function(option){
             $('<input class="form-control inputOptionEdit" type="text" value="' + option + '">').insertAfter('#label'+config.name);
-          })
+          });
         }
-      })
+      });
 
       // button to add a new config
       $('<button type="button" class="btn btn-outline-primary" id="buttonMoreConfigEdit"><i class="fa fa-plus-circle"></i> Configuration</button>').insertAfter('.modal-body .form-group:last');
-    })
-  })
+    });
+  });
 
   // modal button listener (new config)
   $('.modal-body').on('click', '#buttonMoreConfigEdit', function(){
@@ -182,7 +182,7 @@
         '</div>' +
       '</div>').insertBefore('#buttonMoreConfigEdit');
     } else {
-      alert('Fulfill the actual configuration to add another!')
+      alert('Fulfill the actual configuration to add another!');
     }
   });
 
@@ -191,7 +191,7 @@
     if($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOptionEdit" type="text" placeholder="Enter an option">').insertBefore(this);
     } else {
-      alert('Fulfill the actual option to add another!')
+      alert('Fulfill the actual option to add another!');
     }
   });
 
@@ -205,12 +205,12 @@
   $('.modal-body').on('change', '.inputOptionEdit', function(){
     var name = $(this).val().trim().toLowerCase().replace(/\s+/g, ' ');
     $(this).val(name);
-  })
+  });
 
   // Submit event when editing a subject
   $('.form-edit').submit(function(e){
     e.preventDefault();
-    var r = confirm('Please confirm that you want to add this new test subject.')
+    var r = confirm('Please confirm that you want to add this new test subject.');
     if(r === true){
       var editedSubject = {
         name: $('#inputNameEdit').val().replace(/\s+/g, ' '),
@@ -226,7 +226,7 @@
             if($(this).val().trim() !== ''){
               config.options.push($(this).val());
             }
-          })
+          });
           editedSubject.configuration.push(config);
         }
       })
@@ -235,11 +235,11 @@
         if(data.name === 'Success') {
           location.reload();
         } else {
-          alert('Someting went wrong.')
+          alert('Someting went wrong.');
         }
-      })
+      });
     }
-  })
+  });
 
   // -------------------------- Functions -------------------------- //
 
@@ -252,7 +252,7 @@
       success: function(user) {
         res = !user.error;
       }
-    })
+    });
     return res;
   }
 
@@ -265,7 +265,7 @@
       success: function(user) {
         res = user['write_permission'];
       }
-    })
+    });
     return res;
   }
 
@@ -278,7 +278,7 @@
       success: function(user) {
         res = user.master;
       }
-    })
+    });
     return res;
   }
 
@@ -291,7 +291,7 @@
       success: function(user) {
         res = user.name;
       }
-    })
+    });
     return res;
   }
 
@@ -304,9 +304,9 @@
       success: function(masters) {
         masters.forEach(function(master){
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
-        })
+        });
       }
-    })
+    });
     return res;
   }
 

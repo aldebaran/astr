@@ -6,19 +6,19 @@
   $.get('api/tests/authors', function(authors){
     authors.forEach(function(author){
       $('#selectAuthor').append('<option>' + author + '</option>');
-    })
+    });
   });
   //get all test subjects
   $.get('api/tests/subjects', function(subjects){
     subjects.forEach(function(subject){
       $('#selectSubject').append('<option>' + subject + '</option>');
-    })
+    });
   });
   //get all test configuration
   $.get('api/tests/configurations', function(configurations){
     configurations.forEach(function(config){
       $('#selectConfig').append('<option>' + config + '</option>');
-    })
+    });
   });
 
   // search
@@ -49,13 +49,13 @@
               "value": $(this).val()
             }
           }
-        })
+        });
       }
-    })
+    });
 
     //execute the search each time the box search content change
     search(bodyRequest);
-  })
+  });
 
   $('#selectSubject').change(function(){
     if($('#selectSubject').val() !== 'default') {
@@ -64,14 +64,14 @@
         $('#selectConfig').html('<option value="default"></option>');
         configurations.forEach(function(config){
           $('#selectConfig').append('<option>' + config + '</option>');
-        })
+        });
       });
     } else {
       $.get('api/tests/configurations', function(configurations){
         $('#selectConfig').html('<option value="default"></option>');
         configurations.forEach(function(config){
           $('#selectConfig').append('<option>' + config + '</option>');
-        })
+        });
       });
     }
 
@@ -109,10 +109,10 @@
       $.get('/api/tests/options/' + $('#selectConfig').val(), function(options){
         options.forEach(function(option){
           $('.inputConfig:last').append('<option>' + option + '</option>')
-        })
-      })
+        });
+      });
     }
-  })
+  });
 
   //delete config input
   $('#form-search').on('click', '.deleteConfig', function(){
@@ -149,7 +149,7 @@
           test.configuration.forEach(function(config){
             $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
           });
-        })
+        });
       } else if (isConnected()){
         //if the user is connected but not a master --> can only modify his own tests
         const username = getUserName();
@@ -178,7 +178,7 @@
             '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
             '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>');
           }
-        })
+        });
       } else {
         //if the user isn't logged
         tests.forEach(function(test){
@@ -199,7 +199,7 @@
           test.configuration.forEach(function(config){
             $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
           });
-        })
+        });
       }
 
       // display number of results
@@ -251,7 +251,7 @@
         });
       });
 
-    })
+    });
   }
 
   // buttons listener (edit & delete)
@@ -264,9 +264,9 @@
         success: function(data){
           location.reload();
         }
-      })
+      });
     }
-  })
+  });
 
   // Edit a test
   $('#tests-grid').on('click', '#editTest', function(){
@@ -354,9 +354,8 @@
       } else {
         alert("Your test was not added because you left an empty field.");
       }
-
     }
-  })
+  });
 
   search({});
 
@@ -371,7 +370,7 @@
       success: function(user) {
         res = !user.error;
       }
-    })
+    });
     return res;
   }
 
@@ -384,7 +383,7 @@
       success: function(user) {
         res = user['write_permission'];
       }
-    })
+    });
     return res;
   }
 
@@ -397,7 +396,7 @@
       success: function(user) {
         res = user.master;
       }
-    })
+    });
     return res;
   }
 
@@ -410,7 +409,7 @@
       success: function(user) {
         res = user.name;
       }
-    })
+    });
     return res;
   }
 
@@ -423,9 +422,9 @@
       success: function(masters) {
         masters.forEach(function(master){
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
-        })
+        });
       }
-    })
+    });
     return res;
   }
 

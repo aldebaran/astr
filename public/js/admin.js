@@ -37,8 +37,8 @@
         } else {
           $('#master'+user['_id']).css('color','red');
         }
-      })
-    })
+      });
+    });
 
     // modify and delete buttons
     $('tbody').on('click', '#modifyWritePermission', function(){
@@ -46,17 +46,17 @@
       if(r === true){
         $.post('api/user/id/' + $(this).parent().parent().attr('value'), {"write_permission": !$(this).parent().html().includes('true')}, function(data){
           location.reload();
-        })
+        });
       }
-    })
+    });
     $('tbody').on('click', '#modifyMaster', function(){
       var r = confirm('Please confirm that you want to modify the master status of this user.');
       if(r === true){
         $.post('api/user/id/' + $(this).parent().parent().attr('value'), {"master": !$(this).parent().html().includes('true')}, function(data){
           location.reload();
-        })
+        });
       }
-    })
+    });
     $('tbody').on('click', '#deleteUser', function(){
       var r = confirm('Please confirm that you want to delete this user.');
       if(r === true){
@@ -66,9 +66,9 @@
           success: function(data){
             location.reload();
           }
-        })
+        });
       }
-    })
+    });
   } else {
     // user not logged or not master
     $('body').html('<pre style="color: white;">Well tried but you\'re not a master!</pre>')
@@ -86,7 +86,7 @@
       success: function(user) {
         res = !user.error;
       }
-    })
+    });
     return res;
   }
 
@@ -99,7 +99,7 @@
       success: function(user) {
         res = user['write_permission'];
       }
-    })
+    });
     return res;
   }
 
@@ -112,7 +112,7 @@
       success: function(user) {
         res = user.master;
       }
-    })
+    });
     return res;
   }
 
@@ -125,7 +125,7 @@
       success: function(user) {
         res = user.name;
       }
-    })
+    });
     return res;
   }
 
@@ -138,9 +138,9 @@
       success: function(masters) {
         masters.forEach(function(master){
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
-        })
+        });
       }
-    })
+    });
     return res;
   }
 
