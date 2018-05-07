@@ -44,4 +44,9 @@ module.exports = function(app) {
     test.getConfigurationsOfSubject(subject, res);
   });
 
+  app.get('/api/tests/options/:configname', (req, res) => {
+    const configName = req.params.configname;
+    test.getOptionsOfConfig(configName, res);
+  });
+
 };

@@ -21,34 +21,7 @@
     })
   });
 
-  var selectedConfig = [];
-  $('#selectConfig').change(function(){
-    if($('#selectConfig').val() !== 'default' && !selectedConfig.includes($('#selectConfig').val())){
-      selectedConfig.push($('#selectConfig').val());
-      $('#form-search').append('' +
-      '<div class="form-group config-group">' +
-        '<label for="inputConfig" class="labelConfig">' + $('#selectConfig').val() + '</label>' +
-        '<div class="row">' +
-          '<div class="col">' +
-            '<input type="text" class="form-control inputConfig" id="inputConfig">' +
-          '</div>' +
-          '<div class="col-2">' +
-            '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
-          '</div>' +
-        '</div>' +
-      '</div>'
-      )
-    }
-  })
-
-  $('#form-search').on('click', '.deleteConfig', function(){
-    //remove config from the array
-    selectedConfig.splice(selectedConfig.indexOf($(this).closest('.form-group').find('label').html()), 1);
-    //remove config input from the page
-    $(this).closest('.form-group').remove();
-    $('#form-search').trigger('change');
-  })
-
+  // search
   $('#form-search').change(function(){
     //create the body request
     var bodyRequest = {
@@ -111,6 +84,44 @@
 
   $('#form-search').submit(function(e){
     e.preventDefault();
+  })
+
+  //add input when a new configuration is selected
+  var selectedConfig = [];
+  $('#selectConfig').change(function(){
+    if($('#selectConfig').val() !== 'default' && !selectedConfig.includes($('#selectConfig').val())){
+      selectedConfig.push($('#selectConfig').val());
+      $('#form-search').append('' +
+      '<div class="form-group config-group">' +
+        '<label class="labelConfig">' + $('#selectConfig').val() + '</label>' +
+        '<div class="row">' +
+          '<div class="col">' +
+            '<select class="form-control inputConfig">' +
+              '<option></option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="col-2">' +
+            '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+      );
+      $.get('/api/tests/options/' + $('#selectConfig').val(), function(options){
+        console.log(options)
+        options.forEach(function(option){
+          $('.inputConfig:last').append('<option>' + option + '</option>')
+        })
+      })
+    }
+  })
+
+  //delete config input
+  $('#form-search').on('click', '.deleteConfig', function(){
+    //remove config from the array
+    selectedConfig.splice(selectedConfig.indexOf($(this).closest('.form-group').find('label').html()), 1);
+    //remove config input from the page
+    $(this).closest('.form-group').remove();
+    $('#form-search').trigger('change');
   })
 
   function search(body) {
@@ -270,8 +281,8 @@
       test.configuration.forEach(function(config){
         $('.modal-body').append('' +
         '<div class="form-group">' +
-          '<label for="inputConfig">' + config.name + '</label>' +
-          '<input type="text" id="inputConfig" class="form-control inputConfig" value="' + config.value + '" name="' + config.name + '" required>' +
+          '<label>' + config.name + '</label>' +
+          '<input type="text" class="form-control inputConfigEdit" value="' + config.value + '" name="' + config.name + '" required>' +
         '</div>'
         );
       })
@@ -292,7 +303,7 @@
         date: $('#inputDateEdit').val(),
         configuration: [],
       };
-      $('.inputConfig').each(function(){
+      $('.inputConfigEdit').each(function(){
         if($(this).val().trim() === ""){
           okayToPush = false;
         } else {

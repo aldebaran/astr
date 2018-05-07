@@ -129,3 +129,24 @@ exports.getConfigurationsOfSubject = (subject, res) => {
     }
   });
 };
+
+exports.getOptionsOfConfig = (configName, res) => {
+  Test.aggregate([
+    {"$unwind": "$configuration"},
+    {"$match": {"configuration.name": configName}},
+    {"$group": {"_id": null, "values": {"$addToSet": "$configuration.value"}}},
+    {"$project": {"values": true, "_id": false}}
+  ])
+  .exec((err, data) => {
+    if (err) {
+      res.send(err);
+    }
+    else {
+      if(data.length === 1) {
+        res.json(data[0].values);
+      } else {
+        res.json({'error': 'Nothing found'});
+      }
+    }
+  });
+};
