@@ -72,3 +72,23 @@ exports.deleteTestSubject = (id, res) => {
     }
   });
 }
+
+exports.getOptionsOfConfig = (subjectName, configName, res) => {
+  TestSubject.aggregate([
+    {"$unwind": "$configuration"},
+    {"$match": {"configuration.name": configName, "name": subjectName}},
+    {"$group": {"_id": "$configuration.options"}}
+  ])
+  .exec((err, data) => {
+    if (err) {
+      res.send(err);
+    }
+    else {
+      if(data.length === 1) {
+        res.json(data[0]['_id']);
+      } else {
+        res.json({'error': 'Nothing found'});
+      }
+    }
+  });
+}

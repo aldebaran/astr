@@ -107,7 +107,6 @@
       '</div>'
       );
       $.get('/api/tests/options/' + $('#selectConfig').val(), function(options){
-        console.log(options)
         options.forEach(function(option){
           $('.inputConfig:last').append('<option>' + option + '</option>')
         })
@@ -282,17 +281,42 @@
         $('.modal-body').append('' +
         '<div class="form-group">' +
           '<label>' + config.name + '</label>' +
-          '<input type="text" class="form-control inputConfigEdit" value="' + config.value + '" name="' + config.name + '" required>' +
+          '<select class="form-control selectConfigEdit ' + config.name + '">' +
+            '<option>' + config.value + '</option>' +
+          '</select>' +
         '</div>'
         );
-      })
+        $.get('api/test-subjects/options/' + test.type + '/' + config.name, function(options){
+          if(options.length > 0) {
+            options.forEach(function(option, idx, array){
+              if(option !== $('.selectConfigEdit.' + config.name).val()) {
+                $('.selectConfigEdit.' + config.name).append('<option>' + option + '</option>');
+              }
+              if(idx === array.length-1) {
+                $('.selectConfigEdit.' + config.name).append('<option>Other</option>');
+              }
+            });
+          } else {
+            $('.selectConfigEdit.' + config.name).append('<option>Other</option>');
+          }
+        });
+      });
       $('.modal-footer').html('' +
         '<input type="submit" value="Apply" class="btn btn-info" id="submit-edit">' +
         '<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>'
       );
       $('.form-edit').attr('id', test['_id']);
-    })
-  })
+    });
+  });
+
+  // add an input if the user select "Other" on a configuration
+  $('#myModal').on('change', '.selectConfigEdit', function(){
+    if($(this).val() === 'Other'){
+      $(this).closest('.form-group').append('<input type="text" class="form-control inputConfigEdit" required>');
+    } else {
+      $(this).closest('.form-group').find('.inputConfigEdit').remove();
+    }
+  });
 
   $('.form-edit').submit(function(e){
     e.preventDefault();
@@ -303,16 +327,24 @@
         date: $('#inputDateEdit').val(),
         configuration: [],
       };
+      $('.selectConfigEdit').each(function(){
+        if($(this).val() !== 'Other'){
+          test.configuration.push({
+            name: $(this).prev().html(),
+            value: $(this).val().trim()
+          });
+        }
+      });
       $('.inputConfigEdit').each(function(){
         if($(this).val().trim() === ""){
           okayToPush = false;
         } else {
           test.configuration.push({
-            name: $(this).attr('name'),
+            name: $(this).prev().prev().html(),
             value: $(this).val().trim()
           });
         }
-      })
+      });
 
       if(okayToPush === true) {
         $.post('api/tests/id/' + $('.form-edit').attr('id'), test, function(data){

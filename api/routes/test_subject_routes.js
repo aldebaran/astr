@@ -11,20 +11,26 @@ module.exports = function(app) {
     .get(testSubject.getAllTestSubjects)
     .post(testSubject.addTestSubject);
 
-  app.get('/api/test-subjects/:id', (req, res) => {
+  app.get('/api/test-subjects/id/:id', (req, res) => {
     const id = req.params.id;
     testSubject.getTestSubject(id, res);
   });
 
-  app.post('/api/test-subjects/:id', (req, res) => {
+  app.post('/api/test-subjects/id/:id', (req, res) => {
     const id = req.params.id;
     const body = req.body;
     testSubject.updateTestSubject(id, body, res);
   });
 
-  app.delete('/api/test-subjects/:id', (req, res) => {
+  app.delete('/api/test-subjects/id/:id', (req, res) => {
     const id = req.params.id;
     testSubject.deleteTestSubject(id, res);
   });
-  
+
+  app.get('/api/test-subjects/options/:subject/:configName', (req, res) => {
+    const subjectName = req.params.subject;
+    const configName = req.params.configName;
+    testSubject.getOptionsOfConfig(subjectName, configName, res);
+  }); 
+
 };

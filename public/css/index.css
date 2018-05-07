@@ -632,6 +632,10 @@ a.download-button {
   margin-bottom: 1em;
 }
 
+.inputConfigEdit {
+  margin-top: 1em;
+}
+
 .row.config {
   padding-top: 1em;
   padding-bottom: 1em;

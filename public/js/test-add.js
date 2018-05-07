@@ -10,7 +10,7 @@
 
   $('#selectSubject').change(function(){
     if($('#selectSubject').val() !== "default"){
-      $.get('api/test-subjects/' + $('#selectSubject').val(), function(subject){
+      $.get('api/test-subjects/id/' + $('#selectSubject').val(), function(subject){
         $('#config').html('<h4>Configuration</h4>');
         subject.configuration.forEach(function(config){
           $('#config').append('' +

@@ -89,7 +89,7 @@
 
   $('#selectSubject').change(function(){
     if($('#selectSubject').val() !== "default"){
-      $.get('api/test-subjects/' + $('#selectSubject').val(), function(data){
+      $.get('api/test-subjects/id/' + $('#selectSubject').val(), function(data){
         $('#infoSubject').attr('val', data['_id']);
         $('#infoSubject').html('' +
         '<span class="key"> Name: </span><span class="value">' + data.name + '</span><br>' +
@@ -113,7 +113,7 @@
             var r = confirm('Please confirm that you want to delete this test subject.');
             if(r === true){
               $.ajax({
-                url: 'api/test-subjects/' + $(this).closest('#infoSubject').attr('val'),
+                url: 'api/test-subjects/id/' + $(this).closest('#infoSubject').attr('val'),
                 type: 'DELETE',
                 success: function(data){
                   location.reload();
@@ -130,7 +130,7 @@
 
   // Edit test subject
   $('#cardExistingSubject').on('click', '#editTestSubject', function(){
-    $.get('api/test-subjects/' + $(this).closest('.card-body').find('#selectSubject').val(), function(subject){
+    $.get('api/test-subjects/id/' + $(this).closest('.card-body').find('#selectSubject').val(), function(subject){
       $('.modal-body').html('' +
       '<div class="form-group">' +
         '<label for="inputNameEdit">Name</label>' +
@@ -231,7 +231,7 @@
         }
       })
 
-      $.post('api/test-subjects/' + $('#infoSubject').attr('val'), editedSubject, function(data){
+      $.post('api/test-subjects/id/' + $('#infoSubject').attr('val'), editedSubject, function(data){
         if(data.name === 'Success') {
           location.reload();
         } else {
