@@ -157,6 +157,8 @@ npm run dev
     - GET: Returns the list of configurations (used at least by one test)
 7. [/api/tests/configurations/:subject](http://10.0.160.147:8000/api/tests/configurations/CAMERA)
     - GET: Returns the list of configurations of the associated subject (used at least by one test)
+8. [/api/tests/options/:configName](http://10.0.160.147:8000/api/tests/options/robot_type)
+    - GET: Returns the  options of the associated configuration (used at least one time)
 
 #### Test subject
 
