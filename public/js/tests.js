@@ -122,7 +122,7 @@
         tests.forEach(function(test){
           matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
-            '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
+            '<div class="card-header">'+ test.type + '</div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
               '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
@@ -146,7 +146,7 @@
         tests.forEach(function(test){
           matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
-            '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
+            '<div class="card-header">'+ test.type + '</div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
               '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
@@ -174,7 +174,7 @@
         tests.forEach(function(test){
           matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
-            '<div class="card-header"><i class="fa fa-wrench"></i> '+ test.type + '</div>' +
+            '<div class="card-header">'+ test.type + '</div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
               '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +

@@ -19,7 +19,6 @@
             '<select class="form-control selectConfig">' +
             '</select>' +
             '<small class="form-text text-muted">Select an option or "Other"</small>' +
-            // '<input type="text" class="form-control inputConfig" name="' + config.name + '" required>' +
           '</div>');
 
           if(config.options.length > 0) {
