@@ -165,10 +165,12 @@ npm run dev
 1. [/api/test-subjects](http://10.0.160.147:8000/api/test-subjects)
     - GET: Returns the list of all the test subjects
     - POST:  Add a new test subject in the DB in function of the parameters given in the body request
-2. [/api/test-subjects/:id](http://10.0.160.147:8000/api/test-subjects/5adf3559da64c157e53c6b17)
+2. [/api/test-subjects/id/:id](http://10.0.160.147:8000/api/test-subjects/id/5adf3559da64c157e53c6b17)
     - GET: Returns the test subject with the associated ID
     - POST:  Update the test subject with the associated ID in function of the parameters given in the body request
     - DELETE: Delete the test subject with the associated ID
+3. [/api/test-subjects/options/:subject/:configName](http://10.0.160.147:8000/api/test-subjects/options/WIFI/robot_type)
+    - GET: Returns the test subject with the associated ID
 
 #### User
 
