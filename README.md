@@ -16,9 +16,10 @@
   - [6. Install the modules](#6-install-the-modules)
   - [7. Launch the application](#7-launch-the-application)
 - [API endpoints](#api-endpoints)
-    - [Test](#test)
-    - [Test subject](#test-subject)
-    - [User](#user)
+    - [Tests](#tests)
+    - [Test subjects](#test-subjects)
+    - [Filters](#filters)
+    - [Users](#users)
     - [Upload](#upload)
     - [Download](#download)
 
@@ -138,10 +139,10 @@ npm run dev
 
 ## API endpoints
 
-#### Test
+#### Tests
 
 1. [/api/tests](http://10.0.160.147:8000/api/tests)
-    - GET: Returns the list of all the tests
+    - GET: Returns the list of all tests
     - POST: Returns the list of tests that match with the parameters given in the body request
 2. [/api/tests/add](http://10.0.160.147:8000/api/tests/add)
     - POST: Add a new test in the DB in function of the parameters given in the body request
@@ -160,10 +161,10 @@ npm run dev
 8. [/api/tests/options/:configName](http://10.0.160.147:8000/api/tests/options/robot_type)
     - GET: Returns the  options of the associated configuration (used at least one time)
 
-#### Test subject
+#### Test subjects
 
 1. [/api/test-subjects](http://10.0.160.147:8000/api/test-subjects)
-    - GET: Returns the list of all the test subjects
+    - GET: Returns the list of all test subjects
     - POST:  Add a new test subject in the DB in function of the parameters given in the body request
 2. [/api/test-subjects/id/:id](http://10.0.160.147:8000/api/test-subjects/id/5adf3559da64c157e53c6b17)
     - GET: Returns the test subject with the associated ID
@@ -172,7 +173,16 @@ npm run dev
 3. [/api/test-subjects/options/:subject/:configName](http://10.0.160.147:8000/api/test-subjects/options/WIFI/robot_type)
     - GET: Returns the test subject with the associated ID
 
-#### User
+#### Filters
+
+1. [/api/filters](http://10.0.160.147:8000/api/filters)
+    - GET: Returns the list of all filters
+    - POST:  Add a new filter in the DB in function of the parameters given in the body request
+2. [/api/filters/id/:id](http://10.0.160.147:8000/api/filters/id/5adf3559da64c157e53c6b17)
+    - GET: Returns the filter with the associated ID
+    - DELETE: Delete the filter with the associated ID
+
+#### Users
 
 1. [/api/user](http://10.0.160.147:8000/api/user)
     - GET: Returns the list of all the users
