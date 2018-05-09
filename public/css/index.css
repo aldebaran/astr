@@ -641,6 +641,15 @@ a.download-button {
   padding-bottom: 1em;
 }
 
+span.null {
+  color: #ff8c00;
+}
+
+span.notNull {
+  color: #00aeff;
+  font-weight: bold;
+}
+
 #holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}
 #holder.hover { border: 10px dashed #0c0; }
 #holder img { display: block; margin: 10px auto; }

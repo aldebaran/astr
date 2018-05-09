@@ -76,77 +76,25 @@
         <li class="breadcrumb-item">
           <a href="tests.html">Tests</a>
         </li>
-        <li class="breadcrumb-item active">Search</li>
+        <li class="breadcrumb-item active">My filters</li>
       </ol>
 
-      <div class="row" id="grid">
-        <div class="col-sm-3">
-          <div class="card mb-3" id="search-box">
-            <div class="card-header">
-              Search Box <i class="fa fa-search" aria-hidden="true"></i>
-            </div>
-            <div class="card-body">
-              <form id="form-search">
-                <div class="form-group">
-                  <label for="inputDate">Date</label>
-                  <input type="date" id="inputDate" max="2100-12-31" min="2010-01-01" class="form-control">
-                </div>
-                <div class="form-group">
-                  <label for="selectSubject">Test subject</label>
-                  <select class="form-control" id="selectSubject">
-                    <option value="default">ALL</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="selectAuthor">Author</label>
-                  <select class="form-control" id="selectAuthor">
-                    <option value="default">ALL</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="selectConfig">Configuration</label>
-                  <select class="form-control" id="selectConfig" aria-describedby="configHelp">
-                    <option value="default"></option>
-                  </select>
-                  <small id="configHelp" class="form-text text-muted">Select as many configuration as you like</small>
-                </div>
-              </form>
-            </div>
-            <div class="card-footer small text-muted">
-              <button class="btn btn-outline-primary" id="buttonSaveFilters">Save this search</button>
-              <a class="btn btn-outline-info" id="buttonMyFilters" href="filters.html">My filters</a>
-              <medium class="form-text">You can store these filters to reuse them later or to share this search.</medium>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm" id="search-result">
-          <div id="header-result">
-          </div>
-          <div id="tests-grid" class="row">
-          </div>
-        </div>
+      <div id="myFilters">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Subject</th>
+              <th scope="col">Author</th>
+              <th scope="col">Date</th>
+              <th scope="col">Configuration</th>
+              <th scope="col">Link</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
       </div>
-
-
-
-      <!-- modal to edit the test -->
-      <div class="modal fade" id="myModal">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Edit test</h4>
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <form class="form-edit">
-              <div class="modal-body">
-              </div>
-              <div class="modal-footer">
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
 
     </div>
 
@@ -171,8 +119,7 @@
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="js/index.js"></script>
-    <!-- Specific script for tests-->
-    <script src="js/tests.js"></script>
+    <script src="js/filters.js"></script>
   </div>
 </body>
 
