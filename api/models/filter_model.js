@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var ConfigurationSchema = new Schema({
+var FilterSchema = new Schema({
   author: {
     type: String,
     unique: false,
@@ -32,5 +32,5 @@ var ConfigurationSchema = new Schema({
   },
 });
 
-var Configuration = mongoose.model('Configuration', ConfigurationSchema);
-module.exports = Configuration;
+var Filter = mongoose.model('Filter', FilterSchema);
+module.exports = Filter;
