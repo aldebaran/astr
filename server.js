@@ -5,10 +5,13 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
+
 var Test = require('./api/models/test_model');
 Test = mongoose.model('Test');
 var TestSubject = require('./api/models/test_subject_model');
 TestSubject = mongoose.model('TestSubject');
+var Configuration = require('./api/models/configuration_model');
+Configuration = mongoose.model('Configuration');
 
 //Connection to mongoDB
 mongoose.Promise = global.Promise;
@@ -33,6 +36,7 @@ app.use(session({
 //importing route
 var testRoutes = require('./api/routes/test_routes');
 var testSubjectRoutes = require('./api/routes/test_subject_routes');
+var configurationRoutes = require('./api/routes/configuration_routes');
 var userRoutes = require('./api/routes/user_routes');
 var uploadRoutes = require('./api/routes/upload_routes');
 var downloadRoutes = require('./api/routes/download_routes');
@@ -40,6 +44,7 @@ var downloadRoutes = require('./api/routes/download_routes');
 //register the route
 testRoutes(app);
 testSubjectRoutes(app);
+configurationRoutes(app);
 userRoutes(app);
 uploadRoutes(app);
 downloadRoutes(app);
