@@ -383,10 +383,10 @@
     });
 
     if(isConnected()) {
-      if(filters.configuration.length > 0 || filters.date || filters.testAuthor) {
+      if(filters.configuration.length > 0 || filters.date || filters.testAuthor || filters.testSubjectName) {
         $.post('api/filters', filters, function(data){
           if(data.name === 'Success') {
-            alert('Your search has been saved !'); 
+            alert('Your search has been saved !');
           }
           console.log(data);
         })
@@ -396,9 +396,57 @@
     } else {
       alert('Please log in to save your search !');
     }
-
-
   });
+
+  //use filter if present in URL
+  if(getUrlParameter('filter')){
+    $.get('api/filters/id/' + getUrlParameter('filter'), function(filter){
+      if(filter['_id']) {
+        console.log(filter);
+        if(filter.date) {
+          $('#inputDate').val(filter.date);
+        }
+        if(filter.testSubjectName) {
+          $('#selectSubject').val(filter.testSubjectName);
+        }
+        if(filter.testAuthor) {
+          $('#selectAuthor').val(filter.testAuthor);
+        }
+        if(filter.configuration.length > 0) {
+          filter.configuration.forEach(function(config){
+            selectedConfig.push(config.name);
+            $('#form-search').append('' +
+            '<div class="form-group config-group">' +
+              '<label class="labelConfig">' + config.name + '</label>' +
+              '<div class="row">' +
+                '<div class="col">' +
+                  '<select class="form-control inputConfig ' + config.name + '">' +
+                    '<option></option>' +
+                  '</select>' +
+                '</div>' +
+                '<div class="col-2">' +
+                  '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+                '</div>' +
+              '</div>' +
+            '</div>'
+            );
+            $.get('/api/tests/options/' + config.name, function(options){
+              options.forEach(function(option){
+                $('.inputConfig.' + config.name).append('<option>' + option + '</option>');
+              });
+              $('.inputConfig.' + config.name).val(config.value);
+            });
+          });
+        }
+        setTimeout(function(){
+          $('#form-search').trigger('change');
+        }, 100);
+      } else {
+        console.log('Error with the filter ID in params.');
+        console.log(filter);
+      }
+    });
+  }
 
   search({});
 
@@ -469,6 +517,21 @@
       }
     });
     return res;
+  }
+
+  function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+      sURLVariables = sPageURL.split('&'),
+      sParameterName,
+      i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+      sParameterName = sURLVariables[i].split('=');
+
+      if (sParameterName[0] === sParam) {
+          return sParameterName[1] === undefined ? true : sParameterName[1];
+      }
+    }
   }
 
 })(jQuery);

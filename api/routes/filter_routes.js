@@ -21,4 +21,9 @@ module.exports = function(app) {
     filter.deleteFilter(id, res);
   });
 
+  app.get('/tests/:filterId', (req, res) => {
+    const id = req.params.filterId;
+    filter.searchWithFilter(id, res);
+  });
+
 };
