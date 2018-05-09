@@ -2,10 +2,16 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var FilterSchema = new Schema({
-  author: {
+  user: {
     type: String,
     unique: false,
     required: true,
+    trim: true
+  },
+  testAuthor: {
+    type: String,
+    unique: false,
+    required: false,
     trim: true
   },
   testSubjectName: {

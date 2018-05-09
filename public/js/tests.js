@@ -357,6 +357,49 @@
     }
   });
 
+  //save filters
+  $('#buttonSaveFilters').click(function(){
+    var filters = {
+      user: getUserName(),
+      configuration: []
+    };
+    if($('#inputDate').val() !== ''){
+      filters.date = $('#inputDate').val();
+    }
+    if($('#selectSubject').val() !== 'default'){
+      filters.testSubjectName = $('#selectSubject').val();
+    }
+    if($('#selectAuthor').val() !== 'default'){
+      filters.testAuthor = $('#selectAuthor').val();
+    }
+
+    $('.config-group').each(function(){
+      if($(this).find('.inputConfig').val() !== ''){
+        filters.configuration.push({
+          name: $(this).find('.labelConfig').html(),
+          value: $(this).find('.inputConfig').val()
+        });
+      }
+    });
+
+    if(isConnected()) {
+      if(filters.configuration.length > 0 || filters.date || filters.testAuthor) {
+        $.post('api/filters', filters, function(data){
+          if(data.name === 'Success') {
+            alert('Your search has been saved !'); 
+          }
+          console.log(data);
+        })
+      } else {
+        alert('Add some filters to your search before saving it');
+      }
+    } else {
+      alert('Please log in to save your search !');
+    }
+
+
+  });
+
   search({});
 
   // -------------------------- Functions -------------------------- //
