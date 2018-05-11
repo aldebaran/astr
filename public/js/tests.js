@@ -61,7 +61,7 @@
     if($('#selectSubject').val() !== 'default') {
       //select only the configuration of the test subject
       $.get('api/tests/configurations/' + $('#selectSubject').val(), function(configurations){
-        $('#selectConfig').html('<option value="default"></option>');
+        $('#selectConfig').html('<option value="default">Click here to add filters</option>');
         configurations.forEach(function(config){
           $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
         });
