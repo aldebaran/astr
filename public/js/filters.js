@@ -8,19 +8,19 @@
         if(filter.user === user) {
           var link = window.location.origin + '/tests/' + filter['_id'];
           if(!filter.testSubjectName){
-            filter.testSubjectName = '<span class="null">NULL</span>';
+            filter.testSubjectName = '<span class="null">ALL</span>';
           } else {
-            filter.testSubjectName = '<span class="notNull">' + filter.testSubjectName + '</span>';
+            filter.testSubjectName = '<span class="key">' + filter.testSubjectName + '</span>';
           }
           if(!filter.testAuthor){
-            filter.testAuthor = '<span class="null">NULL</span>';
+            filter.testAuthor = '<span class="null">ALL</span>';
           } else {
-            filter.testAuthor = '<span class="notNull">' + filter.testAuthor + '</span>';
+            filter.testAuthor = '<span class="key">' + filter.testAuthor + '</span>';
           }
           if(!filter.date){
-            filter.date = '<span class="null">NULL</span>';
+            filter.date = '<span class="null">ALL</span>';
           } else {
-            filter.date = '<span class="notNull">' + filter.date + '</span>';
+            filter.date = '<span class="key">' + filter.date + '</span>';
           }
           $('tbody').append('' +
           '<tr id="' + filter['_id'] + '">' +
@@ -33,10 +33,10 @@
           '</tr>');
           if(filter.configuration.length > 0) {
             filter.configuration.forEach(function(config){
-              $('.config:last').append('<span class="notNull">[' + config.name + ': ' + config.value + ']   </span>')
+              $('.config:last').append('<span class="notNull">[<span class="key">' + config.name + ': </span><span class=value>' + config.value + '</span>]   </span>')
             });
           } else {
-            $('.config:last').html('<span class="null">NULL</span>');
+            $('.config:last').html('<span class="null">ALL</span>');
           }
         }
       });
@@ -57,7 +57,7 @@
         }
       });
     }
-  }); 
+  });
 
 
   // -------------------------- Functions -------------------------- //

@@ -643,11 +643,12 @@ a.download-button {
 
 span.null {
   color: #ff8c00;
+  font-weight: lighter;
 }
 
 span.notNull {
   color: #00aeff;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 #holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}
