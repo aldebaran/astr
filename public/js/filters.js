@@ -3,9 +3,11 @@
 
   if(isConnected()) {
     $.get('api/filters', function(filters){
+      var count = 0;
       var user = getUserName();
       filters.forEach(function(filter){
         if(filter.user === user) {
+          count++;
           var link = window.location.origin + '/tests/' + filter['_id'];
           if(!filter.testSubjectName){
             filter.testSubjectName = '<span class="null">ALL</span>';
@@ -24,6 +26,7 @@
           }
           $('tbody').append('' +
           '<tr id="' + filter['_id'] + '">' +
+            '<th scope="row">' + count + '</th>' +
             '<td>' + filter.testSubjectName + '</td>' +
             '<td>' + filter.testAuthor + '</td>' +
             '<td>' + filter.date + '</td>' +
@@ -33,7 +36,7 @@
           '</tr>');
           if(filter.configuration.length > 0) {
             filter.configuration.forEach(function(config){
-              $('.config:last').append('<span class="notNull">[<span class="key">' + config.name + ': </span><span class=value>' + config.value + '</span>]   </span>')
+              $('.config:last').append('<div><span class="key">' + config.name + ': </span><span class=value>' + config.value + '</span></div>')
             });
           } else {
             $('.config:last').html('<span class="null">ALL</span>');

@@ -607,6 +607,11 @@ a.download-button {
   overflow-x: auto;
 }
 
+#myFilters {
+  width: 100%;
+  overflow-x: auto;
+}
+
 #header-result {
   margin-bottom: 1em;
 }
@@ -649,6 +654,10 @@ span.null {
 span.notNull {
   color: #00aeff;
   font-weight: 600;
+}
+
+span.text-muted {
+  font-size: 90%;
 }
 
 #holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}
