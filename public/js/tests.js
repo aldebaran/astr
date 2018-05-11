@@ -17,7 +17,7 @@
   //get all test configuration
   $.get('api/tests/configurations', function(configurations){
     configurations.forEach(function(config){
-      $('#selectConfig').append('<option>' + config + '</option>');
+      $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
     });
   });
 
@@ -63,14 +63,14 @@
       $.get('api/tests/configurations/' + $('#selectSubject').val(), function(configurations){
         $('#selectConfig').html('<option value="default"></option>');
         configurations.forEach(function(config){
-          $('#selectConfig').append('<option>' + config + '</option>');
+          $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
         });
       });
     } else {
       $.get('api/tests/configurations', function(configurations){
         $('#selectConfig').html('<option value="default"></option>');
         configurations.forEach(function(config){
-          $('#selectConfig').append('<option>' + config + '</option>');
+          $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
         });
       });
     }
@@ -110,7 +110,10 @@
         options.forEach(function(option){
           $('.inputConfig:last').append('<option>' + option + '</option>')
         });
+        $('#selectConfig').val('default');
       });
+    } else {
+      $('#selectConfig').val('default');
     }
   });
 

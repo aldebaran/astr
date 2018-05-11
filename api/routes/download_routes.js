@@ -11,7 +11,7 @@ module.exports = function(app) {
 
   // Route to download one archive
   app.get('/api/download/id/:id', function (req, res, next) {
-    var filePath = 'archives/'; // Or format the path using the `id` rest param
+    var filePath = 'archives/';
     var fileName = req.params.id + '.zip';
     res.download(filePath + fileName);
   });

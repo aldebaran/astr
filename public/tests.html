@@ -108,7 +108,7 @@
                   <select class="form-control" id="selectConfig" aria-describedby="configHelp">
                     <option value="default"></option>
                   </select>
-                  <small id="configHelp" class="form-text text-muted">Select as many configuration as you like</small>
+                  <small id="configHelp" class="form-text text-muted">Select a configuration to add a filter on it. You can add as many filter as you want, just click on another in the list.</small>
                 </div>
               </form>
             </div>
@@ -145,6 +145,11 @@
             </form>
           </div>
         </div>
+      </div>
+
+      <div id="message" style="display: none">
+        <div id="message-screen-mask" class="ui-widget-overlay ui-front"></div>
+        <div id="message-text" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-draggable ui-resizable waitmessage">please wait...</div>
       </div>
 
 
