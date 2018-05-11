@@ -54,7 +54,9 @@
           var configName = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
           var options = [];
           $(this).closest('.row').find('.inputOption').each(function(){
-            options.push($(this).val().trim().toLowerCase().replace(/\s+/g, ' '));
+            if($(this).val().trim() !== '') {
+              options.push($(this).val().trim().toLowerCase().replace(/\s+/g, ' '));
+            }
           });
           if(configName !== ''){
             subject.configuration.push({
