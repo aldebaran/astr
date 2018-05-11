@@ -341,7 +341,7 @@
         } else {
           test.configuration.push({
             name: $(this).prev().prev().html(),
-            value: $(this).val().trim()
+            value: $(this).val().trim().toLowerCase().replace(/\s+/g, ' ')
           });
         }
       });
