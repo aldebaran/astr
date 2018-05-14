@@ -68,7 +68,7 @@
       });
     } else {
       $.get('api/tests/configurations', function(configurations){
-        $('#selectConfig').html('<option value="default"></option>');
+        $('#selectConfig').html('<option value="default">Click here to add filters</option>');
         configurations.forEach(function(config){
           $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
         });
@@ -362,23 +362,23 @@
 
   //save filters
   $('#buttonSaveFilters').click(function(){
-    var filters = {
+    var filter = {
       user: getUserName(),
       configuration: []
     };
     if($('#inputDate').val() !== ''){
-      filters.date = $('#inputDate').val();
+      filter.date = $('#inputDate').val();
     }
     if($('#selectSubject').val() !== 'default'){
-      filters.testSubjectName = $('#selectSubject').val();
+      filter.testSubjectName = $('#selectSubject').val();
     }
     if($('#selectAuthor').val() !== 'default'){
-      filters.testAuthor = $('#selectAuthor').val();
+      filter.testAuthor = $('#selectAuthor').val();
     }
 
     $('.config-group').each(function(){
       if($(this).find('.inputConfig').val() !== ''){
-        filters.configuration.push({
+        filter.configuration.push({
           name: $(this).find('.labelConfig').html(),
           value: $(this).find('.inputConfig').val()
         });
@@ -386,15 +386,30 @@
     });
 
     if(isConnected()) {
-      if(filters.configuration.length > 0 || filters.date || filters.testAuthor || filters.testSubjectName) {
-        $.post('api/filters', filters, function(data){
-          if(data.name === 'Success') {
-            alert('Your search has been saved !');
+      if(filter.configuration.length > 0 || filter.date || filter.testAuthor || filter.testSubjectName) {
+        // check if filter already exist
+        $.get('api/filters', function(savedFilters) {
+          var alreadyExist = false;
+          savedFilters.forEach(function(savedFilter) {
+            if((savedFilter.user === filter.user) && (savedFilter.testSubjectName === filter.testSubjectName) && (savedFilter.testAuthor === filter.testAuthor) && (savedFilter.date === filter.date) && configurationsAreTheSame(savedFilter.configuration, filter.configuration)) {
+              alreadyExist = true;
+            }
+          });
+          if (alreadyExist === false) {
+            $.post('api/filters', filter, function(data) {
+              if(data.name === 'Success') {
+                alert('SUCCESS\n\nYour search has been saved !');
+              }
+              console.log(data);
+            });
+          } else {
+            alert('WARNING\n\nYou already saved this search ! Check the page My Filters to manage them');
           }
-          console.log(data);
-        })
+        });
+
+
       } else {
-        alert('Add some filters to your search before saving it');
+        alert('WARNING\n\nAdd some filters to your search before saving it');
       }
     } else {
       alert('Please log in to save your search !');
@@ -405,7 +420,7 @@
   if(getUrlParameter('filter')){
     $.get('api/filters/id/' + getUrlParameter('filter'), function(filter){
       if(filter['_id']) {
-        console.log(filter);
+        //console.log(filter);
         if(filter.date) {
           $('#inputDate').val(filter.date);
         }
@@ -535,6 +550,31 @@
           return sParameterName[1] === undefined ? true : sParameterName[1];
       }
     }
+  }
+
+  function configurationsAreTheSame(firstConfigArray, secondConfigArray) {
+    if (firstConfigArray.length === secondConfigArray.length) {
+      if (firstConfigArray.length === 0) {
+        return true;
+      } else {
+        var dict1 = {};
+        var dict2 = {};
+        firstConfigArray.forEach(function(config) {
+          dict1[config.name] = config.value;
+        });
+        secondConfigArray.forEach(function(config) {
+          dict2[config.name] = config.value;
+        });
+        for (var key in dict1) {
+          if (!dict2[key] || dict1[key] !== dict2[key]) {
+            return false;
+          }
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
   }
 
 })(jQuery);
