@@ -147,9 +147,16 @@
         </div>
       </div>
 
-      <div id="message" style="display: none">
-        <div id="message-screen-mask" class="ui-widget-overlay ui-front"></div>
-        <div id="message-text" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-draggable ui-resizable waitmessage">please wait...</div>
+      <div class="modal fade" id="waitDialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <p class="text-center">Please wait...</p>
+              <div class="loader"></div>
+              <p class="text-center font-italic">This can take some time because all the files are being zipped together.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
 

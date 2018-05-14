@@ -249,11 +249,19 @@
 
       // "Download All" button handler
       $('#buttonDownloadAll').click(function(){
+        $("#waitDialog").modal('show');
+        $('#waitDialog').modal({
+          backdrop: 'static',
+          keyboard: false 
+        });
         $.post('api/download/multiple', {ids: matchedTests}, function(data){
           window.location.href = 'api/download/id/multiple';
+          var timer = window.setInterval(function() {
+            clearInterval(timer);
+            $("#waitDialog").modal('hide');
+          }, 1000);
         });
       });
-
     });
   }
 
@@ -575,6 +583,11 @@
       return false;
     }
     return true;
+  }
+
+  function getCookie(name) {
+    var parts = document.cookie.split(name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
   }
 
 })(jQuery);

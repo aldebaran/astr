@@ -437,6 +437,15 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
   }
 }
 
+#holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}
+#holder.hover { border: 10px dashed #0c0; }
+#holder img { display: block; margin: 10px auto; }
+#holder p { margin: 10px; font-size: 14px; }
+progress { width: 100%; }
+progress:after { content: '%'; }
+.fail { background: #c00; padding: 2px; color: #fff; }
+.hidden { display: none !important;}
+
 .card-body-icon {
   position: absolute;
   z-index: 0;
@@ -660,11 +669,19 @@ span.text-muted {
   font-size: 90%;
 }
 
-#holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}
-#holder.hover { border: 10px dashed #0c0; }
-#holder img { display: block; margin: 10px auto; }
-#holder p { margin: 10px; font-size: 14px; }
-progress { width: 100%; }
-progress:after { content: '%'; }
-.fail { background: #c00; padding: 2px; color: #fff; }
-.hidden { display: none !important;}
+.loader {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3em;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
