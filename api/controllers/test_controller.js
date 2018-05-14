@@ -1,3 +1,4 @@
+const fs = require('fs');
 var mongoose = require('mongoose'),
   Test = mongoose.model('Test');
 
@@ -71,6 +72,11 @@ exports.updateTest = (id, body, res) => {
 }
 
 exports.deleteTest = (id, res) => {
+  // delete the archive (file)
+  fs.unlink('archives/' + id + '.zip', (err) => {
+    if (err) throw err;
+    console.log('successfully deleted ' + id + '.zip');
+  });
   Test.findByIdAndRemove(id, (err, data) => {
     if (err) {
       res.send(err);
