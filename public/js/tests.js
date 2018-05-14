@@ -252,7 +252,7 @@
         $("#waitDialog").modal('show');
         $('#waitDialog').modal({
           backdrop: 'static',
-          keyboard: false 
+          keyboard: false
         });
         $.post('api/download/multiple', {ids: matchedTests}, function(data){
           window.location.href = 'api/download/id/multiple';
@@ -265,7 +265,7 @@
     });
   }
 
-  // buttons listener (edit & delete)
+  // Delete a test
   $('#tests-grid').on('click', '#deleteTest', function(){
     var r = confirm('Please confirm that you want to delete this test.');
     if(r === true){
@@ -359,6 +359,7 @@
 
       if(okayToPush === true) {
         $.post('api/tests/id/' + $('.form-edit').attr('id'), test, function(data){
+          console.log(JSON.stringify(test, null, 2))
           //alert(JSON.stringify(data, null, 2));
           location.reload();
         });
