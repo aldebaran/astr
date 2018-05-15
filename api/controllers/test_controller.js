@@ -24,6 +24,22 @@ exports.getTestsByQuery = (req, res) => {
   });
 };
 
+exports.getTestsByQueryAndPage = (req, res) => {
+  var page = Number(req.params.page);
+  var resultPerPage = Number(req.params.resultPerPage);
+  Test.find(req.body)
+  .limit(resultPerPage)
+  .skip((page-1)*resultPerPage)
+  .exec((err, data) => {
+    if (err) {
+      res.send(err);
+    }
+    else {
+      res.json(data);
+    }
+  });
+};
+
 exports.addTest = (req, res) => {
   var newTest = new Test(req.body);
   newTest.created = Date.now();

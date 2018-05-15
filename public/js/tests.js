@@ -54,7 +54,7 @@
     });
 
     //execute the search each time the box search content change
-    search(bodyRequest);
+    search(bodyRequest, 1);
   });
 
   $('#selectSubject').change(function(){
@@ -126,8 +126,9 @@
     $('#form-search').trigger('change');
   })
 
-  function search(body) {
-    $.post('api/tests', body, function(tests){
+  function search(body, page) {
+    var resultPerPage = 30;
+    $.post('api/tests/page/' + page + '/' + resultPerPage, body, function(tests){
       var matchedTests = [];
       $('#tests-grid').html('');
       if(isConnected() && isMaster()){
@@ -135,7 +136,7 @@
         tests.forEach(function(test){
           matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
-            '<div class="card-header">'+ test.type + '</div>' +
+            '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
               '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
@@ -159,7 +160,7 @@
         tests.forEach(function(test){
           matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
-            '<div class="card-header">'+ test.type + '</div>' +
+            '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
               '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
@@ -187,7 +188,7 @@
         tests.forEach(function(test){
           matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
-            '<div class="card-header">'+ test.type + '</div>' +
+            '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
               '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
@@ -206,46 +207,110 @@
       }
 
       // display number of results
-      if(matchedTests.length > 1){
-        $('#header-result').html('' +
-        '<div class="card mb-3">' +
-          '<div class="card-header">' +
-            '<div class="row">' +
-              '<div class="col-6">' +
-                '<h5>' + matchedTests.length + ' tests found</h5>' +
-              '</div>' +
-              '<div class="col-6">'+
-                '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-        '</div>');
-      } else if (matchedTests.length === 1){
-        $('#header-result').html('' +
-        '<div class="card mb-3">' +
-          '<div class="card-header">' +
-            '<div class="row">' +
-              '<div class="col-6">' +
-                '<h5>' + matchedTests.length + ' test found</h5>' +
-              '</div>' +
-              '<div class="col-6">'+
-                '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
+      $.post('api/tests', body, function(totalTests){
+        if(totalTests.length > 1) {
+          $('#header-result').html('' +
+          '<div class="card mb-3">' +
+            '<div class="card-header">' +
+              '<div class="row">' +
+                '<div class="col-6">' +
+                  '<h5>' + totalTests.length + ' tests found</h5>' +
+                  '<span id="itemOnPage"></span>' +
+                '</div>' +
+                '<div class="col-6">'+
+                  '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
+                '</div>' +
               '</div>' +
             '</div>' +
-          '</div>' +
-        '</div>');
-      } else {
-        $('#header-result').html('' +
-        '<div class="card mb-3">' +
-          '<div class="card-header">' +
-            '<div class="row">' +
-              '<div class="col-6">' +
-                '<h5>No test found</h5>' +
+          '</div>');
+        } else if (totalTests.length === 1) {
+          $('#header-result').html('' +
+          '<div class="card mb-3">' +
+            '<div class="card-header">' +
+              '<div class="row">' +
+                '<div class="col-6">' +
+                  '<h5>' + totalTests.length + ' test found</h5>' +
+                '</div>' +
+                '<div class="col-6">'+
+                  '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
+                '</div>' +
               '</div>' +
             '</div>' +
-          '</div>' +
-        '</div>');
-      }
+          '</div>');
+        } else {
+          $('#header-result').html('' +
+          '<div class="card mb-3">' +
+            '<div class="card-header">' +
+              '<div class="row">' +
+                '<div class="col-6">' +
+                  '<h5>No test found</h5>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>');
+        }
+
+        // navigation
+        var numberOfPages = Math.ceil(totalTests.length / resultPerPage);
+        var from = resultPerPage * page - resultPerPage + 1;
+        var to = resultPerPage * page;
+        if (to < totalTests.length) {
+          $('#itemOnPage').html(from + ' - ' + to + ' (Page ' + page + '/' + numberOfPages + ')');
+        } else {
+          $('#itemOnPage').html(from + ' - ' + totalTests.length + ' (Page ' + page + '/' + numberOfPages + ')');
+        }
+
+        $('.testNumber').each(function(idx) {
+          $(this).html('#' + (from+idx));
+        });
+
+
+        $('.pagination').html('');
+        if (numberOfPages > 1) {
+          for (var i=1; i<=numberOfPages; i++) {
+            $('.pagination').append('<li class="page-item" id="page-item' + i + '"><a class="page-link">' + i + '</a></li>');
+          }
+        }
+        $('#page-item' + page).addClass('active');
+
+        $('#pagination').on('click', '.page-link', function() {
+          //get the filters
+          var bodyRequest = {
+            '$and': []
+          };
+          if($('#selectAuthor').val() !== 'default') {
+            bodyRequest.author = $('#selectAuthor').val();
+          }
+          if($('#selectSubject').val() !== 'default') {
+            bodyRequest.type = $('#selectSubject').val();
+          }
+          if($('#inputDate').val() !== '') {
+            bodyRequest.date = $('#inputDate').val();
+          }
+          $('.inputConfig').each(function(){
+            if($(this).val() !== ''){
+              bodyRequest['$and'].push({
+                "configuration": {
+                  "$elemMatch": {
+                    "name": $(this).closest('.form-group').find('label').html(),
+                    "value": $(this).val()
+                  }
+                }
+              });
+            }
+          });
+          if (bodyRequest['$and'].length === 0) {
+            delete bodyRequest['$and'];
+          }
+
+          //redirect to the page
+          if (bodyRequest['$and'] || bodyRequest.author || bodyRequest.type || bodyRequest.date) {
+            window.location.href = '?page=' + $(this).html() + '&query=' + JSON.stringify(bodyRequest);
+          } else {
+            window.location.href = '?page=' + $(this).html();
+          }
+        });
+      });
 
       // "Download All" button handler
       $('#buttonDownloadAll').click(function(){
@@ -426,20 +491,19 @@
   });
 
   //use filter if present in URL
-  if(getUrlParameter('filter')){
+  if(getUrlParameter('filter')) {
     $.get('api/filters/id/' + getUrlParameter('filter'), function(filter){
-      if(filter['_id']) {
-        //console.log(filter);
-        if(filter.date) {
+      if (filter['_id']) {
+        if (filter.date) {
           $('#inputDate').val(filter.date);
         }
-        if(filter.testSubjectName) {
+        if (filter.testSubjectName) {
           $('#selectSubject').val(filter.testSubjectName);
         }
-        if(filter.testAuthor) {
+        if (filter.testAuthor) {
           $('#selectAuthor').val(filter.testAuthor);
         }
-        if(filter.configuration.length > 0) {
+        if (filter.configuration.length > 0) {
           filter.configuration.forEach(function(config){
             selectedConfig.push(config.name);
             $('#form-search').append('' +
@@ -475,7 +539,55 @@
     });
   }
 
-  search({});
+  // Search without filter at the loading of the page
+  if(getUrlParameter('page') && getUrlParameter('query')) {
+    var page = getUrlParameter('page');
+    var query = JSON.parse(getUrlParameter('query'));
+    setTimeout(function() {
+      if (query.author) {
+        $('#selectAuthor').val(query.author);
+      }
+      if (query.date) {
+        $('#inputDate').val(query.date);
+      }
+      if (query.type) {
+        $('#selectSubject').val(query.type);
+      }
+      if (query['$and']) {
+        query['$and'].forEach(function(specificFilter) {
+          selectedConfig.push(specificFilter.configuration['$elemMatch'].name);
+          $('#form-search').append('' +
+          '<div class="form-group config-group">' +
+            '<label class="labelConfig">' + specificFilter.configuration['$elemMatch'].name + '</label>' +
+            '<div class="row">' +
+              '<div class="col">' +
+                '<select class="form-control inputConfig" id="inputConfig' + specificFilter.configuration['$elemMatch'].name + '">' +
+                  '<option></option>' +
+                '</select>' +
+              '</div>' +
+              '<div class="col-2">' +
+                '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+          );
+          $.get('/api/tests/options/' + specificFilter.configuration['$elemMatch'].name, function(options){
+            options.forEach(function(option){
+              $('#inputConfig' + specificFilter.configuration['$elemMatch'].name).append('<option>' + option + '</option>');
+            });
+            $('#inputConfig' + specificFilter.configuration['$elemMatch'].name).val(specificFilter.configuration['$elemMatch'].value);
+          });
+        });
+      }
+    }, 100);
+
+    search(query, page);
+  } else if (getUrlParameter('page')){
+    var page = getUrlParameter('page');
+    search({}, page);
+  } else {
+    search({}, 1);
+  }
 
   // -------------------------- Functions -------------------------- //
 

@@ -595,6 +595,12 @@ a.download-button {
   float: right;
 }
 
+#pagination {
+  float: right;
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
 #search-box {
   position: -webkit-sticky;
   position: sticky;

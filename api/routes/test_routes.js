@@ -11,6 +11,9 @@ module.exports = function(app) {
     .get(test.getAllTests)
     .post(test.getTestsByQuery);
 
+  app.route('/api/tests/page/:page/:resultPerPage')
+    .post(test.getTestsByQueryAndPage);
+
   app.route('/api/tests/add')
     .post(test.addTest);
 
