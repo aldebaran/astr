@@ -250,6 +250,22 @@
           '</div>');
         }
 
+        // "Download All" button handler
+        $('#buttonDownloadAll').click(function(){
+          $("#waitDialog").modal('show');
+          $('#waitDialog').modal({
+            backdrop: 'static',
+            keyboard: false
+          });
+          $.post('api/download/multiple', {ids: matchedTests}, function(data){
+            window.location.href = 'api/download/id/multiple';
+            var timer = window.setInterval(function() {
+              clearInterval(timer);
+              $("#waitDialog").modal('hide');
+            }, 1000);
+          });
+        });
+
         // navigation
         var numberOfPages = Math.ceil(totalTests.length / resultPerPage);
         var from = resultPerPage * page - resultPerPage + 1;
@@ -309,22 +325,6 @@
           } else {
             window.location.href = '?page=' + $(this).html();
           }
-        });
-      });
-
-      // "Download All" button handler
-      $('#buttonDownloadAll').click(function(){
-        $("#waitDialog").modal('show');
-        $('#waitDialog').modal({
-          backdrop: 'static',
-          keyboard: false
-        });
-        $.post('api/download/multiple', {ids: matchedTests}, function(data){
-          window.location.href = 'api/download/id/multiple';
-          var timer = window.setInterval(function() {
-            clearInterval(timer);
-            $("#waitDialog").modal('hide');
-          }, 1000);
         });
       });
     });
