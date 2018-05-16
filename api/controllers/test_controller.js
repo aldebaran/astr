@@ -1,9 +1,13 @@
 const fs = require('fs');
+var request = require('request');
 var mongoose = require('mongoose'),
   Test = mongoose.model('Test');
 
 exports.getAllTests = (req, res) => {
-  Test.find({}, (err, data) => {
+  checkIfTestsHaveAnArchive();
+  Test.find({})
+  .where('archive').equals(true)
+  .exec((err, data) => {
     if (err) {
       res.send(err);
     }
@@ -14,7 +18,10 @@ exports.getAllTests = (req, res) => {
 };
 
 exports.getTestsByQuery = (req, res) => {
-  Test.find(req.body, (err, data) => {
+  checkIfTestsHaveAnArchive();
+  Test.find(req.body)
+  .where('archive').equals(true)
+  .exec((err, data) => {
     if (err) {
       res.send(err);
     }
@@ -25,9 +32,11 @@ exports.getTestsByQuery = (req, res) => {
 };
 
 exports.getTestsByQueryAndPage = (req, res) => {
+  checkIfTestsHaveAnArchive();
   var page = Number(req.params.page);
   var resultPerPage = Number(req.params.resultPerPage);
   Test.find(req.body)
+  .where('archive').equals(true)
   .limit(resultPerPage)
   .skip((page-1)*resultPerPage)
   .exec((err, data) => {
@@ -35,7 +44,7 @@ exports.getTestsByQueryAndPage = (req, res) => {
       res.send(err);
     }
     else {
-      res.json(data);
+      res.send(data);
     }
   });
 };
@@ -172,3 +181,35 @@ exports.getOptionsOfConfig = (configName, res) => {
     }
   });
 };
+
+function checkIfTestsHaveAnArchive() {
+  Test.find({}, (err, data) => {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      request.get({
+        url: 'http://localhost:8000/api/download/files',
+        json: true,
+      }, (err, res2, archives) => {
+        if (err) {
+          console.log('Error:', err);
+        } else {
+          data.forEach(function(test) {
+            if ('archive' in test) {
+              if (test.archive !== archives.includes(test._id.toString())) {
+                Test.findByIdAndUpdate(test._id, {archive: archives.includes(test._id.toString())}, (err, data) => {
+                  if (err) console.log(err);
+                });
+              }
+            } else {
+              Test.findByIdAndUpdate(test._id, {archive: archives.includes(test._id.toString())}, (err, data) => {
+                if (err) console.log(err);
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+}

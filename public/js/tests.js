@@ -128,7 +128,7 @@
 
   function search(body, page) {
     var resultPerPage = 30;
-    $.post('api/tests/page/' + page + '/' + resultPerPage, body, function(tests){
+    $.post('api/tests/page/' + page + '/' + resultPerPage, body, function(tests) {
       var matchedTests = [];
       $('#tests-grid').html('');
       if(isConnected() && isMaster()){

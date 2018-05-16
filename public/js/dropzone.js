@@ -3532,7 +3532,7 @@
 
   Dropzone.options.myDropzone = {
     url: '/api/upload',
-    //maxFilesize: 5, // MB
+    maxFilesize: 512, // MB
     maxFiles: 10,
     autoProcessQueue: false,
     uploadMultiple: true,
@@ -3543,7 +3543,12 @@
       var myDropzone = this;
 
       myDropzone.on("addedfile", function(file){
-        $('#isFileUploaded').val('true');
+        if (file.upload.total < this.options.maxFilesize * 1024 * 1024) {
+          $('#isFileUploaded').val('true');
+        } else {
+          alert('ERROR\n\nThis file is too big !\nMax size: ' + this.options.maxFilesize + 'MB');
+          this.removeFile(file);
+        }
       });
 
       myDropzone.on("sending", function(file, xhr, formData) {
@@ -3553,7 +3558,8 @@
       });
 
       myDropzone.on("complete", function (file) {
-        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0 && file.status !== 'error') {
+          alert('Your test is now saved !\n\nNote that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped :)');
           location.reload();
         }
       });

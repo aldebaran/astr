@@ -73,19 +73,15 @@ module.exports = function(app) {
       if(typeof req.body.files === 'string'){
         // only one file uploaded
         var file = 'archives/' + req.body.files;
-        fs.unlink(file, (err) => {
-          if (err) throw err;
-        });
+        fs.unlink(file, (err) => {});
       } else {
         // multiple files uploaded
         req.body.files.forEach(function(filename){
           var file = 'archives/' + filename;
-          fs.unlink(file, (err) => {
-            if (err) throw err;
-          });
-        })
+          fs.unlink(file, (err) => {});
+        });
       }
-    })
+    });
 
     return res.status( 200 ).send( req.file );
 

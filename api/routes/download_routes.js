@@ -9,6 +9,12 @@ module.exports = function(app) {
     next();
   });
 
+  app.get('/api/download/files', function(req, res, next) {
+    fs.readdir('archives/', (err, files) => {
+      res.json(files.map(file => file.split('.')[0]));
+    });
+  });
+
   // Route to download one archive
   app.get('/api/download/id/:id', function (req, res, next) {
     var filePath = 'archives/';

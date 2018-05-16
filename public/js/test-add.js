@@ -80,6 +80,7 @@
       });
 
       if(okayToPush === true) {
+        $('#submitTest').attr("disabled", true);
         $.post('api/tests/add', test, function(data){
           $('#testId').html(data.test['_id']);
         });

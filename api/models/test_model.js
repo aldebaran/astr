@@ -34,6 +34,11 @@ var TestSchema = new Schema({
     default: Date.Now,
     required: true
   },
+  archive: {
+    type: Boolean,
+    required: false
+  }
+
 });
 
 module.exports = mongoose.model('Test', TestSchema);
