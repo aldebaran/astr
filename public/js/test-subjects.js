@@ -212,7 +212,7 @@
   // Submit event when editing a subject
   $('.form-edit').submit(function(e){
     e.preventDefault();
-    var r = confirm('Please confirm that you want to add this new test subject.');
+    var r = confirm('Please confirm that you want to modify this test subject.');
     if(r === true){
       var editedSubject = {
         name: $('#inputNameEdit').val().replace(/\s+/g, ' '),
