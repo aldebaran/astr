@@ -170,7 +170,9 @@ npm run dev
     - GET: Returns the test subject with the associated ID
     - POST:  Update the test subject with the associated ID in function of the parameters given in the body request
     - DELETE: Delete the test subject with the associated ID
-3. [/api/test-subjects/options/:subject/:configName](http://10.0.160.147:8000/api/test-subjects/options/WIFI/robot_type)
+3. [/api/test-subjects/name/:name](http://10.0.160.147:8000/api/test-subjects/name/CAMERA)
+    - GET: Returns the test subject with the associated name
+4. [/api/test-subjects/options/:subject/:configName](http://10.0.160.147:8000/api/test-subjects/options/WIFI/robot_type)
     - GET: Returns the test subject with the associated ID
 
 #### Filters
