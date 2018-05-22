@@ -382,20 +382,4 @@
     }
   }
 
-  // function configNameChanged(testSubjectBefore, testSubjectAfter) {
-  //   if (testSubjectBefore.configuration.length === 0 && testSubjectAfter.configuration.length === 0) {
-  //     return false;
-  //   } else if (testSubjectBefore.configuration.length === testSubjectAfter.configuration.length) {
-  //     for (var i=0; i<testSubjectBefore.configuration.length; i++) {
-  //       if (testSubjectBefore.configuration[i].name !== testSubjectAfter.configuration[i].name) {
-  //         return true;
-  //       } else if (i === testSubjectBefore.configuration.length - 1) {
-  //         return false;
-  //       }
-  //     }
-  //   } else {
-  //     return true;
-  //   }
-  // }
-
 })(jQuery);
