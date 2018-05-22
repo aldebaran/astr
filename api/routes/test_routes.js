@@ -64,4 +64,7 @@ module.exports = function(app) {
     test.changeConfigName(req, res);
   });
 
+  app.route('/api/tests/withoutArchive')
+    .get(test.getAllTestsWithoutArchive);
+
 };

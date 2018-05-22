@@ -19,6 +19,22 @@ exports.getAllTests = (req, res) => {
   });
 };
 
+exports.getAllTestsWithoutArchive = (req, res) => {
+  checkIfTestsHaveAnArchive()
+  .then(() => {
+    Test.find({})
+    .where('archive').equals(false)
+    .exec((err, data) => {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json(data);
+      }
+    });
+  });
+};
+
 exports.getTestsByQuery = (req, res) => {
   checkIfTestsHaveAnArchive()
   .then(() => {
