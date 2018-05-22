@@ -127,8 +127,8 @@ exports.updateTest = (id, body, res) => {
 exports.deleteTest = (id, res) => {
   // delete the archive (file)
   fs.unlink('archives/' + id + '.zip', (err) => {
-    if (err) throw err;
-    console.log('successfully deleted ' + id + '.zip');
+    if (err) console.log(err);
+    else console.log('successfully deleted ' + id + '.zip');
   });
   Test.findByIdAndRemove(id, (err, data) => {
     if (err) {
