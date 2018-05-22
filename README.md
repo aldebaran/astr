@@ -167,7 +167,7 @@ npm run dev
 11. [/api/tests/changeConfigName](http://10.0.160.147:8000/api/tests/changeConfigName)
     - POST: Change the name of the matched configuration in all tests matched by the test type/subject (body contains *subject*, *previousName* and *newName*)
 12. [/api/tests/withoutArchive](http://10.0.160.147:8000/api/tests/withoutArchive)
-    - GET: Returns the list of all tests without archived (to delete them)
+    - GET: Returns the list of all tests without any archive (to delete them)
 
 #### Test subjects
 
