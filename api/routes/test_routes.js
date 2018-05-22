@@ -52,4 +52,16 @@ module.exports = function(app) {
     test.getOptionsOfConfig(configName, res);
   });
 
+  app.post('/api/tests/changeTestSubjectName', (req, res) => {
+    test.changeTestSubjectName(req, res);
+  });
+
+  app.post('/api/tests/addConfig', (req, res) => {
+    test.addConfig(req, res);
+  });
+
+  app.post('/api/tests/changeConfigName', (req, res) => {
+    test.changeConfigName(req, res);
+  });
+
 };

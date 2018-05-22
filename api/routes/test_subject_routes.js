@@ -16,6 +16,11 @@ module.exports = function(app) {
     testSubject.getTestSubject(id, res);
   });
 
+  app.get('/api/test-subjects/name/:name', (req, res) => {
+    const name = req.params.name;
+    testSubject.getTestSubjectByName(name, res);
+  });
+
   app.post('/api/test-subjects/id/:id', (req, res) => {
     const id = req.params.id;
     const body = req.body;
@@ -31,6 +36,6 @@ module.exports = function(app) {
     const subjectName = req.params.subject;
     const configName = req.params.configName;
     testSubject.getOptionsOfConfig(subjectName, configName, res);
-  }); 
+  });
 
 };

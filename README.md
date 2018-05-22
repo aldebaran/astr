@@ -160,6 +160,12 @@ npm run dev
     - GET: Returns the list of configurations of the associated subject (used at least by one test)
 8. [/api/tests/options/:configName](http://10.0.160.147:8000/api/tests/options/robot_type)
     - GET: Returns the  options of the associated configuration (used at least one time)
+9. [/api/tests/changeTestSubjectName](http://10.0.160.147:8000/api/tests/changeTestSubjectName)
+    - POST: Change the test type of all the tests matched by {type: previousName} (body contains *previousName* and *newName*)
+10. [/api/tests/addConfig](http://10.0.160.147:8000/api/tests/addConfig)
+    - POST: Push a new configuration in all tests matched by the test type/subject (body contains *subject* and *config: {name, value}*)
+11. [/api/tests/changeConfigName](http://10.0.160.147:8000/api/tests/changeConfigName)
+    - POST: Change the name of the matched configuration in all tests matched by the test type/subject (body contains *subject*, *previousName* and *newName*)
 
 #### Test subjects
 

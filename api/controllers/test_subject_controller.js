@@ -41,6 +41,22 @@ exports.getTestSubject = (id, res) => {
   });
 }
 
+exports.getTestSubjectByName = (name, res) => {
+  TestSubject.findOne({name: name}, (err, data) => {
+    if (err) {
+      res.send(err);
+    }
+    else {
+      if(data === null){
+        res.json({name: 'Failed', message: 'This name doesn\'t exist'});
+      }
+      else {
+        res.json(data);
+      }
+    }
+  });
+}
+
 exports.updateTestSubject = (id, body, res) => {
   TestSubject.findByIdAndUpdate(id, body, (err, data) => {
     if (err) {

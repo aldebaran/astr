@@ -22,7 +22,6 @@ exports.getAllTests = (req, res) => {
 exports.getTestsByQuery = (req, res) => {
   checkIfTestsHaveAnArchive()
   .then(() => {
-    console.log('THEN !')
     Test.find(req.body)
     .where('archive').equals(true)
     .exec((err, data) => {
@@ -60,13 +59,19 @@ exports.addTest = (req, res) => {
   var newTest = new Test(req.body);
   newTest.created = Date.now();
   newTest.lastModification = Date.now();
-  newTest.save((err, data) => {
-    if (err) {
-      res.send(err);
-    }
-    else {
-      res.json({name: 'Success', message: 'Test successfully added', test: data});
-    }
+  request.get({
+    url: 'http://localhost:8000/api/test-subjects/name/' + newTest.type,
+    json: true
+  }, (err1, res1, testSubject) => {
+    newTest.testSubjectId = testSubject._id;
+    newTest.save((err, data) => {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json({name: 'Success', message: 'Test successfully added', test: data});
+      }
+    });
   });
 }
 
@@ -188,6 +193,43 @@ exports.getOptionsOfConfig = (configName, res) => {
     }
   });
 };
+
+exports.changeTestSubjectName = (req, res) => {
+  var previousName = req.body.previousName;
+  var newName = req.body.newName;
+  Test.update({type: previousName}, {type: newName}, {multi: true}, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+exports.addConfig = (req, res) => {
+  var config = req.body.config;
+  var subject = req.body.subject;
+  Test.update({type: subject}, {$push: {configuration: config}}, {multi: true}, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+exports.changeConfigName = (req, res) => {
+  var previousName = req.body.previousName;
+  var newName = req.body.newName;
+  var subject = req.body.subject;
+  Test.update({type: subject, 'configuration.name': previousName}, {$set: {'configuration.$.name': newName}}, {multi: true}, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(data);
+    }
+  });
+}
 
 function checkIfTestsHaveAnArchive() {
   return new Promise((resolve, reject) => {

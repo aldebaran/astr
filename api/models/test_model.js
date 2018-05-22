@@ -22,7 +22,7 @@ var TestSchema = new Schema({
   },
   configuration: [{
     name: { type: String, lowercase: true, trim: true },
-    value: { type: Schema.Types.Mixed, lowercase: true, trim: true }
+    value: { type: String, uppercase: true, trim: true }
   }],
   created: {
     type: Date,
@@ -37,6 +37,11 @@ var TestSchema = new Schema({
   archive: {
     type: Boolean,
     required: false
+  },
+  testSubjectId: {
+    type: String,
+    unique: false,
+    required: true
   }
 
 });

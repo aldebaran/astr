@@ -35,7 +35,14 @@
 
   // modify the configuration name
   $('#submitNewSubject').on('change', '.inputConfigName', function(){
-    $(this).closest('.form-group').find('#labelConfigName').html($(this).val().trim().toLowerCase().replace(/\s+/g, '_'));
+    var name = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
+    $(this).val(name);
+  });
+
+  // modify option name on change
+  $('#submitNewSubject').on('change', '.inputOption', function(){
+    var name = $(this).val().trim().toUpperCase().replace(/\s+/g, ' ');
+    $(this).val(name);
   });
 
   $('#submitNewSubject').submit(function(e){
@@ -55,7 +62,7 @@
           var options = [];
           $(this).closest('.row').find('.inputOption').each(function(){
             if($(this).val().trim() !== '') {
-              options.push($(this).val().trim().toLowerCase().replace(/\s+/g, ' '));
+              options.push($(this).val().trim().toUpperCase().replace(/\s+/g, ' '));
             }
           });
           if(configName !== ''){
@@ -145,11 +152,18 @@
           '<div class="row config border-top">' +
             '<div class="col">' +
               '<label id="labelConfigNameEdit">Configuration name</label>' +
-              '<input type="text" class="form-control inputConfigNameEdit" id="inputConfigNameEdit" value="' + config.name + '">' +
+              '<input type="text" class="form-control inputConfigNameEdit" value="' + config.name + '" previousname="' + config.name + '">' +
             '</div>' +
             '<div class="col">' +
               '<label id="label' + config.name + '">Options</label>' +
               '<button type="button" class="btn btn-outline-primary" id="buttonMoreOptionEdit"><i class="fa fa-plus-circle"></i> Option</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="row">' +
+            '<div class="col">' +
+            '</div>' +
+            '<div class="col">' +
+              '<button type="button" class="btn btn-outline-danger float-right" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i> Delete this configuration</button>' +
             '</div>' +
           '</div>' +
         '</div>');
@@ -158,6 +172,8 @@
           config.options.forEach(function(option){
             $('<input class="form-control inputOptionEdit" type="text" value="' + option + '">').insertAfter('#label'+config.name);
           });
+        } else {
+          $('<input class="form-control inputOptionEdit" type="text" value="">').insertAfter('#label'+config.name);
         }
       });
 
@@ -168,13 +184,13 @@
 
   // modal button listener (new config)
   $('.modal-body').on('click', '#buttonMoreConfigEdit', function(){
-    if($(this).parent().find('.form-group:last').find('#inputConfigNameEdit').val().trim() !== ''){
+    if($(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== ''){
       $('' +
       '<div class="form-group">' +
         '<div class="row config border-top">' +
           '<div class="col">' +
             '<label id="labelConfigNameEdit">Configuration name</label>' +
-            '<input type="text" class="form-control inputConfigNameEdit" id="inputConfigNameEdit" placeholder="Enter the name">' +
+            '<input type="text" class="form-control inputConfigNameEdit newConfig" placeholder="Enter the name">' +
           '</div>' +
           '<div class="col">' +
             '<label>Options</label>' +
@@ -197,29 +213,38 @@
     }
   });
 
+  // modal button listener (delete config)
+  $('.modal-body').on('click', '#deleteConfig', function(){
+    var r = confirm('Are you sure you want to delete this configuration ? It won\'t affect the tests already stored');
+    if (r === true) {
+      $(this).closest('.form-group').remove();
+    }
+  });
+
   // modify configuration name on change
   $('.modal-body').on('change', '.inputConfigNameEdit', function(){
     var name = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
     $(this).val(name);
-  })
+    $(this).addClass('nameChanged');
+  });
 
   // modify option name on change
   $('.modal-body').on('change', '.inputOptionEdit', function(){
-    var name = $(this).val().trim().toLowerCase().replace(/\s+/g, ' ');
+    var name = $(this).val().trim().toUpperCase().replace(/\s+/g, ' ');
     $(this).val(name);
   });
 
   // Submit event when editing a subject
   $('.form-edit').submit(function(e){
     e.preventDefault();
-    var r = confirm('Please confirm that you want to modify this test subject.');
+    var r = confirm('⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️\n\nThis will modify all the associated tests ! If you deleted some configurations, they will stay in the tests.\nPlease confirm that you want to modify this test subject.');
     if(r === true){
       var editedSubject = {
         name: $('#inputNameEdit').val().replace(/\s+/g, ' '),
         configuration: []
       };
-      $('.inputConfigNameEdit').each(function(){
-        if($(this).val().trim() !== ''){
+      $('.inputConfigNameEdit').each(function() {
+        if(!$(this).hasClass('newConfig') || ($(this).hasClass('newConfig') && $(this).val().trim() !== '')){
           var config = {
             name: $(this).val(),
             options: []
@@ -231,11 +256,48 @@
           });
           editedSubject.configuration.push(config);
         }
-      })
+      });
 
-      $.post('api/test-subjects/id/' + $('#infoSubject').attr('val'), editedSubject, function(data){
+      $.post('api/test-subjects/id/' + $('#infoSubject').attr('val'), editedSubject, function(data) {
         if(data.name === 'Success') {
-          location.reload();
+          // modify all the associated tests
+          $.post('api/tests', {testSubjectId: $('#infoSubject').attr('val')}, function(tests) {
+            new Promise(function(resolve, reject) {
+              if(tests.length > 0) {
+                if (subjectNameChanged(data.before, data.modified)) {
+                  $.post('api/tests/changeTestSubjectName', {previousName: data.before.name, newName: data.modified.name}, function(data) {
+                    console.log(data);
+                  });
+                }
+                // handle changes on configuration
+                $('.inputConfigNameEdit').each(function() {
+                  if($(this).hasClass('newConfig') && $(this).val().trim() !== '') {
+                    // add this config to all tests with the associated subject
+                    var body = {
+                      subject: editedSubject.name,
+                      config: {
+                        name: $(this).val().trim(),
+                        value: ''
+                      }
+                    };
+                    $.post('api/tests/addConfig', body, function(data) {
+                      console.log(data);
+                    });
+                  } else if ($(this).hasClass('nameChanged') && $(this).val().trim() !== '') {
+                    // change this config name on all tests with the associated subject
+                    var body = {
+                      subject: editedSubject.name,
+                      previousName: $(this).attr('previousname'),
+                      newName: $(this).val().trim()
+                    };
+                    $.post('api/tests/changeConfigName', body, function(data) {
+                      console.log(data);
+                    });
+                  }
+                });
+              }
+            }).then(location.reload());
+          });
         } else {
           alert('Someting went wrong.');
         }
@@ -311,5 +373,29 @@
     });
     return res;
   }
+
+  function subjectNameChanged(testSubjectBefore, testSubjectAfter) {
+    if (testSubjectBefore.name !== testSubjectAfter.name) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // function configNameChanged(testSubjectBefore, testSubjectAfter) {
+  //   if (testSubjectBefore.configuration.length === 0 && testSubjectAfter.configuration.length === 0) {
+  //     return false;
+  //   } else if (testSubjectBefore.configuration.length === testSubjectAfter.configuration.length) {
+  //     for (var i=0; i<testSubjectBefore.configuration.length; i++) {
+  //       if (testSubjectBefore.configuration[i].name !== testSubjectAfter.configuration[i].name) {
+  //         return true;
+  //       } else if (i === testSubjectBefore.configuration.length - 1) {
+  //         return false;
+  //       }
+  //     }
+  //   } else {
+  //     return true;
+  //   }
+  // }
 
 })(jQuery);
