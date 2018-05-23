@@ -58,6 +58,9 @@ exports.getTestSubjectByName = (name, res) => {
 }
 
 exports.updateTestSubject = (id, body, res) => {
+  if (body.emptyConfiguration) {
+    body.configuration = [];
+  }
   TestSubject.findByIdAndUpdate(id, body, (err, data) => {
     if (err) {
       res.send(err);

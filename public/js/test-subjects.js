@@ -156,7 +156,7 @@
           '<div class="row config border-top">' +
             '<div class="col">' +
               '<label id="labelConfigNameEdit">Configuration name</label>' +
-              '<input type="text" class="form-control inputConfigNameEdit" value="' + config.name + '" previousname="' + config.name + '">' +
+              '<input type="text" class="form-control inputConfigNameEdit" value="' + config.name + '" previousname="' + config.name + '" required>' +
             '</div>' +
             '<div class="col">' +
               '<label id="label' + config.name + '">Options</label>' +
@@ -188,7 +188,7 @@
 
   // modal button listener (new config)
   $('.modal-body').on('click', '#buttonMoreConfigEdit', function(){
-    if($(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== ''){
+    if(!$(this).parent().find('.form-group:last').find('.inputConfigNameEdit').length > 0 || $(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== ''){
       $('' +
       '<div class="form-group">' +
         '<div class="row config border-top">' +
@@ -247,20 +247,24 @@
         name: $('#inputNameEdit').val().replace(/\s+/g, ' '),
         configuration: []
       };
-      $('.inputConfigNameEdit').each(function() {
-        if(!$(this).hasClass('newConfig') || ($(this).hasClass('newConfig') && $(this).val().trim() !== '')){
-          var config = {
-            name: $(this).val(),
-            options: []
-          };
-          $(this).closest('.form-group').find('.inputOptionEdit').each(function(){
-            if($(this).val().trim() !== ''){
-              config.options.push($(this).val());
-            }
-          });
-          editedSubject.configuration.push(config);
-        }
-      });
+      if ($('.inputConfigNameEdit').length > 0) {
+        $('.inputConfigNameEdit').each(function() {
+          if(!$(this).hasClass('newConfig') || ($(this).hasClass('newConfig') && $(this).val().trim() !== '')){
+            var config = {
+              name: $(this).val(),
+              options: []
+            };
+            $(this).closest('.form-group').find('.inputOptionEdit').each(function(){
+              if($(this).val().trim() !== ''){
+                config.options.push($(this).val());
+              }
+            });
+            editedSubject.configuration.push(config);
+          }
+        });
+      } else {
+        editedSubject.emptyConfiguration = true;
+      }
 
       $.post('api/test-subjects/id/' + $('#infoSubject').attr('val'), editedSubject, function(data) {
         if(data.name === 'Success') {
