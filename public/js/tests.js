@@ -472,12 +472,12 @@
           if (alreadyExist === false) {
             $.post('api/filters', filter, function(data) {
               if(data.name === 'Success') {
-                alert('SUCCESS\n\nYour search has been saved !');
+                alert('Your search has been saved !\n\nYou can now find it in "My Searches" to reuse it or to share it.');
               }
               console.log(data);
             });
           } else {
-            alert('WARNING\n\nYou already saved this search ! Check the page My Filters to manage them');
+            alert('ERROR\n\nYou already saved this search ! Check the page My Filters to manage them.');
           }
         });
 

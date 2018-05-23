@@ -29,7 +29,7 @@ var FilterSchema = new Schema({
   },
   configuration: [{
     name: { type: String, lowercase: true, trim: true },
-    value: { type: String, lowercase: true, trim: true }
+    value: { type: String, uppercase: true, trim: true }
   }],
   created: {
     type: Date,
