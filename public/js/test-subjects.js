@@ -106,7 +106,11 @@
         '<span class="key"> Created: </span><span class="value">' + new Date(data.created).toLocaleDateString() + '</span><br>' +
         '<span class="key"> Configuration</span><br>');
         data.configuration.forEach(function(config){
-          $('#infoSubject').append('<li><span class="value">' + config.name + ': [' + config.options.join(', ') + ']' + '</span></li>');
+          if (config.options.length > 0) {
+            $('#infoSubject').append('<li class="config"><span>' + config.name + '</span><span class="value"> [' + config.options.join(', ') + ']' + '</span></li>');
+          } else {
+            $('#infoSubject').append('<li class="config"><span>' + config.name + '</span></li>');
+          }
         });
 
         // master can delete and edit the subject
