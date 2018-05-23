@@ -541,11 +541,6 @@ li.config {
 	background-color: rgba(0,0,0,0.1);
 }
 
-.test-subject-card {
-  padding-left: 30px;
-  padding-right: 30px;
-}
-
 #formConfig {
   margin-top: 1em;
 }
@@ -594,7 +589,7 @@ a.download-button {
 #pagination {
   float: right;
   margin-top: 2em;
-  margin-bottom: 1em;
+  margin-bottom: 2em;
 }
 
 #search-box {
@@ -690,8 +685,4 @@ span.text-muted {
 
 #waitDialog .modal-content {
   padding: 2em;
-}
-
-#deleteConfig {
-
 }
