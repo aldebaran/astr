@@ -9,10 +9,11 @@
 }
 .dropzone {
     min-height: 150px;
-    border: 2px solid rgba(0, 0, 0, 0.3);
+    border: 2px dashed rgb(0, 135, 247);
     background: white;
     padding: 54px 54px;
 }
+
 .dropzone.dz-clickable {
     cursor: pointer;
 }
