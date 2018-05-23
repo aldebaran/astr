@@ -477,7 +477,7 @@
               console.log(data);
             });
           } else {
-            alert('ERROR\n\nYou already saved this search ! Check the page My Filters to manage them.');
+            alert('ERROR\n\nYou already saved this search ! Check the page "My Searches" to manage them.');
           }
         });
 

@@ -46,7 +46,7 @@
     });
   } else {
     // user not logged
-    $('#myFilters').html('<p>Log in to see your saved filters</p>');
+    $('#myFilters').html('<p>Log in to see your saved searches.</p>');
   }
 
   $('table').on('click', '#deleteFilter', function(){
