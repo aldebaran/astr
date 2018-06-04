@@ -46,11 +46,21 @@
   // navigation menu (top)
   if(isConnected() && isMaster()) {
     $('#navbar-top').html('' +
-    '<li class="nav-item">' +
-      '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + getUserName() + ' (master)</a>' +
-    '</li>' +
-    '<li class="nav-item">' +
-      '<a class="nav-link" href="admin.html"> Admin</a>' +
+    '<li class="nav-item dropdown">' +
+      '<a class="nav-link dropdown-toggle mr-lg-2" id="userDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+        '<i class="fa fa-fw fa-user"></i> Signed as ' + getUserName() + ' (master)' +
+      '</a>' +
+      '<div class="dropdown-menu" aria-labelledby="userDropdown">' +
+        '<a class="dropdown-item" href="profile.html">' +
+          '<strong>My Profile</strong>' +
+          '<div class="dropdown-message small">Your personnal information</div>' +
+        '</a>' +
+        '<div class="dropdown-divider"></div>' +
+        '<a class="dropdown-item" href="admin.html">' +
+          '<strong>Admin</strong>' +
+          '<div class="dropdown-message small">Manage user permissions</div>' +
+        '</a>' +
+      '<div>' +
     '</li>' +
     '<li class="nav-item">' +
       '<a class="nav-link" href="/api/user/logout">' +
@@ -58,8 +68,16 @@
     '</li>');
   } else if(isConnected()) {
     $('#navbar-top').html('' +
-    '<li class="nav-item">' +
-      '<a class="nav-link" style="pointer-events: none; cursor: default; color: white"> Signed as ' + getUserName() + '</a>' +
+    '<li class="nav-item dropdown">' +
+      '<a class="nav-link dropdown-toggle mr-lg-2" id="userDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+        '<i class="fa fa-fw fa-user"></i> Signed as ' + getUserName() + ' (master)' +
+      '</a>' +
+      '<div class="dropdown-menu" aria-labelledby="userDropdown">' +
+        '<a class="dropdown-item" href="profile.html">' +
+          '<strong>My Profile</strong>' +
+          '<div class="dropdown-message small">Your personnal information</div>' +
+        '</a>' +
+      '<div>' +
     '</li>' +
     '<li class="nav-item">' +
       '<a class="nav-link" href="/api/user/logout">' +

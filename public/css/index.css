@@ -686,3 +686,8 @@ span.text-muted {
 #waitDialog .modal-content {
   padding: 2em;
 }
+
+#personnal-info {
+  margin-left: 1em;
+  margin-top: 2em;
+}
