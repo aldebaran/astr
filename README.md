@@ -15,6 +15,7 @@
   - [5. Clone the repository](#5-clone-the-repository)
   - [6. Install the modules](#6-install-the-modules)
   - [7. Launch the application](#7-launch-the-application)
+  - [8. Create the first Admin](#8-create-the-first-admin)
 - [API endpoints](#api-endpoints)
     - [Tests](#tests)
     - [Test subjects](#test-subjects)
@@ -136,6 +137,32 @@ npm start
 ```
 npm run dev
 ```
+
+### 8. Create the first Admin
+
+**From your personnal computer, open the website**
+- Click on *Login*
+- Click on *Register an Account*
+- Fulfill the form to create your account (it will create a simple user without any permission)
+
+**From the server, open a terminal**
+- Open the mongoDB client
+```
+mongo
+```
+
+- Switch to ASTR database
+```
+use ASTR
+```
+
+- Update your account with full privileges
+```
+db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permission": true}})
+```
+
+- That's it! You are now a "Master", that means you can modify directly users permissions on the website
+
 
 ## API endpoints
 
