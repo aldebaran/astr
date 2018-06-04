@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
+var uuidv1 = require('uuid/v1');
 
 var UserSchema = new mongoose.Schema({
   email: {
@@ -35,6 +36,10 @@ var UserSchema = new mongoose.Schema({
   master: {
     type: Boolean,
     required: false,
+  },
+  token: {
+    type: String,
+    required: false,
   }
 });
 
@@ -62,6 +67,7 @@ UserSchema.statics.authenticate = function (email, password, callback) {
 //hashing a password before saving it to the database
 UserSchema.pre('save', function (next) {
   var user = this;
+  user.token = uuidv1();
   bcrypt.hash(user.password, 10, function (err, hash) {
     if (err) {
       return next(err);

@@ -9,7 +9,7 @@ module.exports = function(app) {
 
   //GET all users
   app.get('/api/user', function(req, res){
-    User.find({},{password:0}, (err, data) => {
+    User.find({},{password:0, token: 0}, (err, data) => {
       if (err) {
         res.send(err);
       }
@@ -81,7 +81,7 @@ module.exports = function(app) {
     });
   });
 
-  //POST route for updating data
+  //POST route for loggin and  to create new user
   app.post('/api/user', function (req, res, next) {
     // confirm that user typed same password twice
     if (req.body.password !== req.body.passwordConf) {
@@ -151,6 +151,7 @@ module.exports = function(app) {
               id: user['_id'],
               name: user.firstname + ' ' + user.lastname,
               email: user.email,
+              token: user.token,
               write_permission: user.write_permission,
               master: user.master,
             })
