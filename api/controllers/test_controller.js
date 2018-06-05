@@ -1,7 +1,9 @@
 const fs = require('fs');
 var request = require('request');
-var mongoose = require('mongoose'),
-  Test = mongoose.model('Test');
+var mongoose = require('mongoose');
+var User = require('../models/user_model');
+var Test = mongoose.model('Test');
+var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).</p>';
 
 exports.getAllTests = (req, res) => {
   checkIfTestsHaveAnArchive()
@@ -72,22 +74,29 @@ exports.getTestsByQueryAndPage = (req, res) => {
 };
 
 exports.addTest = (req, res) => {
-  var newTest = new Test(req.body);
-  newTest.created = Date.now();
-  newTest.lastModification = Date.now();
-  request.get({
-    url: 'http://localhost:8000/api/test-subjects/name/' + newTest.type,
-    json: true
-  }, (err1, res1, testSubject) => {
-    newTest.testSubjectId = testSubject._id;
-    newTest.save((err, data) => {
-      if (err) {
-        res.send(err);
-      }
-      else {
-        res.json({name: 'Success', message: 'Test successfully added', test: data});
-      }
-    });
+  User.hasAuthorization(req)
+  .then((hasAuthorization) => {
+    if (hasAuthorization) {
+      var newTest = new Test(req.body);
+      newTest.created = Date.now();
+      newTest.lastModification = Date.now();
+      request.get({
+        url: 'http://localhost:8000/api/test-subjects/name/' + newTest.type,
+        json: true
+      }, (err1, res1, testSubject) => {
+        newTest.testSubjectId = testSubject._id;
+        newTest.save((err, data) => {
+          if (err) {
+            res.send(err);
+          }
+          else {
+            res.json({name: 'Success', message: 'Test successfully added', test: data});
+          }
+        });
+      });
+    } else {
+      res.status(401).send(error401);
+    }
   });
 }
 
@@ -287,4 +296,8 @@ function checkIfTestsHaveAnArchive() {
       }
     });
   });
+}
+
+function hasAuthorization() {
+
 }

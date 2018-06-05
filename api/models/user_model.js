@@ -77,6 +77,37 @@ UserSchema.pre('save', function (next) {
   })
 });
 
+UserSchema.statics.hasAuthorization = function (req) {
+  return new Promise((resolve) => {
+    if (req.headers.authorization) {
+      var tmp = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString();
+      var auth = {
+        email: tmp.split(':')[0],
+        token: tmp.split(':')[1]
+      };
+      User.findOne({email: auth.email}, (err, user) => {
+        if (err) {
+          console.log(err);
+          resolve(false);
+        } else if (user && user.token === auth.token) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    } else {
+      resolve(false);
+    }
+  });
+}
+// User.hasAuthorization(req)
+// .then((hasAuthorization) => {
+//   if (hasAuthorization) {
+//
+//   } else {
+//     res.status(401).send(error401);
+//   }
+// });
 
 var User = mongoose.model('User', UserSchema);
 module.exports = User;
