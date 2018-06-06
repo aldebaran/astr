@@ -80,7 +80,6 @@ UserSchema.pre('save', function (next) {
 
 UserSchema.statics.hasAuthorization = function (req, permissions) {
   // permissions -> Array ['master', 'write_permission', 'owner']
-  console.log()
   return new Promise((resolve) => {
     if (req.headers.authorization) {
       var tmp = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString();
@@ -95,10 +94,13 @@ UserSchema.statics.hasAuthorization = function (req, permissions) {
         } else if (user && user.token === auth.token) {
           if (permissions.length > 0) {
             if (permissions.includes('master') && user.master === true) {
+              // require to be master
               resolve(true);
             } else if (permissions.includes('write_permission') && user.write_permission === true) {
+              // require to have write_permission
               resolve(true);
             } else if (permissions.includes('owner') && req.url.includes('tests')) {
+              // require to have be owner of the test
               request('http://' + req.get('host') + '/api/tests/id/' + req.params.id, {json: true}, (err2, res2, test) => {
                 if (test.author === user.firstname + ' ' + user.lastname) {
                   resolve(true);
@@ -107,7 +109,14 @@ UserSchema.statics.hasAuthorization = function (req, permissions) {
                 }
               });
             } else if (permissions.includes('owner') && req.url.includes('filters')) {
-              // TODO
+              // require to have be owner of the filter
+              request('http://' + req.get('host') + '/api/filters/id/' + req.params.id, {json: true}, (err2, res2, filter) => {
+                if (filter.user === user.firstname + ' ' + user.lastname) {
+                  resolve(true);
+                } else {
+                  resolve(false);
+                }
+              });
             } else {
               resolve(false);
             }

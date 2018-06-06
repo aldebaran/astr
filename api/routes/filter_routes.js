@@ -8,22 +8,14 @@ module.exports = function(app) {
   });
 
   app.route('/api/filters')
-    .get(filter.getAllFilters)
-    .post(filter.addFilter);
+  .get(filter.getAllFilters)
+  .post(filter.addFilter);
 
-  app.get('/api/filters/id/:id', (req, res) => {
-    const id = req.params.id;
-    filter.getFilter(id, res);
-  });
+  app.route('/api/filters/id/:id')
+  .get(filter.getFilter)
+  .delete(filter.deleteFilter);
 
-  app.delete('/api/filters/id/:id', (req, res) => {
-    const id = req.params.id;
-    filter.deleteFilter(id, res);
-  });
-
-  app.get('/tests/:filterId', (req, res) => {
-    const id = req.params.filterId;
-    filter.searchWithFilter(id, res);
-  });
+  app.route('/tests/:filterId')
+  .get(filter.searchWithFilter);
 
 };

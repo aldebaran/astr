@@ -20,7 +20,7 @@ module.exports = function(app) {
   app.route('/api/tests/id/:id')
   .get(test.getTest) // GET: Returns the test with the associated ID
   .post(test.updateTest) // POST: Update the test with the associated ID in function of the parameters given in the body request
-  .delete(test.deleteTest) // DELETE: Delete the test with the associated ID
+  .delete(test.deleteTest); // DELETE: Delete the test with the associated ID
 
   app.route('/api/tests/authors')
   .get(test.getDistinctAuthors); // GET: Returns the list of test authors (that wrote at least one test)
@@ -48,5 +48,5 @@ module.exports = function(app) {
 
   app.route('/api/tests/withoutArchive')
   .get(test.getAllTestsWithoutArchive); // GET: Returns the list of all tests without any archive (to delete them)
-  
+
 };
