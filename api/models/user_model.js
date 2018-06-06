@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var uuidv1 = require('uuid/v1');
+var request = require('request');
 
 var UserSchema = new mongoose.Schema({
   email: {
@@ -43,7 +44,7 @@ var UserSchema = new mongoose.Schema({
   }
 });
 
-//authenticate input against database
+// authenticate input against database
 UserSchema.statics.authenticate = function (email, password, callback) {
   User.findOne({ email: email })
     .exec(function (err, user) {
@@ -64,7 +65,7 @@ UserSchema.statics.authenticate = function (email, password, callback) {
     });
 }
 
-//hashing a password before saving it to the database
+// hashing a password before saving it to the database
 UserSchema.pre('save', function (next) {
   var user = this;
   user.token = uuidv1();
@@ -77,7 +78,9 @@ UserSchema.pre('save', function (next) {
   })
 });
 
-UserSchema.statics.hasAuthorization = function (req) {
+UserSchema.statics.hasAuthorization = function (req, permissions) {
+  // permissions -> Array ['master', 'write_permission', 'owner']
+  console.log()
   return new Promise((resolve) => {
     if (req.headers.authorization) {
       var tmp = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString();
@@ -90,7 +93,28 @@ UserSchema.statics.hasAuthorization = function (req) {
           console.log(err);
           resolve(false);
         } else if (user && user.token === auth.token) {
-          resolve(true);
+          if (permissions.length > 0) {
+            if (permissions.includes('master') && user.master === true) {
+              resolve(true);
+            } else if (permissions.includes('write_permission') && user.write_permission === true) {
+              resolve(true);
+            } else if (permissions.includes('owner') && req.url.includes('tests')) {
+              request('http://' + req.get('host') + '/api/tests/id/' + req.params.id, {json: true}, (err2, res2, test) => {
+                if (test.author === user.firstname + ' ' + user.lastname) {
+                  resolve(true);
+                } else {
+                  resolve(false);
+                }
+              });
+            } else if (permissions.includes('owner') && req.url.includes('filters')) {
+              // TODO
+            } else {
+              resolve(false);
+            }
+          } else {
+            // No permissions needed except authentication
+            resolve(true);
+          }
         } else {
           resolve(false);
         }
@@ -100,7 +124,7 @@ UserSchema.statics.hasAuthorization = function (req) {
     }
   });
 }
-// User.hasAuthorization(req)
+// User.hasAuthorization(req, ['master', 'write_permission', 'owner'])
 // .then((hasAuthorization) => {
 //   if (hasAuthorization) {
 //
