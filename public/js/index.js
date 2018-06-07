@@ -153,7 +153,7 @@
       url: 'api/user/master',
       async: false,
       success: function(masters) {
-        masters.forEach(function(master){
+        masters.forEach(function(master) {
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
         });
       }

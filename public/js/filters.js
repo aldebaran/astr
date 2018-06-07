@@ -2,24 +2,24 @@
   "use strict";
 
   if(isConnected()) {
-    $.get('api/filters', function(filters){
+    $.get('api/filters', function(filters) {
       var count = 0;
       var user = getUserName();
-      filters.forEach(function(filter){
+      filters.forEach(function(filter) {
         if(filter.user === user) {
           count++;
-          var link = window.location.origin + '/tests/' + filter['_id'];
-          if(!filter.testSubjectName){
+          var link = window.location.origin + '/tests.html?filter=' + filter['_id'];
+          if(!filter.testSubjectName) {
             filter.testSubjectName = '<span class="null">ALL</span>';
           } else {
             filter.testSubjectName = '<span class="key">' + filter.testSubjectName + '</span>';
           }
-          if(!filter.testAuthor){
+          if(!filter.testAuthor) {
             filter.testAuthor = '<span class="null">ALL</span>';
           } else {
             filter.testAuthor = '<span class="key">' + filter.testAuthor + '</span>';
           }
-          if(!filter.date){
+          if(!filter.date) {
             filter.date = '<span class="null">ALL</span>';
           } else {
             filter.date = '<span class="key">' + filter.date + '</span>';
@@ -35,7 +35,7 @@
             '<td><button type="button" class="btn btn-danger admin-user" id="deleteFilter"><i class="fa fa-trash" aria-hidden="true"></i></button></td>' +
           '</tr>');
           if(filter.configuration.length > 0) {
-            filter.configuration.forEach(function(config){
+            filter.configuration.forEach(function(config) {
               $('.config:last').append('<div><span class="key">' + config.name + ': </span><span class=value>' + config.value + '</span></div>')
             });
           } else {
@@ -49,13 +49,14 @@
     $('#myFilters').html('<p>Log in to see your saved searches.</p>');
   }
 
-  $('table').on('click', '#deleteFilter', function(){
+  $('table').on('click', '#deleteFilter', function() {
     var r = confirm('Please confirm that you want to delete this filter.');
-    if(r === true){
+    if(r === true) {
       $.ajax({
-        url: 'api/filters/id/' + $(this).closest('tr').attr('id'),
         type: 'DELETE',
-        success: function(data){
+        url: 'api/filters/id/' + $(this).closest('tr').attr('id'),
+        headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+        success: function() {
           location.reload();
         }
       });
@@ -124,9 +125,22 @@
       url: 'api/user/master',
       async: false,
       success: function(masters) {
-        masters.forEach(function(master){
+        masters.forEach(function(master) {
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
         });
+      }
+    });
+    return res;
+  }
+
+  function getAuthentification() {
+    var res;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.email + ':' + user.token;
       }
     });
     return res;

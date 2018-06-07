@@ -2,7 +2,7 @@
   "use strict";
 
   // Create a new test subject
-  $('#buttonMoreConfig').click(function(){
+  $('#buttonMoreConfig').click(function() {
     // check if the last configuration row is not empty
     if($('.inputConfigName:last').val().trim() !== '') {
       $('#formConfig').append('' +
@@ -24,7 +24,7 @@
     }
   });
 
-  $('#formConfig').on('click', '#buttonMoreOption', function(){
+  $('#formConfig').on('click', '#buttonMoreOption', function() {
     // check if the last option row is not empty
     if($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOption" type="text" placeholder="Enter an option">').insertBefore(this);
@@ -33,39 +33,45 @@
     }
   });
 
+  // modify test subject name
+  $('#inputName').change(function() {
+    var name = $(this).val().trim().toUpperCase().replace(/\s+/g, ' ');
+    $(this).val(name);
+  });
+
   // modify the configuration name
-  $('#submitNewSubject').on('change', '.inputConfigName', function(){
+  $('#submitNewSubject').on('change', '.inputConfigName', function() {
     var name = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
     $(this).val(name);
   });
 
   // modify option name on change
-  $('#submitNewSubject').on('change', '.inputOption', function(){
+  $('#submitNewSubject').on('change', '.inputOption', function() {
     var name = $(this).val().trim().toUpperCase().replace(/\s+/g, ' ');
     $(this).val(name);
   });
 
-  $('#submitNewSubject').submit(function(e){
+  $('#submitNewSubject').submit(function(e) {
     e.preventDefault();
 
     // if the user is logged and is master
     if(isConnected() && isMaster()) {
       var r = confirm('Please confirm that you want to add this new test subject.')
-      if(r === true){
+      if(r === true) {
         var subject = {
           name: $('#inputName').val().trim().replace(/\s+/g, ' '),
           author: getUserName(),
           configuration: [],
         }
-        $('.inputConfigName').each(function(){
+        $('.inputConfigName').each(function() {
           var configName = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
           var options = [];
-          $(this).closest('.row').find('.inputOption').each(function(){
+          $(this).closest('.row').find('.inputOption').each(function() {
             if($(this).val().trim() !== '') {
               options.push($(this).val().trim().toUpperCase().replace(/\s+/g, ' '));
             }
           });
-          if(configName !== ''){
+          if(configName !== '') {
             subject.configuration.push({
               name: configName,
               options: options
@@ -74,10 +80,15 @@
         });
 
         // send the new subject
-        $.post('api/test-subjects', subject, function(data){
-          //alert(JSON.stringify(data, null, 2));
-          location.reload();
-        })
+        $.ajax({
+          method: 'POST',
+          url: 'api/test-subjects',
+          headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+          data: subject,
+          success: function() {
+            location.reload();
+          }
+        });
       }
     } else if(isConnected()) {
       // if the user is logged but without permission
@@ -90,22 +101,22 @@
 
 
   // Existing subjects
-  $.get('api/test-subjects', function(subjects){
-    subjects.forEach(function(subject){
+  $.get('api/test-subjects', function(subjects) {
+    subjects.forEach(function(subject) {
       $('#selectSubject').append('<option value="' + subject['_id'] + '">' + subject.name + '</option>');
     });
   });
 
-  $('#selectSubject').change(function(){
-    if($('#selectSubject').val() !== "default"){
-      $.get('api/test-subjects/id/' + $('#selectSubject').val(), function(data){
+  $('#selectSubject').change(function() {
+    if($('#selectSubject').val() !== 'default') {
+      $.get('api/test-subjects/id/' + $('#selectSubject').val(), function(data) {
         $('#infoSubject').attr('val', data['_id']);
         $('#infoSubject').html('' +
         '<span class="key"> Name: </span><span class="value">' + data.name + '</span><br>' +
         '<span class="key"> Author: </span><span class="value" id="subjectAuthor">' + data.author + '</span><br>' +
         '<span class="key"> Created: </span><span class="value">' + new Date(data.created).toLocaleDateString() + '</span><br>' +
         '<span class="key"> Configuration</span><br>');
-        data.configuration.forEach(function(config){
+        data.configuration.forEach(function(config) {
           if (config.options.length > 0) {
             $('#infoSubject').append('<li class="config"><span>' + config.name + '</span><span class="value"> [' + config.options.join(', ') + ']' + '</span></li>');
           } else {
@@ -118,17 +129,18 @@
           $('#infoSubject').append('' +
             '<div class="button-footer">' +
               '<button type="button" class="btn btn-danger admin-user" id="deleteTestSubject"><i class="fa fa-times" aria-hidden="true"></i> Delete</button>' +
-              '<button type="button" class="btn btn-info admin-user" id="editTestSubject" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>' +
+              '<button type="button" class="btn btn-info admin-user" id="editTestSubject" data-toggle="modal" data-target="#modalEdit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>' +
             '</div>'
           );
 
-          $('#deleteTestSubject').click(function(){
+          $('#deleteTestSubject').click(function() {
             var r = confirm('Please confirm that you want to delete this test subject.');
-            if(r === true){
+            if(r === true) {
               $.ajax({
-                url: 'api/test-subjects/id/' + $(this).closest('#infoSubject').attr('val'),
                 type: 'DELETE',
-                success: function(data){
+                url: 'api/test-subjects/id/' + $(this).closest('#infoSubject').attr('val'),
+                headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                success: function() {
                   location.reload();
                 }
               });
@@ -142,15 +154,15 @@
   })
 
   // Edit test subject
-  $('#cardExistingSubject').on('click', '#editTestSubject', function(){
-    $.get('api/test-subjects/id/' + $(this).closest('.card-body').find('#selectSubject').val(), function(subject){
+  $('#cardExistingSubject').on('click', '#editTestSubject', function() {
+    $.get('api/test-subjects/id/' + $(this).closest('.card-body').find('#selectSubject').val(), function(subject) {
       $('.modal-body').html('' +
       '<div class="form-group">' +
         '<label for="inputNameEdit">Name</label>' +
         '<input type="text" id="inputNameEdit" class="form-control" value="' + subject.name + '" required>' +
       '</div>'
       );
-      subject.configuration.forEach(function(config){
+      subject.configuration.forEach(function(config) {
         $('.modal-body').append('' +
         '<div class="form-group">' +
           '<div class="row config border-top">' +
@@ -173,7 +185,7 @@
         '</div>');
 
         if(config.options.length > 0) {
-          config.options.forEach(function(option){
+          config.options.forEach(function(option) {
             $('<input class="form-control inputOptionEdit" type="text" value="' + option + '">').insertAfter('#label'+config.name);
           });
         } else {
@@ -187,8 +199,8 @@
   });
 
   // modal button listener (new config)
-  $('.modal-body').on('click', '#buttonMoreConfigEdit', function(){
-    if(!$(this).parent().find('.form-group:last').find('.inputConfigNameEdit').length > 0 || $(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== ''){
+  $('.modal-body').on('click', '#buttonMoreConfigEdit', function() {
+    if(!$(this).parent().find('.form-group:last').find('.inputConfigNameEdit').length > 0 || $(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== '') {
       $('' +
       '<div class="form-group">' +
         '<div class="row config border-top">' +
@@ -209,7 +221,7 @@
   });
 
   // modal button listener (new option)
-  $('.modal-body').on('click', '#buttonMoreOptionEdit', function(){
+  $('.modal-body').on('click', '#buttonMoreOptionEdit', function() {
     if($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOptionEdit" type="text" placeholder="Enter an option">').insertBefore(this);
     } else {
@@ -218,7 +230,7 @@
   });
 
   // modal button listener (delete config)
-  $('.modal-body').on('click', '#deleteConfig', function(){
+  $('.modal-body').on('click', '#deleteConfig', function() {
     var r = confirm('Are you sure you want to delete this configuration ? It won\'t affect the tests already stored');
     if (r === true) {
       $(this).closest('.form-group').remove();
@@ -226,36 +238,36 @@
   });
 
   // modify configuration name on change
-  $('.modal-body').on('change', '.inputConfigNameEdit', function(){
+  $('.modal-body').on('change', '.inputConfigNameEdit', function() {
     var name = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
     $(this).val(name);
     $(this).addClass('nameChanged');
   });
 
   // modify option name on change
-  $('.modal-body').on('change', '.inputOptionEdit', function(){
+  $('.modal-body').on('change', '.inputOptionEdit', function() {
     var name = $(this).val().trim().toUpperCase().replace(/\s+/g, ' ');
     $(this).val(name);
   });
 
   // Submit event when editing a subject
-  $('.form-edit').submit(function(e){
+  $('.form-edit').submit(function(e) {
     e.preventDefault();
     var r = confirm('⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️\n\nThis will modify all the associated tests ! If you deleted some configurations, they will stay in the tests.\nPlease confirm that you want to modify this test subject.');
-    if(r === true){
+    if(r === true) {
       var editedSubject = {
         name: $('#inputNameEdit').val().replace(/\s+/g, ' '),
         configuration: []
       };
       if ($('.inputConfigNameEdit').length > 0) {
         $('.inputConfigNameEdit').each(function() {
-          if(!$(this).hasClass('newConfig') || ($(this).hasClass('newConfig') && $(this).val().trim() !== '')){
+          if(!$(this).hasClass('newConfig') || ($(this).hasClass('newConfig') && $(this).val().trim() !== '')) {
             var config = {
               name: $(this).val(),
               options: []
             };
-            $(this).closest('.form-group').find('.inputOptionEdit').each(function(){
-              if($(this).val().trim() !== ''){
+            $(this).closest('.form-group').find('.inputOptionEdit').each(function() {
+              if($(this).val().trim() !== '') {
                 config.options.push($(this).val());
               }
             });
@@ -266,50 +278,76 @@
         editedSubject.emptyConfiguration = true;
       }
 
-      $.post('api/test-subjects/id/' + $('#infoSubject').attr('val'), editedSubject, function(data) {
-        if(data.name === 'Success') {
-          // modify all the associated tests
-          $.post('api/tests', {testSubjectId: $('#infoSubject').attr('val')}, function(tests) {
-            new Promise(function(resolve, reject) {
-              if(tests.length > 0) {
-                if (subjectNameChanged(data.before, data.modified)) {
-                  $.post('api/tests/changeTestSubjectName', {previousName: data.before.name, newName: data.modified.name}, function(data) {
-                    console.log(data);
-                  });
-                }
-                // handle changes on configuration
-                $('.inputConfigNameEdit').each(function() {
-                  if($(this).hasClass('newConfig') && $(this).val().trim() !== '') {
-                    // add this config to all tests with the associated subject
-                    var body = {
-                      subject: editedSubject.name,
-                      config: {
-                        name: $(this).val().trim(),
-                        value: ''
+      $.ajax({
+        method: 'POST',
+        url: 'api/test-subjects/id/' + $('#infoSubject').attr('val'),
+        headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+        data: editedSubject,
+        success: function(data) {
+          if(data.name === 'Success') {
+            // modify all the associated tests
+            $.post('api/tests', {testSubjectId: $('#infoSubject').attr('val')}, function(tests) {
+              new Promise(function(resolve, reject) {
+                if(tests.length > 0) {
+                  if (subjectNameChanged(data.before, data.modified)) {
+                    $.ajax({
+                      method: 'POST',
+                      url: 'api/tests/changeTestSubjectName',
+                      headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                      data: {previousName: data.before.name, newName: data.modified.name},
+                      success: function(data) {
+                        console.log(data);
                       }
-                    };
-                    $.post('api/tests/addConfig', body, function(data) {
-                      console.log(data);
-                    });
-                  } else if ($(this).hasClass('nameChanged') && $(this).val().trim() !== '') {
-                    // change this config name on all tests with the associated subject
-                    var body = {
-                      subject: editedSubject.name,
-                      previousName: $(this).attr('previousname'),
-                      newName: $(this).val().trim()
-                    };
-                    $.post('api/tests/changeConfigName', body, function(data) {
-                      console.log(data);
                     });
                   }
-                });
-              }
-            }).then(location.reload());
-          });
-        } else {
-          alert('Someting went wrong.');
+                  // handle changes on configuration
+                  $('.inputConfigNameEdit').each(function() {
+                    if($(this).hasClass('newConfig') && $(this).val().trim() !== '') {
+                      // add this config to all tests with the associated subject
+                      var body = {
+                        subject: editedSubject.name,
+                        config: {
+                          name: $(this).val().trim(),
+                          value: ''
+                        }
+                      };
+                      $.ajax({
+                        method: 'POST',
+                        url: 'api/tests/addConfig',
+                        headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                        data: body,
+                        success: function(data) {
+                          console.log(data);
+                        }
+                      });
+                    } else if ($(this).hasClass('nameChanged') && $(this).val().trim() !== '') {
+                      // change this config name on all tests with the associated subject
+                      var body = {
+                        subject: editedSubject.name,
+                        previousName: $(this).attr('previousname'),
+                        newName: $(this).val().trim()
+                      };
+                      $.ajax({
+                        method: 'POST',
+                        url: 'api/tests/changeConfigName',
+                        headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                        data: body,
+                        success: function(data) {
+                          console.log(data);
+                        }
+                      });
+                    }
+                  });
+                }
+              }).then(location.reload());
+            });
+          } else {
+            alert('Someting went wrong.');
+          }
         }
       });
+
+
     }
   });
 
@@ -374,9 +412,22 @@
       url: 'api/user/master',
       async: false,
       success: function(masters) {
-        masters.forEach(function(master){
+        masters.forEach(function(master) {
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
         });
+      }
+    });
+    return res;
+  }
+
+  function getAuthentification() {
+    var res;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.email + ':' + user.token;
       }
     });
     return res;

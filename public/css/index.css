@@ -691,3 +691,7 @@ span.text-muted {
   margin-left: 1em;
   margin-top: 2em;
 }
+
+#copyToClipboard {
+  margin-left: 1em;
+}

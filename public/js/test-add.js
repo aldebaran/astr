@@ -2,17 +2,17 @@
   "use strict";
 
   // get the list of existing subjects
-  $.get('api/test-subjects', function(subjects){
-    subjects.forEach(function(subject){
+  $.get('api/test-subjects', function(subjects) {
+    subjects.forEach(function(subject) {
       $('#selectSubject').append('<option value="' + subject['_id'] + '">' + subject.name + '</option>');
     });
   });
 
-  $('#selectSubject').change(function(){
-    if($('#selectSubject').val() !== "default"){
-      $.get('api/test-subjects/id/' + $('#selectSubject').val(), function(subject){
+  $('#selectSubject').change(function() {
+    if($('#selectSubject').val() !== 'default') {
+      $.get('api/test-subjects/id/' + $('#selectSubject').val(), function(subject) {
         $('#config').html('<h4>Configuration</h4>');
-        subject.configuration.forEach(function(config){
+        subject.configuration.forEach(function(config) {
           $('#config').append('' +
           '<div class="form-group">' +
             '<label for="inputConfig">' + config.name + '</label>' +
@@ -22,9 +22,9 @@
           '</div>');
 
           if(config.options.length > 0) {
-            config.options.forEach(function(option, idx, array){
+            config.options.forEach(function(option, idx, array) {
               $('#config').find('select:last').append('<option>' + option + '</option>');
-              if (idx === array.length - 1){
+              if (idx === array.length - 1) {
                 $('#config').find('select:last').append('<option>Other</option>');
               }
             });
@@ -41,8 +41,8 @@
   })
 
   // add an input if the user select "Other" on a configuration
-  $('#cardAddNewTest').on('change', '.selectConfig', function(){
-    if($(this).val() === 'Other'){
+  $('#cardAddNewTest').on('change', '.selectConfig', function() {
+    if($(this).val() === 'Other') {
       $(this).closest('.form-group').append('<input type="text" class="form-control inputConfig" required>');
     } else {
       $(this).closest('.form-group').find('.inputConfig').remove();
@@ -50,18 +50,18 @@
   });
 
   // Submit event
-  $('form').submit(function(e){
+  $('form').submit(function(e) {
     e.preventDefault();
     var okayToPush = true;
-    if(isConnected() && hasWritePermission() && $('#isFileUploaded').val() === 'true'){
+    if(isConnected() && hasWritePermission() && $('#isFileUploaded').val() === 'true') {
       var test = {
         type: $('#selectSubject option:selected').html(),
         date: $('#inputDate').val(),
         author: getUserName(),
         configuration: [],
       };
-      $('.inputConfig').each(function(){
-        if($(this).val().trim() === ""){
+      $('.inputConfig').each(function() {
+        if($(this).val().trim() === "") {
           okayToPush = false;
         } else {
           test.configuration.push({
@@ -70,8 +70,8 @@
           });
         }
       });
-      $('.selectConfig').each(function(){
-        if($(this).val() !== 'Other'){
+      $('.selectConfig').each(function() {
+        if($(this).val() !== 'Other') {
           test.configuration.push({
             name: $(this).closest('.form-group').find('label').html(),
             value: $(this).val()
@@ -81,13 +81,19 @@
 
       if(okayToPush === true) {
         $('#submitTest').attr("disabled", true);
-        $.post('api/tests/add', test, function(data){
-          $('#testId').html(data.test['_id']);
+        $.ajax({
+          method: 'POST',
+          url: 'api/tests/add',
+          headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+          data: test,
+          success: function(data) {
+            $('#testId').html(data.test['_id']);
+          }
         });
       } else {
         alert("Your test was not added because you left an empty field.");
       }
-    } else if(!isConnected()){
+    } else if(!isConnected()) {
       alert('Please log in to submit new tests !')
     } else if(isConnected() && $('#isFileUploaded').val() === 'true') {
       alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
@@ -158,9 +164,22 @@
       url: 'api/user/master',
       async: false,
       success: function(masters) {
-        masters.forEach(function(master){
+        masters.forEach(function(master) {
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
         });
+      }
+    });
+    return res;
+  }
+
+  function getAuthentification() {
+    var res;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.email + ':' + user.token;
       }
     });
     return res;

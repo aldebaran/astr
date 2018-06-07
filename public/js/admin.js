@@ -2,10 +2,12 @@
   "use strict";
 
   if(isConnected() && isMaster()) {
-    $.get('api/user', function(users){
+    var auth = getAuthentification();
+
+    $.get('api/user', function(users) {
       // fillout the table with users
-      users.forEach(function(user){
-        if(user.master === true){
+      users.forEach(function(user) {
+        if(user.master === true) {
           $('tbody').append('' +
           '<tr value="' + user['_id'] + '">' +
             '<td>' + user.firstname + '</td>'+
@@ -41,29 +43,42 @@
     });
 
     // modify and delete buttons
-    $('tbody').on('click', '#modifyWritePermission', function(){
+    $('tbody').on('click', '#modifyWritePermission', function() {
       var r = confirm('Please confirm that you want to modify the write permission of this user.');
-      if(r === true){
-        $.post('api/user/id/' + $(this).parent().parent().attr('value'), {"write_permission": !$(this).parent().html().includes('true')}, function(data){
-          location.reload();
-        });
-      }
-    });
-    $('tbody').on('click', '#modifyMaster', function(){
-      var r = confirm('Please confirm that you want to modify the master status of this user.');
-      if(r === true){
-        $.post('api/user/id/' + $(this).parent().parent().attr('value'), {"master": !$(this).parent().html().includes('true')}, function(data){
-          location.reload();
-        });
-      }
-    });
-    $('tbody').on('click', '#deleteUser', function(){
-      var r = confirm('Please confirm that you want to delete this user.');
-      if(r === true){
+      if(r === true) {
         $.ajax({
+          type: 'POST',
           url: 'api/user/id/' + $(this).parent().parent().attr('value'),
+          headers: {"Authorization": "Basic " + btoa(auth)},
+          data: {"write_permission": !$(this).parent().html().includes('true')},
+          success: function() {
+            location.reload();
+          }
+        });
+      }
+    });
+    $('tbody').on('click', '#modifyMaster', function() {
+      var r = confirm('Please confirm that you want to modify the master status of this user.');
+      if(r === true) {
+        $.ajax({
+          type: 'POST',
+          url: 'api/user/id/' + $(this).parent().parent().attr('value'),
+          headers: {"Authorization": "Basic " + btoa(auth)},
+          data: {"master": !$(this).parent().html().includes('true')},
+          success: function() {
+            location.reload();
+          }
+        });
+      }
+    });
+    $('tbody').on('click', '#deleteUser', function() {
+      var r = confirm('Please confirm that you want to delete this user.');
+      if(r === true) {
+        $.ajax({
           type: 'DELETE',
-          success: function(data){
+          url: 'api/user/id/' + $(this).parent().parent().attr('value'),
+          headers: {"Authorization": "Basic " + btoa(auth)},
+          success: function() {
             location.reload();
           }
         });
@@ -136,9 +151,22 @@
       url: 'api/user/master',
       async: false,
       success: function(masters) {
-        masters.forEach(function(master){
+        masters.forEach(function(master) {
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
         });
+      }
+    });
+    return res;
+  }
+
+  function getAuthentification() {
+    var res;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.email + ':' + user.token;
       }
     });
     return res;

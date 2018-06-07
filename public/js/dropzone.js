@@ -1,5 +1,13 @@
-(function($){
+(function($) {
   "use strict";
+
+  // ----------------------------------------------//
+  //                                               //
+  //                   /!\ INFO /!\                //
+  //  Scroll to the bottom to change the options!  //
+  //          Don't touch anything else            //
+  //                                               //
+  // ----------------------------------------------//
 
   var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -3531,18 +3539,19 @@
 
 
   Dropzone.options.myDropzone = {
+    method: 'POST',
     url: '/api/upload',
+    headers: {"Authorization": "Basic " + btoa(getAuthentification())},
     maxFilesize: 512, // MB
     maxFiles: 10,
     autoProcessQueue: false,
     uploadMultiple: true,
     paramName: paramNameForSend,
-    method: 'post',
     parallelUploads: 10,
     init: function() {
       var myDropzone = this;
 
-      myDropzone.on("addedfile", function(file){
+      myDropzone.on("addedfile", function(file) {
         if (file.upload.total < this.options.maxFilesize * 1024 * 1024) {
           $('#isFileUploaded').val('true');
         } else {
@@ -3564,10 +3573,10 @@
         }
       });
 
-      $('form').submit(function(e){
+      $('form').submit(function(e) {
         e.preventDefault();
         // wait 200ms to make sure the test is pushed in the DB
-        setTimeout(function(){
+        setTimeout(function() {
           if($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
             console.log($('#testId').html())
             myDropzone.processQueue(); // Tell Dropzone to process all queued files.
@@ -3593,5 +3602,17 @@
     }, 100);
   });
 
+  function getAuthentification() {
+    var res;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.email + ':' + user.token;
+      }
+    });
+    return res;
+  }
 
 })(jQuery)
