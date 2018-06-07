@@ -174,11 +174,11 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 2. [/api/tests/page/:page/:resultPerPage](http://10.0.160.147:8000/api/tests/page/2/30)
     - POST: Returns the list of tests that match with the parameters given in the body request, with pagination
 3. [/api/tests/add](http://10.0.160.147:8000/api/tests/add)
-    - POST: Add a new test in the DB in function of the parameters given in the body request
+    - POST: Add a new test in the DB in function of the parameters given in the body request **(user must have write permission)**
 4. [/api/tests/id/:id](http://10.0.160.147:8000/api/tests/id/5adf356dda64c157e53c6b18)
     - GET: Returns the test with the associated ID
-    - POST: Update the test with the associated ID in function of the parameters given in the body request
-    - DELETE: Delete the test with the associated ID
+    - POST: Update the test with the associated ID in function of the parameters given in the body request **(user must be master or owner of the test)**
+    - DELETE: Delete the test with the associated ID **(user must be master or owner of the test)**
 5. [/api/tests/authors](http://10.0.160.147:8000/api/tests/authors)
     - GET: Returns the list of test authors (that wrote at least one test)
 6. [/api/tests/subjects](http://10.0.160.147:8000/api/tests/subjects)
@@ -190,11 +190,11 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 9. [/api/tests/options/:configName](http://10.0.160.147:8000/api/tests/options/robot_type)
     - GET: Returns the  options of the associated configuration (used at least one time)
 10. [/api/tests/changeTestSubjectName](http://10.0.160.147:8000/api/tests/changeTestSubjectName)
-    - POST: Change the test type of all the tests matched by {type: previousName} (body contains *previousName* and *newName*)
+    - POST: Change the test type of all the tests matched by {type: previousName} (body contains *previousName* and *newName*) **(user must be master)**
 11. [/api/tests/addConfig](http://10.0.160.147:8000/api/tests/addConfig)
-    - POST: Push a new configuration in all tests matched by the test type/subject (body contains *subject* and *config: {name, value}*)
+    - POST: Push a new configuration in all tests matched by the test type/subject (body contains *subject* and *config: {name, value}*) **(user must be master)**
 12. [/api/tests/changeConfigName](http://10.0.160.147:8000/api/tests/changeConfigName)
-    - POST: Change the name of the matched configuration in all tests matched by the test type/subject (body contains *subject*, *previousName* and *newName*)
+    - POST: Change the name of the matched configuration in all tests matched by the test type/subject (body contains *subject*, *previousName* and *newName*) **(user must be master)**
 13. [/api/tests/withoutArchive](http://10.0.160.147:8000/api/tests/withoutArchive)
     - GET: Returns the list of all tests without any archive (to delete them)
 
@@ -202,11 +202,11 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 
 1. [/api/test-subjects](http://10.0.160.147:8000/api/test-subjects)
     - GET: Returns the list of all test subjects
-    - POST:  Add a new test subject in the DB in function of the parameters given in the body request
+    - POST:  Add a new test subject in the DB in function of the parameters given in the body request **(user must be master)**
 2. [/api/test-subjects/id/:id](http://10.0.160.147:8000/api/test-subjects/id/5adf3559da64c157e53c6b17)
     - GET: Returns the test subject with the associated ID
-    - POST:  Update the test subject with the associated ID in function of the parameters given in the body request
-    - DELETE: Delete the test subject with the associated ID
+    - POST:  Update the test subject with the associated ID in function of the parameters given in the body request **(user must be master)**
+    - DELETE: Delete the test subject with the associated ID **(user must be master)**
 3. [/api/test-subjects/name/:name](http://10.0.160.147:8000/api/test-subjects/name/CAMERA)
     - GET: Returns the test subject with the associated name
 4. [/api/test-subjects/options/:subject/:configName](http://10.0.160.147:8000/api/test-subjects/options/WIFI/robot_type)
@@ -216,10 +216,10 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 
 1. [/api/filters](http://10.0.160.147:8000/api/filters)
     - GET: Returns the list of all filters
-    - POST:  Add a new filter in the DB in function of the parameters given in the body request
+    - POST:  Add a new filter in the DB in function of the parameters given in the body request **(user must use authentification)**
 2. [/api/filters/id/:id](http://10.0.160.147:8000/api/filters/id/5adf3559da64c157e53c6b17)
     - GET: Returns the filter with the associated ID
-    - DELETE: Delete the filter with the associated ID
+    - DELETE: Delete the filter with the associated ID **(user must be the owner of the filter)**
 
 #### Users
 
@@ -230,8 +230,8 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
     - GET: Returns the list of all the masters
 3. [/api/user/id/:id](http://10.0.160.147:8000/api/user/id/5ad8aad45aa7dd1b0f17e7f9)
     - GET: Returns the user with the associated ID
-    - POST:  Update the user with the associated ID in function of the parameters given in the body request (only the variable *write_permission* and *master* can be modified)
-    - DELETE: Delete the user with the associated ID
+    - POST:  Update the user with the associated ID in function of the parameters given in the body request (only the variable *write_permission* and *master* can be modified) **(user must be master)**
+    - DELETE: Delete the user with the associated ID **(user must be master)**
 4. [/api/user/profile](http://10.0.160.147:8000/api/user/profile)
     - GET: Returns the information about the user logged in the machine
 5. [/api/user/logout](http://10.0.160.147:8000/api/user/logout)
@@ -240,7 +240,7 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 #### Upload
 
 1. [/api/upload](http://10.0.160.147:8000/api/upload)
-    - POST: Upload files to the server in a ZIP. The name of the archive is the ID of the test
+    - POST: Upload files to the server in a ZIP. The name of the archive is the ID of the test **(user must have write permission)**
 
 #### Download
 
