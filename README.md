@@ -4,9 +4,12 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Website](#website)
-- [Techs used](#techs-used)
-- [Useful tools](#useful-tools)
+- [Description of the tool](#description-of-the-tool)
+  - [Global architecture](#global-architecture)
+  - [Website](#website)
+  - [User privileges](#user-privileges)
+  - [Techs used](#techs-used)
+  - [Useful tools](#useful-tools)
 - [Installation](#installation)
   - [1. Install MongoDB](#1-install-mongodb)
   - [2. Launch MongoDB](#2-launch-mongodb)
