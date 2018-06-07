@@ -26,11 +26,23 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Website
+## Description of the tool
+
+### Global architecture
+![global architecture](https://gitlab.aldebaran.lan/hardware-test/astr/raw/dev/img/global_architecture.png)
+
+### Website
 
 The website is currently hosted on the IVV server at this address: [10.0.160.147:8000](http://10.0.160.147:8000/).
 
-## Techs used
+Here are the main features: 
+![website architecture](https://gitlab.aldebaran.lan/hardware-test/astr/raw/dev/img/website_architecture.png)
+
+### User privileges
+
+![user privieges](https://gitlab.aldebaran.lan/hardware-test/astr/raw/dev/img/user_privileges.png)
+
+### Techs used
 
 - NoSQL database: [MongoDB](https://www.mongodb.com/)
 - [Node.js](https://nodejs.org/en/)
@@ -43,7 +55,7 @@ The website is currently hosted on the IVV server at this address: [10.0.160.147
     - [archiver](https://www.npmjs.com/package/archiver) *(to zip the files)*
     - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
 
-## Useful tools
+### Useful tools
 
 - [Postman](https://www.getpostman.com/) *(best GUI to make HTTP requests, useful to try queries on the API)*
 - [Robo 3T](https://robomongo.org/) *(GUI for MongoDB)*
