@@ -1,6 +1,10 @@
 (function($) {
   "use strict";
 
+  if(!hasWritePermission()) {
+    showModal('Information', 'Welcome on the Archiver page !<br><br>Since you don\'t have the write permission, you won\'t be able to archive a new test.<br><br>Contact a master to modify your privileges.<br>' + getMasterList().replace(/\n/g,'<br>'));
+  }
+
   // get the list of existing subjects
   $.get('api/test-subjects', function(subjects) {
     subjects.forEach(function(subject) {
@@ -91,14 +95,14 @@
           }
         });
       } else {
-        alert("Your test was not added because you left an empty field.");
+        showModal('Error', 'Your test was not added because you left an empty field.');
       }
     } else if(!isConnected()) {
-      alert('Please log in to submit new tests !')
+      showModal('Error', 'Please log in to submit new tests.')
     } else if(isConnected() && $('#isFileUploaded').val() === 'true') {
-      alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
+      showModal('Error', 'Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.<br><br>Admins:<br>' + getMasterList().replace(/\n/g,'<br>'));
     } else if ($('#isFileUploaded').val() !== 'true') {
-      alert('Upload a file to add a new test !');
+      showModal('Error', 'Upload a file to archive a new test.');
     }
   });
 
@@ -183,6 +187,12 @@
       }
     });
     return res;
+  }
+
+  function showModal(title, message) {
+    $('#myModal .modal-header').html('<h4 class="modal-title">' + title + '</h4>');
+    $('#myModal .modal-body').html('<p>' + message + '<p>');
+    $('#myModal').modal('show');
   }
 
 })(jQuery);

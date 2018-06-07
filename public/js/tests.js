@@ -434,7 +434,7 @@
           }
         });
       } else {
-        alert("Your test was not added because you left an empty field.");
+        showModal('Error', 'Your test was not added because you left an empty field.');
       }
     }
   });
@@ -483,21 +483,21 @@
               success: function(data) {
                 console.log(data);
                 if(data.name === 'Success') {
-                  alert('Your search has been saved !\n\nYou can now find it in "My Searches" to reuse it or to share it.');
+                  showModal('Success', 'Your search has been saved !<br><br>You can now find it in "My Searches" to reuse it or to share it.');
                 }
               }
             });
           } else {
-            alert('ERROR\n\nYou already saved this search ! Check the page "My Searches" to manage them.');
+            showModal('Error','You already saved this search !<br><br>Check the page "My Searches" to manage them.');
           }
         });
 
 
       } else {
-        alert('WARNING\n\nAdd some filters to your search before saving it');
+        showModal('Error', 'Add some filters to your search before saving it.');
       }
     } else {
-      alert('Please log in to save your search !');
+      showModal('Error', 'Please log in to save your search !');
     }
   });
 
@@ -725,6 +725,12 @@
   function getCookie(name) {
     var parts = document.cookie.split(name + "=");
     if (parts.length == 2) return parts.pop().split(";").shift();
+  }
+
+  function showModal(title, message) {
+    $('#myModal .modal-header').html('<h4 class="modal-title">' + title + '</h4>');
+    $('#myModal .modal-body').html('<p>' + message + '<p>');
+    $('#myModal').modal('show');
   }
 
 })(jQuery);

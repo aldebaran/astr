@@ -3555,7 +3555,7 @@
         if (file.upload.total < this.options.maxFilesize * 1024 * 1024) {
           $('#isFileUploaded').val('true');
         } else {
-          alert('ERROR\n\nThis file is too big !\nMax size: ' + this.options.maxFilesize + 'MB');
+          showModal('Error', 'This file is too big.<br>Max size: ' + this.options.maxFilesize + 'MB');
           this.removeFile(file);
         }
       });
@@ -3568,8 +3568,14 @@
 
       myDropzone.on("complete", function (file) {
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0 && file.status !== 'error') {
-          alert('Your test is now saved !\n\nNote that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped :)');
-          location.reload();
+          $('#myModal').modal({
+              backdrop: 'static',
+              keyboard: false
+          });
+          showModal('Success', 'Your test is now saved !<br><br>Note that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped :) <div class="loader"></div>');
+          setTimeout(function() {
+            location.reload();
+          }, 3000);
         }
       });
 
@@ -3613,6 +3619,12 @@
       }
     });
     return res;
+  }
+
+  function showModal(title, message) {
+    $('#myModal .modal-header').html('<h4 class="modal-title">' + title + '</h4>');
+    $('#myModal .modal-body').html('<p>' + message + '<p>');
+    $('#myModal').modal('show');
   }
 
 })(jQuery)

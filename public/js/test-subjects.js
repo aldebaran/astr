@@ -1,6 +1,10 @@
 (function($) {
   "use strict";
 
+  if(!isMaster()) {
+    showModal('Information', 'Welcome on the Test Subject page !<br><br>Since you are not a Master, you won\'t be able to modify or create new test subjects. But you can still take a look at the existing subjects.');
+  }
+
   // Create a new test subject
   $('#buttonMoreConfig').click(function() {
     // check if the last configuration row is not empty
@@ -20,7 +24,7 @@
         '</div>' +
       '</div>');
     } else {
-      alert('Fulfill the actual configuration input to add another!');
+      showModal('Warning', 'Fulfill the actual configuration input to add another.');
     }
   });
 
@@ -29,7 +33,7 @@
     if($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOption" type="text" placeholder="Enter an option">').insertBefore(this);
     } else {
-      alert('Fulfill the actual option to add another!');
+      showModal('Warning', 'Fulfill the actual option to add another.');
     }
   });
 
@@ -92,10 +96,10 @@
       }
     } else if(isConnected()) {
       // if the user is logged but without permission
-      alert('Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.\n\nAdmins:\n' + getMasterList());
+      showModal('Error', 'Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.<br><br>Admins:<br>' + getMasterList().replace(/\n/g, '<br>'));
     } else {
       // if the user isn't logged
-      alert('Please log in to add a new test subject !');
+      showModal('Error', 'Please log in to add a new test subject !');
     }
   });
 
@@ -156,14 +160,14 @@
   // Edit test subject
   $('#cardExistingSubject').on('click', '#editTestSubject', function() {
     $.get('api/test-subjects/id/' + $(this).closest('.card-body').find('#selectSubject').val(), function(subject) {
-      $('.modal-body').html('' +
+      $('#modalEdit .modal-body').html('' +
       '<div class="form-group">' +
         '<label for="inputNameEdit">Name</label>' +
         '<input type="text" id="inputNameEdit" class="form-control" value="' + subject.name + '" required>' +
       '</div>'
       );
       subject.configuration.forEach(function(config) {
-        $('.modal-body').append('' +
+        $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
           '<div class="row config border-top">' +
             '<div class="col">' +
@@ -194,12 +198,12 @@
       });
 
       // button to add a new config
-      $('<button type="button" class="btn btn-outline-primary" id="buttonMoreConfigEdit"><i class="fa fa-plus-circle"></i> Configuration</button>').insertAfter('.modal-body .form-group:last');
+      $('<button type="button" class="btn btn-outline-primary" id="buttonMoreConfigEdit"><i class="fa fa-plus-circle"></i> Configuration</button>').insertAfter('#modalEdit .modal-body .form-group:last');
     });
   });
 
   // modal button listener (new config)
-  $('.modal-body').on('click', '#buttonMoreConfigEdit', function() {
+  $('#modalEdit .modal-body').on('click', '#buttonMoreConfigEdit', function() {
     if(!$(this).parent().find('.form-group:last').find('.inputConfigNameEdit').length > 0 || $(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== '') {
       $('' +
       '<div class="form-group">' +
@@ -216,21 +220,21 @@
         '</div>' +
       '</div>').insertBefore('#buttonMoreConfigEdit');
     } else {
-      alert('Fulfill the actual configuration to add another!');
+      showModal('Warning', 'Fulfill the actual configuration to add another.');
     }
   });
 
   // modal button listener (new option)
-  $('.modal-body').on('click', '#buttonMoreOptionEdit', function() {
+  $('#modalEdit .modal-body').on('click', '#buttonMoreOptionEdit', function() {
     if($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOptionEdit" type="text" placeholder="Enter an option">').insertBefore(this);
     } else {
-      alert('Fulfill the actual option to add another!');
+      showModal('Warning', 'Fulfill the actual option to add another.');
     }
   });
 
   // modal button listener (delete config)
-  $('.modal-body').on('click', '#deleteConfig', function() {
+  $('#modalEdit .modal-body').on('click', '#deleteConfig', function() {
     var r = confirm('Are you sure you want to delete this configuration ? It won\'t affect the tests already stored');
     if (r === true) {
       $(this).closest('.form-group').remove();
@@ -238,14 +242,14 @@
   });
 
   // modify configuration name on change
-  $('.modal-body').on('change', '.inputConfigNameEdit', function() {
+  $('#modalEdit .modal-body').on('change', '.inputConfigNameEdit', function() {
     var name = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
     $(this).val(name);
     $(this).addClass('nameChanged');
   });
 
   // modify option name on change
-  $('.modal-body').on('change', '.inputOptionEdit', function() {
+  $('#modalEdit .modal-body').on('change', '.inputOptionEdit', function() {
     var name = $(this).val().trim().toUpperCase().replace(/\s+/g, ' ');
     $(this).val(name);
   });
@@ -342,7 +346,7 @@
               }).then(location.reload());
             });
           } else {
-            alert('Someting went wrong.');
+            showModal('Error', 'Someting went wrong.');
           }
         }
       });
@@ -439,6 +443,12 @@
     } else {
       return false;
     }
+  }
+
+  function showModal(title, message) {
+    $('#myModal .modal-header').html('<h4 class="modal-title">' + title + '</h4>');
+    $('#myModal .modal-body').html('<p>' + message + '<p>');
+    $('#myModal').modal('show');
   }
 
 })(jQuery);
