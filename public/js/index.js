@@ -70,7 +70,7 @@
     $('#navbar-top').html('' +
     '<li class="nav-item dropdown">' +
       '<a class="nav-link dropdown-toggle mr-lg-2" id="userDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-        '<i class="fa fa-fw fa-user"></i> Signed as ' + getUserName() + ' (master)' +
+        '<i class="fa fa-fw fa-user"></i> Signed as ' + getUserName() +
       '</a>' +
       '<div class="dropdown-menu" aria-labelledby="userDropdown">' +
         '<a class="dropdown-item" href="profile.html">' +

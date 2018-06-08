@@ -38,7 +38,7 @@
 
 The website is currently hosted on the IVV server at this address: [10.0.160.147:8000](http://10.0.160.147:8000/).
 
-Here are the main features: 
+Here are the main features:
 ![website architecture](https://gitlab.aldebaran.lan/hardware-test/astr/raw/dev/img/website_architecture.png)
 
 ### User privileges
@@ -247,9 +247,11 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
     - GET: Returns the user with the associated ID
     - POST:  Update the user with the associated ID in function of the parameters given in the body request (only the variable *write_permission* and *master* can be modified) **(user must be master)**
     - DELETE: Delete the user with the associated ID **(user must be master)**
-4. [/api/user/profile](http://10.0.160.147:8000/api/user/profile)
+4. [/api/user/email/:email](http://10.0.160.147:8000/api/user/email/guillaume.fradet@softbankrobotics.com)
+    - GET: Returns the user with the associated email
+5. [/api/user/profile](http://10.0.160.147:8000/api/user/profile)
     - GET: Returns the information about the user logged in the machine
-5. [/api/user/logout](http://10.0.160.147:8000/api/user/logout)
+6. [/api/user/logout](http://10.0.160.147:8000/api/user/logout)
     - GET: Log out the user logged in the machine
 
 #### Upload

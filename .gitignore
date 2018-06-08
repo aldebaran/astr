@@ -3,6 +3,10 @@
 ### Archives ###
 archives
 
+### Python ###
+__pycache__/
+script.py
+
 ### DotSettings ###
 *.DotSettings
 

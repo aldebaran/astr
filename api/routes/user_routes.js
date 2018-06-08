@@ -19,6 +19,9 @@ module.exports = function(app) {
   .post(user.updateUser) // POST:  Update the user with the associated ID in function of the parameters given in the body request (only the variable write_permission and master can be modified)
   .delete(user.deleteUser); // DELETE: Delete the user with the associated ID
 
+  app.route('/api/user/email/:email')
+  .get(user.getUserByEmail); // GET: Returns the user with the associated email
+
   app.route('/api/user/profile')
   .get(user.getProfile); // GET: Returns the information about the user logged in the machine
 

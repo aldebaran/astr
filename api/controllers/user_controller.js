@@ -39,6 +39,19 @@ exports.getUser = (req, res) => {
   });
 };
 
+// GET: Returns the user with the associated email
+exports.getUserByEmail = (req, res) => {
+  const email = req.params.email;
+  User.findOne({email: email}, {password: 0, token: 0}, (err, data) => {
+    if (err) {
+      res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
+    }
+    else {
+      res.json(data);
+    }
+  });
+};
+
 // POST:  Update the user with the associated ID in function of the parameters given in the body request
 // (only the variable write_permission and master can be modified)
 exports.updateUser = (req, res) => {
