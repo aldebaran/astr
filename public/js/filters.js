@@ -31,7 +31,7 @@
             '<td>' + filter.testAuthor + '</td>' +
             '<td>' + filter.date + '</td>' +
             '<td class="config"></td>' +
-            '<td><a href="' + link + '">' + link + '</a></td>' +
+            '<td><a href="' + link + '">' + link + '</a> <button class="btn btn-outline-success" id="copyToClipboard" style="float: right;  ">Copy to clipboard</button></td>' +
             '<td><button type="button" class="btn btn-danger admin-user" id="deleteFilter"><i class="fa fa-trash" aria-hidden="true"></i></button></td>' +
           '</tr>');
           if(filter.configuration.length > 0) {
@@ -62,6 +62,16 @@
       });
     }
   });
+
+  $('table').on('click', '#copyToClipboard', function() {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(this).prev().attr('href')).select();
+    document.execCommand("copy");
+    $temp.remove();
+    $('#myModal').modal('show');
+  });
+
 
 
   // -------------------------- Functions -------------------------- //

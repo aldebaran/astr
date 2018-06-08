@@ -14,8 +14,4 @@ module.exports = function(app) {
   app.route('/api/filters/id/:id')
   .get(filter.getFilter)
   .delete(filter.deleteFilter);
-
-  app.route('/tests/:filterId')
-  .get(filter.searchWithFilter);
-
 };

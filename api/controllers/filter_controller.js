@@ -75,11 +75,3 @@ exports.deleteFilter = (req, res) => {
     }
   });
 }
-
-exports.searchWithFilter = (req, res) => {
-  const id = req.params.id;
-  res.redirect(url.format({
-    pathname: '/tests.html',
-    query: {"filter": id}
-  }));
-}
