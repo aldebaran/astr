@@ -348,14 +348,14 @@
   // Edit a test
   $('#tests-grid').on('click', '#editTest', function() {
     $.get('api/tests/id/' + $(this).parent().parent().parent().attr('id'), function(test) {
-      $('.modal-body').html('' +
+      $('#modalEdit .modal-body').html('' +
       '<div class="form-group">' +
         '<label for="inputDateEdit">Date</label>' +
         '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date + '" required>' +
       '</div>'
       );
       test.configuration.forEach(function(config) {
-        $('.modal-body').append('' +
+        $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
           '<label>' + config.name + '</label>' +
           '<select class="form-control selectConfigEdit ' + config.name + '">' +
@@ -378,7 +378,7 @@
           }
         });
       });
-      $('.modal-footer').html('' +
+      $('#modalEdit .modal-footer').html('' +
         '<input type="submit" value="Apply" class="btn btn-info" id="submit-edit">' +
         '<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>'
       );
@@ -676,10 +676,16 @@
       url: 'api/user/profile',
       async: false,
       success: function(user) {
-        res = user.email + ':' + user.token;
+        res = user.email + ':' + getCookie('session-token');
       }
     });
     return res;
+  }
+
+  function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
   }
 
   function getUrlParameter(sParam) {
@@ -720,11 +726,6 @@
       return false;
     }
     return true;
-  }
-
-  function getCookie(name) {
-    var parts = document.cookie.split(name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
   }
 
   function showModal(title, message) {

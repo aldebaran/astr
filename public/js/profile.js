@@ -30,8 +30,8 @@
       if (data.key) {
         const date = new Date(data.expires);
         showModal('Success', 'Your new token is <strong id="token">' + data.key + '</strong><br>' +
-        '<i>(expires the ' + date.toString().split(' ').slice(0, 4).join(' ') + ')</i><br>' +
-        '<button class="btn btn-outline-success" id="copyToClipboard">Copy to clipboard</button><br>' +
+        '<i>(expires ' + date.toString().split(' ').slice(0, 4).join(' ') + ')</i><br><br>' +
+        '<button class="btn btn-outline-success" id="copyToClipboard">Copy to clipboard</button><br><br>' +
         '<h2>Warning</h2><strong>You won\'t be able to see this token ever again because it has been encrypted in the database.<br></strong>Please store it in a file on your computer.');
       }
     });

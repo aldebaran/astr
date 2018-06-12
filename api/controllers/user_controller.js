@@ -206,6 +206,7 @@ exports.getProfile = (req, res, next) => {
             email: user.email,
             write_permission: user.write_permission,
             master: user.master,
+            tokens_number: user.tokens.length
           })
         }
       }

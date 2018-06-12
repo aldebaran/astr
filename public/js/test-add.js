@@ -183,10 +183,16 @@
       url: 'api/user/profile',
       async: false,
       success: function(user) {
-        res = user.email + ':' + user.token;
+        res = user.email + ':' + getCookie('session-token');
       }
     });
     return res;
+  }
+
+  function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
   }
 
   function showModal(title, message) {
