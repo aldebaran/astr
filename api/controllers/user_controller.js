@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var uuidv1 = require('uuid/v1');
 var md5 = require('md5');
 var User = require('../models/user_model');
+var request = require('request');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
 
 // GET: Returns the list of all the users
@@ -134,12 +135,25 @@ exports.AddUserAndLogin = (req, res, next) => {
         return next(error);
       } else {
         req.session.userId = user._id;
-        return res.redirect('/');
+        // create a new session-token
+        request.get({
+            url: 'http://localhost:8000/api/user/newToken/session',
+            json: true,
+            body: {
+              userId: user._id
+            }
+        }, (err2, res2, token) => {
+          if (err2) {
+            console.log(err2);
+          } else {
+            return res.cookie('session-token', token.key, {maxAge: 24*60*60*1000}).redirect('/'); // expires after 1 day
+          }
+        });
       }
     });
 
   } else if (req.body.logemail && req.body.logpassword) {
-    // connexion
+    // Login
     User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
       if (error || !user) {
         var err = new Error('Wrong email or password.');
@@ -147,7 +161,24 @@ exports.AddUserAndLogin = (req, res, next) => {
         return next(err);
       } else {
         req.session.userId = user._id;
-        return res.redirect('/');
+
+        // delete expired tokens
+        deleteExpiredTokens(user._id);
+
+        // create a new session-token
+        request.get({
+            url: 'http://localhost:8000/api/user/newToken/session',
+            json: true,
+            body: {
+              userId: user._id
+            }
+        }, (err2, res2, token) => {
+          if (err2) {
+            console.log(err2);
+          } else {
+            return res.cookie('session-token', token.key, {maxAge: 24*60*60*1000}).redirect('/'); // expires after 1 day
+          }
+        });
       }
     });
   } else {
@@ -173,7 +204,6 @@ exports.getProfile = (req, res, next) => {
             id: user['_id'],
             name: user.firstname + ' ' + user.lastname,
             email: user.email,
-            tokens: user.tokens,
             write_permission: user.write_permission,
             master: user.master,
           })
@@ -185,27 +215,53 @@ exports.getProfile = (req, res, next) => {
 // GET: Log out the user logged in the machine
 exports.logout = (req, res, next) => {
   if (req.session) {
+    // delele session-tokken in database
+    if (req.cookies['session-token']) {
+      User.findByIdAndUpdate(req.session.userId, { '$pull': { 'tokens': { 'key': md5(req.cookies['session-token']) }}})
+        .exec(function (error, user) {
+          if (error) {
+            console.log(error);
+          } else {
+            if (user === null) {
+              console.log('User not found');
+            }
+          }
+        });
+    }
+
     // delete session object
     req.session.destroy(function (err) {
       if (err) {
         return next(err);
       } else {
-        return res.redirect('/');
+        // delete session token in cookies
+        return res.clearCookie('session-token').redirect('/');
       }
     });
   }
 };
 
 exports.newToken = (req, res, next) => {
+  var userId = '';
+  if (req.session.userId) {
+    userId = req.session.userId;
+  } else {
+    userId = req.body.userId;
+  }
   var key = uuidv1();
   var expires = new Date();
-  expires.setDate(expires.getDate() + 7)
+  var type = req.params.type;
+  if (type === 'session') {
+    expires.setDate(expires.getDate() + 1) // one day
+  } else if (type === 'persistent') {
+    expires.setDate(expires.getDate() + 7) // 7 days
+  }
 
   var token = {
     key: md5(key),
     expires: expires
   };
-  User.findByIdAndUpdate(req.session.userId, { '$push': { 'tokens': token }})
+  User.findByIdAndUpdate(userId, { '$push': { 'tokens': token }})
     .exec(function (error, user) {
       if (error) {
         return next(error);
@@ -216,9 +272,23 @@ exports.newToken = (req, res, next) => {
           })
         } else {
           return res.json({
-            'token': key,
+            'key': key,
             'expires': expires
           })
+        }
+      }
+    });
+}
+
+function deleteExpiredTokens(userId) {
+  var today = new Date();
+  User.findByIdAndUpdate(userId, { '$pull': { 'tokens': { 'expires': { '$lte': today } }}})
+    .exec(function (error, user) {
+      if (error) {
+        console.log(error);
+      } else {
+        if (user === null) {
+          console.log('User not found');
         }
       }
     });

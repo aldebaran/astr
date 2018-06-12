@@ -50,7 +50,8 @@ Here are the main features:
 - NoSQL database: [MongoDB](https://www.mongodb.com/)
 - [Node.js](https://nodejs.org/en/)
     - [express](https://www.npmjs.com/package/express) *(to build web application and API)*
-    - [express-session](https://www.npmjs.com/package/express-session) *(to handle user session and cookies)*
+    - [express-session](https://www.npmjs.com/package/express-session) *(to handle user session)*
+    - [cookie-parser](https://www.npmjs.com/package/cookie-parser) *(to handle cookies)*
     - [mongodb](https://www.npmjs.com/package/mongodb) and [connect-mongo](https://www.npmjs.com/package/connect-mongo) *(to access the database)*
     - [mongoose](https://www.npmjs.com/package/mongoose) *(to easily make queries on the database)*
     - [bcrypt](https://www.npmjs.com/package/bcrypt) *(to encrypt passwords)*
@@ -255,6 +256,8 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
     - GET: Returns the information about the user logged in the machine
 6. [/api/user/logout](http://10.0.160.147:8000/api/user/logout)
     - GET: Log out the user logged in the machine
+7. [/api/user/newToken/:type](http://10.0.160.147:8000/api/user/newToken/persistent)
+    - GET: Generate a new token for the user, returns it and store it encrypted in the database (type can be 'session' or 'persistent')
 
 #### Upload
 
