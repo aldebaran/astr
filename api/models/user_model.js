@@ -38,10 +38,10 @@ var UserSchema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
-  token: {
-    type: String,
-    required: false,
-  }
+  tokens: [{
+    key: {type: String},
+    expires: {type: Date}
+  }]
 });
 
 // authenticate input against database

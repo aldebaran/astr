@@ -1,10 +1,12 @@
 var mongoose = require('mongoose');
+var uuidv1 = require('uuid/v1');
+var md5 = require('md5');
 var User = require('../models/user_model');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
 
 // GET: Returns the list of all the users
 exports.getAllUsers = (req, res) => {
-  User.find({},{password:0, token: 0}, (err, data) => {
+  User.find({},{password:0, tokens: 0}, (err, data) => {
     if (err) {
       res.send(err);
     }
@@ -16,7 +18,7 @@ exports.getAllUsers = (req, res) => {
 
 // GET: Returns the list of all the masters
 exports.getAllMasters = (req, res) => {
-  User.find({master: true},{password:0, token: 0}, (err, data) => {
+  User.find({master: true},{password:0, tokens: 0}, (err, data) => {
     if (err) {
       res.send(err);
     }
@@ -29,7 +31,7 @@ exports.getAllMasters = (req, res) => {
 // GET: Returns the user with the associated ID
 exports.getUser = (req, res) => {
   const id = req.params.id;
-  User.findById(id, {password: 0, token: 0}, (err, data) => {
+  User.findById(id, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
       res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
     }
@@ -42,7 +44,7 @@ exports.getUser = (req, res) => {
 // GET: Returns the user with the associated email
 exports.getUserByEmail = (req, res) => {
   const email = req.params.email;
-  User.findOne({email: email}, {password: 0, token: 0}, (err, data) => {
+  User.findOne({email: email}, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
       res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
     }
@@ -64,7 +66,7 @@ exports.updateUser = (req, res) => {
         body['write_permission'] = true;
       }
       if('write_permission' in body || 'master' in body){
-        User.findByIdAndUpdate(id, body, {select: {password:0, token: 0}},(err, data) => {
+        User.findByIdAndUpdate(id, body, {select: {password:0, tokens: 0}},(err, data) => {
           if (err) {
             res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
           }
@@ -87,7 +89,7 @@ exports.deleteUser = (req, res) => {
   .then((hasAuthorization) => {
     if (hasAuthorization) {
       const id = req.params.id;
-      User.findByIdAndRemove(id, {password: 0, token: 0}, (err, data) => {
+      User.findByIdAndRemove(id, {password: 0, tokens: 0}, (err, data) => {
         if (err) {
           res.send(err);
         }
@@ -124,6 +126,7 @@ exports.AddUserAndLogin = (req, res, next) => {
       password: req.body.password,
       write_permission: false,
       master: false,
+      tokens: []
     }
 
     User.create(userData, function (error, user) {
@@ -170,7 +173,7 @@ exports.getProfile = (req, res, next) => {
             id: user['_id'],
             name: user.firstname + ' ' + user.lastname,
             email: user.email,
-            token: user.token,
+            tokens: user.tokens,
             write_permission: user.write_permission,
             master: user.master,
           })
@@ -192,3 +195,31 @@ exports.logout = (req, res, next) => {
     });
   }
 };
+
+exports.newToken = (req, res, next) => {
+  var key = uuidv1();
+  var expires = new Date();
+  expires.setDate(expires.getDate() + 7)
+
+  var token = {
+    key: md5(key),
+    expires: expires
+  };
+  User.findByIdAndUpdate(req.session.userId, { '$push': { 'tokens': token }})
+    .exec(function (error, user) {
+      if (error) {
+        return next(error);
+      } else {
+        if (user === null) {
+          return res.json({
+            error: 'Not connected'
+          })
+        } else {
+          return res.json({
+            'token': key,
+            'expires': expires
+          })
+        }
+      }
+    });
+}

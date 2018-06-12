@@ -6,24 +6,36 @@
       $('#personnal-info').html('' +
         '<p><span class="key">Name: </span><span class="value">' + user.name + '</span></p>' +
         '<p><span class="key">Email: </span><span class="value">' + user.email + '</span></p>' +
-        '<p><span class="key">API Token: </span><span class="value" id="token">' + user.token + '</span> <button class="btn btn-outline-success" id="copyToClipboard">Copy to clipboard</button></p>' +
         '<p><span class="key">Write permission: </span><span class="value">' + user.write_permission + '</span></p>' +
-        '<p><span class="key">Master: </span><span class="value">' + user.master + '</span></p>'
+        '<p><span class="key">Master: </span><span class="value">' + user.master + '</span></p>' +
+        '<button class="btn btn-success" id="newToken">Generate a new token</button>'
       );
     });
   } else {
     $('#personnal-info').html('<p>You are not connected.</p>');
   }
 
-  $('#personnal-info').on('click', '#copyToClipboard', function() {
+  $('#myModal').on('click', '#copyToClipboard', function() {
     var $temp = $("<input>");
     $("body").append($temp);
     $temp.val($('#token').text()).select();
     document.execCommand("copy");
     $temp.remove();
-    $('#myModal').modal('show');
+    $('#modalCopyToClipboard').modal('show');
+
   });
 
+  $('#personnal-info').on('click', '#newToken', function() {
+    $.get('http://localhost:8000/api/user/newtoken', function(data) {
+      if (data.token) {
+        const date = new Date(data.expires);
+        showModal('Success', 'Your new token is <strong id="token">' + data.token + '</strong><br>' +
+        '<i>(expires the ' + date.toString().split(' ').slice(0, 4).join(' ') + ')</i><br>' +
+        '<button class="btn btn-outline-success" id="copyToClipboard">Copy to clipboard</button><br>' +
+        '<h2>Warning</h2><strong>You won\'t be able to see this token ever again because it has been encrypted in the database.<br></strong>Please store it in a file on your computer.');
+      }
+    });
+  });
 
   // -------------------------- Functions -------------------------- //
 
@@ -92,6 +104,12 @@
       }
     });
     return res;
+  }
+
+  function showModal(title, message) {
+    $('#myModal .modal-header').html('<h4 class="modal-title">' + title + '</h4>');
+    $('#myModal .modal-body').html('<p>' + message + '<p>');
+    $('#myModal').modal('show');
   }
 
 })(jQuery); // End of use strict

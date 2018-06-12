@@ -28,4 +28,7 @@ module.exports = function(app) {
   app.route('/api/user/logout')
   .get(user.logout); // GET: Log out the user logged in the machine
 
+  app.route('/api/user/newToken')
+  .get(user.newToken);
+
 };
