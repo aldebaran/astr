@@ -19,6 +19,11 @@
   - [6. Install the modules](#6-install-the-modules)
   - [7. Launch the application](#7-launch-the-application)
   - [8. Create the first Admin](#8-create-the-first-admin)
+- [Authentification](#authentification)
+  - [Request Header](#request-header)
+  - [Tokens](#tokens)
+    - [Description](#description)
+    - [Expiration](#expiration)
 - [API endpoints](#api-endpoints)
     - [Tests](#tests)
     - [Test subjects](#test-subjects)
@@ -190,34 +195,34 @@ Some requests to the API require authentification. A website user doesn't need t
 To verify that the user has the required authorizations, he has to authentificate in the request header with his email and one of his tokens, using [Basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
 
 ```
-Authorization: Basic email@softbankrobotics.com:token
+Authorization: Basic email:token
 ```
 
-If the user doesn't authenticate or give a token that doesn't exist, an 401 error (Unauthorized) will be return.
+If the user doesn't authentificate or give a wrong token, an 401 error (Unauthorized) will be return.
 
-An example with a DELETE request with curl:
+An example with curl:
 ```
 curl -X DELETE \
--u guillaume.fradet@softbankrobotics.com:d2147e39-8b6e-4c7b-b4ca-f93529dfbbd1 \
-http://10.0.160.147:8000/api/tests/id/5b19442c5dd23f39e6f5e6d8
+     -u guillaume.fradet@softbankrobotics.com:d2147e39-8b6e-4c7b-b4ca-f93529dfbbd1 \
+      http://10.0.160.147:8000/api/tests/id/5b19442c5dd23f39e6f5e6d8
 ```
 
-All of that is already handled by the [Python library](). The user only has to create an APIClient object with his email and one of his tokens.
+In the [Python library](https://gitlab.aldebaran.lan/hardware-test/master/blob/dev/lib/astr.py), everything is already handled by the APIClient class, so that the user only has to create an instance of this class with his email and one of his tokens.
 
 ### Tokens
 
 #### Description
 
-Tokens are generated with [uuid v4](https://en.wikipedia.org/wiki/Universally_unique_identifier): string of 32 random hexadecimal digits.
-They are stored encrypted in the database using [MD5](https://en.wikipedia.org/wiki/MD5) hash function. Even if MD5 is known to be weak and vulnerable, it is safe to use it on strings of random characters. Therefore, there is no need to overload the server CPU with heavier hashing functions.
+Tokens are [uuid](https://en.wikipedia.org/wiki/Universally_unique_identifier) (v4): string of 32 random hexadecimal digits.
+They are stored encrypted in the database using [MD5](https://en.wikipedia.org/wiki/MD5) hash function. MD5 is known to be vulnerable, but it is perfectly safe to use it on long strings of random characters. Therefore, there is no need to overload the server CPU with more complex hashing algorithms.
 
 Users have two types of tokens:
-- **session-tokens**: For website usage. A new token is created on login and dies on logout. It is stored in the client cookies and used for requests with authentication. It is completely transparent for the user.
-- **persistent-tokens**: For script usage. The user can create has many persistent-tokens as he wants on the [profile](http://10.0.160.147:8000/profile.html) page. He gives a name to each of them. The user must store these tokens in local files on his PC. In fact, they are stored encrypted on the database, so it is not possible to see them again after creation. They will expire after one year.
+- **session-tokens**: for website usage. A new token is created on login and is deleted on logout. It is stored in the client cookies and used for requests with authentication. This process is completely transparent for the user.
+- **persistent-tokens**: for script usage. The user can create as many persistent-tokens as he wants on the [profile](http://10.0.160.147:8000/profile.html) page. All of them have a name and an expiration date of one year. The user must store these tokens in local files on his PC. In fact, they are stored encrypted on the database, so it won't be possible to access their original form after creation.
 
 #### Expiration
 
-Tokens expiration dates are checked when the user logs in. If the date is passed, then the token is removed from the tokens list and can no longer be used.
+Tokens expiration dates are checked when the user logs in. If the date is passed, then the token is removed from the list and therefore can no longer be used.
 
 ## API endpoints
 
