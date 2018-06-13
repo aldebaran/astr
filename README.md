@@ -181,6 +181,43 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 
 - That's it! You are now a "Master", that means you can modify directly users permissions on the website
 
+## Authentification
+
+Some requests to the API require authentification. A website user doesn't need to worry about it because it is completely transparent and handled with cookies. But a script user will have to authentificate to do some actions.
+
+### Request Header
+
+To verify that the user has the required authorizations, he has to authentificate in the request header with his email and one of his tokens, using [Basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
+
+```
+Authorization: Basic email@softbankrobotics.com:token
+```
+
+If the user doesn't authenticate or give a token that doesn't exist, an 401 error (Unauthorized) will be return.
+
+An example with a DELETE request with curl:
+```
+curl -X DELETE \
+-u guillaume.fradet@softbankrobotics.com:d2147e39-8b6e-4c7b-b4ca-f93529dfbbd1 \
+http://10.0.160.147:8000/api/tests/id/5b19442c5dd23f39e6f5e6d8
+```
+
+All of that is already handled by the [Python library](). The user only has to create an APIClient object with his email and one of his tokens.
+
+### Tokens
+
+#### Description
+
+Tokens are generated with [uuid v4](https://en.wikipedia.org/wiki/Universally_unique_identifier): string of 32 random hexadecimal digits.
+They are stored encrypted in the database using [MD5](https://en.wikipedia.org/wiki/MD5) hash function. Even if MD5 is known to be weak and vulnerable, it is safe to use it on strings of random characters. Therefore, there is no need to overload the server CPU with heavier hashing functions.
+
+Users have two types of tokens:
+- **session-tokens**: For website usage. A new token is created on login and dies on logout. It is stored in the client cookies and used for requests with authentication. It is completely transparent for the user.
+- **persistent-tokens**: For script usage. The user can create has many persistent-tokens as he wants on the [profile](http://10.0.160.147:8000/profile.html) page. He gives a name to each of them. The user must store these tokens in local files on his PC. In fact, they are stored encrypted on the database, so it is not possible to see them again after creation. They will expire after one year.
+
+#### Expiration
+
+Tokens expiration dates are checked when the user logs in. If the date is passed, then the token is removed from the tokens list and can no longer be used.
 
 ## API endpoints
 
