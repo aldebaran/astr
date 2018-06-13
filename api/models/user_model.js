@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var md5 = require('md5');
-var uuidv1 = require('uuid/v1');
 var request = require('request');
 
 var UserSchema = new mongoose.Schema({
@@ -41,6 +40,7 @@ var UserSchema = new mongoose.Schema({
   },
   tokens: [{
     key: {type: String},
+    name: {type: String},
     expires: {type: Date}
   }]
 });

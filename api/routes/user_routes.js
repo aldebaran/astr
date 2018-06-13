@@ -28,7 +28,10 @@ module.exports = function(app) {
   app.route('/api/user/logout')
   .get(user.logout); // GET: Log out the user logged in the machine
 
-  app.route('/api/user/newToken/:type')
+  app.route('/api/user/newToken/:type/:name')
   .get(user.newToken); // GET: Generate a new token for the user, returns it and store it encrypted in the database (type can be 'session' or 'persistent')
+
+  app.route('/api/user/deleteToken/:id')
+  .delete(user.deleteToken); // DELETE: Delete the token with the associated ID
 
 };

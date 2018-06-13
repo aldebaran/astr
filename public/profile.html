@@ -79,16 +79,51 @@
         <li class="breadcrumb-item active">Personnal information</li>
       </ol>
 
+
       <div id="personnal-info">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>User</h5>
+          </div>
+          <div class="card-body">
+          </div>
+        </div>
+      </div>
+      <div id="tokens-list" style="display: none;">
+        <h5>Tokens</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Expiration Date</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
       </div>
 
-      <div class="modal fade" id="myModal">
+      <div class="modal fade" id="myModal" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
+              <h4 class="modal-title">New token</h4>
             </div>
-            <div class="modal-body text-center">
-            </div>
+            <form id="formNewToken">
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="inputTokenName">Token name</label>
+                  <input type="text" class="form-control" id="inputTokenName" aria-describedby="tokenNameHelp" placeholder="Enter token name" required>
+                  <small id="tokenNameHelp" class="form-text text-muted">Example: DELL laptop</small>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-info" type="submit">Submit</button>
+                <button class="btn btn-primary" data-dismiss="modal">Close</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

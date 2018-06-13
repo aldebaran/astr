@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var uuidv1 = require('uuid/v1');
+var uuidv4 = require('uuid/v4');
 var md5 = require('md5');
 var User = require('../models/user_model');
 var request = require('request');
@@ -167,7 +167,7 @@ exports.AddUserAndLogin = (req, res, next) => {
 
         // create a new session-token
         request.get({
-            url: 'http://localhost:8000/api/user/newToken/session',
+            url: 'http://localhost:8000/api/user/newToken/session/session',
             json: true,
             body: {
               userId: user._id
@@ -206,7 +206,7 @@ exports.getProfile = (req, res, next) => {
             email: user.email,
             write_permission: user.write_permission,
             master: user.master,
-            tokens_number: user.tokens.length
+            tokens: user.tokens
           })
         }
       }
@@ -249,17 +249,19 @@ exports.newToken = (req, res, next) => {
   } else {
     userId = req.body.userId;
   }
-  var key = uuidv1();
+  var key = uuidv4();
   var expires = new Date();
   var type = req.params.type;
   if (type === 'session') {
     expires.setDate(expires.getDate() + 1) // one day
+    req.params.name = 'session';
   } else if (type === 'persistent') {
-    expires.setDate(expires.getDate() + 7) // 7 days
+    expires.setDate(expires.getDate() + 365) // 365 days
   }
 
   var token = {
     key: md5(key),
+    name: req.params.name,
     expires: expires
   };
   User.findByIdAndUpdate(userId, { '$push': { 'tokens': token }})
@@ -279,6 +281,41 @@ exports.newToken = (req, res, next) => {
         }
       }
     });
+}
+
+exports.deleteToken = (req, res, next) => {
+  User.hasAuthorization(req, [])
+  .then((hasAuthorization) => {
+    if (hasAuthorization) {
+      var userId = '';
+      if (req.session.userId) {
+        userId = req.session.userId;
+      } else {
+        userId = req.body.userId;
+      }
+      const id = req.params.id;
+
+      User.findByIdAndUpdate(userId, { '$pull': { 'tokens': {'_id': mongoose.Types.ObjectId(id) }}})
+        .exec(function (error, user) {
+          if (error) {
+            return next(error);
+          } else {
+            if (user === null) {
+              return res.json({
+                error: 'Not connected'
+              })
+            } else {
+              return res.json({
+                name: 'Success',
+                message: 'Token successfully deleted'
+              });
+            }
+          }
+        });
+    } else {
+      res.status(401).send(error401);
+    }
+  });
 }
 
 function deleteExpiredTokens(userId) {

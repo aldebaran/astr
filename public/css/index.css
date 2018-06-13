@@ -687,7 +687,8 @@ span.text-muted {
   padding: 2em;
 }
 
-#personnal-info {
-  margin-left: 1em;
+#tokens-list {
   margin-top: 2em;
+  padding-right: 20px;
+  padding-left: 20px;
 }

@@ -256,8 +256,10 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
     - GET: Returns the information about the user logged in the machine
 6. [/api/user/logout](http://10.0.160.147:8000/api/user/logout)
     - GET: Log out the user logged in the machine
-7. [/api/user/newToken/:type](http://10.0.160.147:8000/api/user/newToken/persistent)
+7. [/api/user/newToken/:type/:name](http://10.0.160.147:8000/api/user/newToken/persistent/laptop)
     - GET: Generate a new token for the user, returns it and store it encrypted in the database (type can be 'session' or 'persistent')
+7. [/api/user/deleteToken/:id](http://10.0.160.147:8000/api/user/deleteToken/5b20db9770e56a3891e64cd1)
+    - DELETE: Delete the token with the associated ID
 
 #### Upload
 
