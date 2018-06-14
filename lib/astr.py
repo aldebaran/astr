@@ -9,7 +9,7 @@
 # Created with the base of TestRail API (Copyright Gurock Software GmbH)
 #
 
-import urllib.request, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import json, base64
 
 class APIClient:
@@ -64,8 +64,23 @@ class APIClient:
 	def send_delete(self, uri):
 		return self.__send_request('DELETE', uri, None)
 
+	#
+	# Send request
+	#
+	# Issues a GET, POST or DELETE request against the API and returns the result
+	# (as Python dict).
+	#
+	# Arguments:
+	#
+	# method              The HTTP method (GET, POST, or DELETE)
+	# data				  The body request for a POST request
+	# uri                 The API method to call including parameters
+	#                     (e.g. tests/id/5b1948a61962bd3fc11c4de8)
+	#
 	def __send_request(self, method, uri, data):
+		uri = urllib.parse.quote(uri)
 		url = self.__url + uri
+		print('calling ' + method + ' ' + url)
 		if (method == 'DELETE'):
 			request = urllib.request.Request(url, method = 'DELETE')
 		else:
@@ -97,6 +112,45 @@ class APIClient:
 			result = {}
 
 		return result
+	#
+	# Download a file
+	#
+	# Issues a GET request against the API and returns the result
+	# (as Python dict).
+	#
+	# Arguments:
+	#
+	# uri                 The API method to call including parameters
+	#                     (e.g. download/id/5b1948a61962bd3fc11c4de8)
+	# path				  The destination to download the file
+	#                     (e.g. /home/john.doe/Desktop)
+	#
+	def download(self, uri, path):
+		uri = urllib.parse.quote(uri)
+		url = self.__url + uri
+		print('downloading ' + ' ' + url)
+		request = urllib.request.Request(url)
+		auth = str(
+			base64.b64encode(
+				bytes('%s:%s' % (self.email, self.token), 'utf-8')
+			),
+			'ascii'
+		).strip()
+		request.add_header('Authorization', 'Basic %s' % auth)
+		request.add_header('Content-Type', 'application/json')
+
+		e = None
+		try:
+			response = urllib.request.urlopen(request).read()
+			urllib.request.urlretrieve(url, path)
+		except urllib.error.HTTPError as ex:
+			response = ex.read()
+			e = ex
+
+		if (e != None):
+			return {'error': e}
+		else:
+			return {'status': 'done', 'path': path}
 
 	#
 	# Returns the client username
@@ -155,6 +209,18 @@ class Test:
 		if 'date' in data:
 			bodyRequest['date'] = data['date']
 		return self.client.send_post('tests/id/' + id, bodyRequest)
+
+	def getAllConfigurations(self):
+		return self.client.send_get('tests/configurations')
+
+	def getConfigurationsOfTestSubject(self, testSubject):
+		return self.client.send_get('tests/configurations/' + testSubject)
+
+	def downloadTestById(self, id, path):
+		if not path.endswith('/'):
+			path += '/'
+		path += id + '.zip'
+		return self.client.download('download/id/' + id, path)
 
 class TestSubject:
 	def __init__(self, client):
