@@ -151,7 +151,7 @@ exports.updateTest = (req, res) => {
                 });
               });
             }
-            Test.findByIdAndUpdate(id, test, (err2, data) => {
+            Test.findByIdAndUpdate(id, test, {new: true}, (err2, data) => {
               if (err2) {
                 res.send(err2);
               }

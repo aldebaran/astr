@@ -146,7 +146,15 @@ class Test:
 		return self.client.send_delete('tests/id/' + id)
 
 	def updateTestById(self, id, data):
-		return self.client.send_post('tests/id/' + id, data)
+		bodyRequest = {}
+		if 'configuration' in data:
+			configuration = []
+			for key, value in data['configuration'].items():
+				configuration.append({'name': key, 'value': value})
+			bodyRequest['configuration'] = configuration
+		if 'date' in data:
+			bodyRequest['date'] = data['date']
+		return self.client.send_post('tests/id/' + id, bodyRequest)
 
 class TestSubject:
 	def __init__(self, client):
