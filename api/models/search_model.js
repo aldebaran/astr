@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var FilterSchema = new Schema({
+var SearchSchema = new Schema({
   user: {
     type: String,
     unique: false,
@@ -38,5 +38,5 @@ var FilterSchema = new Schema({
   },
 });
 
-var Filter = mongoose.model('Filter', FilterSchema);
-module.exports = Filter;
+var Search = mongoose.model('Search', SearchSchema);
+module.exports = Search;

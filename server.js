@@ -11,8 +11,8 @@ var Test = require('./api/models/test_model');
 Test = mongoose.model('Test');
 var TestSubject = require('./api/models/test_subject_model');
 TestSubject = mongoose.model('TestSubject');
-var Filter = require('./api/models/filter_model');
-Filter = mongoose.model('Filter');
+var Search = require('./api/models/search_model');
+Search = mongoose.model('Search');
 
 //Connection to mongoDB
 mongoose.Promise = global.Promise;
@@ -38,7 +38,7 @@ app.use(session({
 //importing route
 var testRoutes = require('./api/routes/test_routes');
 var testSubjectRoutes = require('./api/routes/test_subject_routes');
-var filterRoutes = require('./api/routes/filter_routes');
+var searchRoutes = require('./api/routes/search_routes');
 var userRoutes = require('./api/routes/user_routes');
 var uploadRoutes = require('./api/routes/upload_routes');
 var downloadRoutes = require('./api/routes/download_routes');
@@ -46,7 +46,7 @@ var downloadRoutes = require('./api/routes/download_routes');
 //register the route
 testRoutes(app);
 testSubjectRoutes(app);
-filterRoutes(app);
+searchRoutes(app);
 userRoutes(app);
 uploadRoutes(app);
 downloadRoutes(app);

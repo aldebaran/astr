@@ -228,3 +228,12 @@ class TestSubject:
 
 	def getAllTestSubjects(self):
 		return self.client.send_get('test-subjects')
+
+	def getTestSubjectById(self, id):
+		return self.client.send_get('test-subjects/id/' + id)
+
+	def getTestSubjectByName(self, name):
+		return self.client.send_get('test-subjects/name/' + name)
+
+	def getOptionsOfConfiguration(self, testSubject, configurationName):
+		return self.client.send_get('test-subjects/options/' + testSubject + '/' + configurationName)

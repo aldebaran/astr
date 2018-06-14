@@ -2,40 +2,40 @@
   "use strict";
 
   if(isConnected()) {
-    $.get('api/filters', function(filters) {
+    $.get('api/search', function(searches) {
       var count = 0;
       var user = getUserName();
-      filters.forEach(function(filter) {
-        if(filter.user === user) {
+      searches.forEach(function(search) {
+        if(search.user === user) {
           count++;
-          var link = window.location.origin + '/tests.html?filter=' + filter['_id'];
-          if(!filter.testSubjectName) {
-            filter.testSubjectName = '<span class="null">ALL</span>';
+          var link = window.location.origin + '/tests.html?search=' + search['_id'];
+          if(!search.testSubjectName) {
+            search.testSubjectName = '<span class="null">ALL</span>';
           } else {
-            filter.testSubjectName = '<span class="key">' + filter.testSubjectName + '</span>';
+            search.testSubjectName = '<span class="key">' + search.testSubjectName + '</span>';
           }
-          if(!filter.testAuthor) {
-            filter.testAuthor = '<span class="null">ALL</span>';
+          if(!search.testAuthor) {
+            search.testAuthor = '<span class="null">ALL</span>';
           } else {
-            filter.testAuthor = '<span class="key">' + filter.testAuthor + '</span>';
+            search.testAuthor = '<span class="key">' + search.testAuthor + '</span>';
           }
-          if(!filter.date) {
-            filter.date = '<span class="null">ALL</span>';
+          if(!search.date) {
+            search.date = '<span class="null">ALL</span>';
           } else {
-            filter.date = '<span class="key">' + filter.date + '</span>';
+            search.date = '<span class="key">' + search.date + '</span>';
           }
           $('tbody').append('' +
-          '<tr id="' + filter['_id'] + '">' +
+          '<tr id="' + search['_id'] + '">' +
             '<th scope="row">' + count + '</th>' +
-            '<td>' + filter.testSubjectName + '</td>' +
-            '<td>' + filter.testAuthor + '</td>' +
-            '<td>' + filter.date + '</td>' +
+            '<td>' + search.testSubjectName + '</td>' +
+            '<td>' + search.testAuthor + '</td>' +
+            '<td>' + search.date + '</td>' +
             '<td class="config"></td>' +
             '<td><a href="' + link + '">' + link + '</a> <button class="btn btn-outline-success" id="copyToClipboard" style="float: right;  ">Copy to clipboard</button></td>' +
-            '<td><button type="button" class="btn btn-danger admin-user" id="deleteFilter"><i class="fa fa-trash" aria-hidden="true"></i></button></td>' +
+            '<td><button type="button" class="btn btn-danger admin-user" id="deleteSearch"><i class="fa fa-trash" aria-hidden="true"></i></button></td>' +
           '</tr>');
-          if(filter.configuration.length > 0) {
-            filter.configuration.forEach(function(config) {
+          if(search.configuration.length > 0) {
+            search.configuration.forEach(function(config) {
               $('.config:last').append('<div><span class="key">' + config.name + ': </span><span class=value>' + config.value + '</span></div>')
             });
           } else {
@@ -46,15 +46,15 @@
     });
   } else {
     // user not logged
-    $('#myFilters').html('<p>Log in to see your saved searches.</p>');
+    $('#mySearches').html('<p>Log in to see your saved searches.</p>');
   }
 
-  $('table').on('click', '#deleteFilter', function() {
-    var r = confirm('Please confirm that you want to delete this filter.');
+  $('table').on('click', '#deleteSearch', function() {
+    var r = confirm('Please confirm that you want to delete this search.');
     if(r === true) {
       $.ajax({
         type: 'DELETE',
-        url: 'api/filters/id/' + $(this).closest('tr').attr('id'),
+        url: 'api/search/id/' + $(this).closest('tr').attr('id'),
         headers: {"Authorization": "Basic " + btoa(getAuthentification())},
         success: function() {
           location.reload();

@@ -20,5 +20,5 @@ module.exports = function(app) {
   .get(testSubject.getTestSubjectByName); // GET: Returns the test subject with the associated name
 
   app.route('/api/test-subjects/options/:subject/:configName')
-  .get(testSubject.getOptionsOfConfig); // GET: Returns the test subject with the associated ID
+  .get(testSubject.getOptionsOfConfig); // GET: Returns the options of a configuration
 };

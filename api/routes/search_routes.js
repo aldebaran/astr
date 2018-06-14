@@ -1,5 +1,5 @@
 module.exports = function(app) {
-  var filter = require('../controllers/filter_controller');
+  var search = require('../controllers/search_controller');
 
   app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -7,11 +7,11 @@ module.exports = function(app) {
     next();
   });
 
-  app.route('/api/filters')
-  .get(filter.getAllFilters)
-  .post(filter.addFilter);
+  app.route('/api/search')
+  .get(search.getAllSearch)
+  .post(search.addSearch);
 
-  app.route('/api/filters/id/:id')
-  .get(filter.getFilter)
-  .delete(filter.deleteFilter);
+  app.route('/api/search/id/:id')
+  .get(search.getSearch)
+  .delete(search.deleteSearch);
 };

@@ -27,7 +27,7 @@
 - [API endpoints](#api-endpoints)
     - [Tests](#tests)
     - [Test subjects](#test-subjects)
-    - [Filters](#filters)
+    - [Search](#search)
     - [Users](#users)
     - [Upload](#upload)
     - [Download](#download)
@@ -270,16 +270,16 @@ Tokens expiration dates are checked when the user logs in. If the date is passed
 3. [/api/test-subjects/name/:name](http://10.0.160.147:8000/api/test-subjects/name/CAMERA)
     - GET: Returns the test subject with the associated name
 4. [/api/test-subjects/options/:subject/:configName](http://10.0.160.147:8000/api/test-subjects/options/WIFI/robot_type)
-    - GET: Returns the test subject with the associated ID
+    - GET: Returns the options of a configuration
 
-#### Filters
+#### Search
 
-1. [/api/filters](http://10.0.160.147:8000/api/filters)
-    - GET: Returns the list of all filters
-    - POST:  Add a new filter in the DB in function of the parameters given in the body request **(user must use authentification)**
-2. [/api/filters/id/:id](http://10.0.160.147:8000/api/filters/id/5adf3559da64c157e53c6b17)
-    - GET: Returns the filter with the associated ID
-    - DELETE: Delete the filter with the associated ID **(user must be the owner of the filter)**
+1. [/api/search](http://10.0.160.147:8000/api/search)
+    - GET: Returns the list of all saved searches
+    - POST:  Add a new search in the DB in function of the parameters given in the body request **(user must use authentification)**
+2. [/api/search/id/:id](http://10.0.160.147:8000/api/search/id/5adf3559da64c157e53c6b17)
+    - GET: Returns the search with the associated ID
+    - DELETE: Delete the search with the associated ID **(user must be the owner of the search)**
 
 #### Users
 

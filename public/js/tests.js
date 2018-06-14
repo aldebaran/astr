@@ -439,25 +439,25 @@
     }
   });
 
-  //save filters
-  $('#buttonSaveFilters').click(function() {
-    var filter = {
+  //save the search
+  $('#buttonSaveSearch').click(function() {
+    var search = {
       user: getUserName(),
       configuration: []
     };
     if($('#inputDate').val() !== '') {
-      filter.date = $('#inputDate').val();
+      search.date = $('#inputDate').val();
     }
     if($('#selectSubject').val() !== 'default') {
-      filter.testSubjectName = $('#selectSubject').val();
+      search.testSubjectName = $('#selectSubject').val();
     }
     if($('#selectAuthor').val() !== 'default') {
-      filter.testAuthor = $('#selectAuthor').val();
+      search.testAuthor = $('#selectAuthor').val();
     }
 
     $('.config-group').each(function() {
       if($(this).find('.inputConfig').val() !== '') {
-        filter.configuration.push({
+        search.configuration.push({
           name: $(this).find('.labelConfig').html(),
           value: $(this).find('.inputConfig').val()
         });
@@ -465,21 +465,21 @@
     });
 
     if(isConnected()) {
-      if(filter.configuration.length > 0 || filter.date || filter.testAuthor || filter.testSubjectName) {
-        // check if filter already exist
-        $.get('api/filters', function(savedFilters) {
+      if(search.configuration.length > 0 || search.date || search.testAuthor || search.testSubjectName) {
+        // check if search already exist
+        $.get('api/search', function(savedSearches) {
           var alreadyExist = false;
-          savedFilters.forEach(function(savedFilter) {
-            if((savedFilter.user === filter.user) && (savedFilter.testSubjectName === filter.testSubjectName) && (savedFilter.testAuthor === filter.testAuthor) && (savedFilter.date === filter.date) && configurationsAreTheSame(savedFilter.configuration, filter.configuration)) {
+          savedSearches.forEach(function(savedSearch) {
+            if((savedSearch.user === search.user) && (savedSearch.testSubjectName === search.testSubjectName) && (savedSearch.testAuthor === search.testAuthor) && (savedSearch.date === search.date) && configurationsAreTheSame(savedSearch.configuration, search.configuration)) {
               alreadyExist = true;
             }
           });
           if (alreadyExist === false) {
             $.ajax({
               method: 'POST',
-              url: 'api/filters',
+              url: 'api/search',
               headers: {"Authorization": "Basic " + btoa(getAuthentification())},
-              data: filter,
+              data: search,
               success: function(data) {
                 console.log(data);
                 if(data.name === 'Success') {
@@ -501,21 +501,21 @@
     }
   });
 
-  //use filter if present in URL
-  if(getUrlParameter('filter')) {
-    $.get('api/filters/id/' + getUrlParameter('filter'), function(filter) {
-      if (filter['_id']) {
-        if (filter.date) {
-          $('#inputDate').val(filter.date);
+  //use the saved search if present in URL
+  if(getUrlParameter('search')) {
+    $.get('api/search/id/' + getUrlParameter('search'), function(search) {
+      if (search['_id']) {
+        if (search.date) {
+          $('#inputDate').val(search.date);
         }
-        if (filter.testSubjectName) {
-          $('#selectSubject').val(filter.testSubjectName);
+        if (search.testSubjectName) {
+          $('#selectSubject').val(search.testSubjectName);
         }
-        if (filter.testAuthor) {
-          $('#selectAuthor').val(filter.testAuthor);
+        if (search.testAuthor) {
+          $('#selectAuthor').val(search.testAuthor);
         }
-        if (filter.configuration.length > 0) {
-          filter.configuration.forEach(function(config) {
+        if (search.configuration.length > 0) {
+          search.configuration.forEach(function(config) {
             selectedConfig.push(config.name);
             $('#form-search').append('' +
             '<div class="form-group config-group">' +
@@ -544,8 +544,8 @@
           $('#form-search').trigger('change');
         }, 100);
       } else {
-        console.log('Error with the filter ID in params.');
-        console.log(filter);
+        console.log('Error with the search ID in params.');
+        console.log(search);
       }
     });
   }

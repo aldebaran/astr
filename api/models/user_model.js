@@ -111,10 +111,10 @@ UserSchema.statics.hasAuthorization = function (req, permissions) {
                       resolve(false);
                     }
                   });
-                } else if (permissions.includes('owner') && req.url.includes('filters')) {
-                  // require to have be owner of the filter
-                  request('http://' + req.get('host') + '/api/filters/id/' + req.params.id, {json: true}, (err2, res2, filter) => {
-                    if (filter.user === user.firstname + ' ' + user.lastname) {
+                } else if (permissions.includes('owner') && req.url.includes('search')) {
+                  // require to have be owner of the search
+                  request('http://' + req.get('host') + '/api/search/id/' + req.params.id, {json: true}, (err2, res2, search) => {
+                    if (search.user === user.firstname + ' ' + user.lastname) {
                       resolve(true);
                     } else {
                       resolve(false);
