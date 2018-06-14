@@ -123,24 +123,42 @@ exports.getTest = (req, res) => {
   });
 }
 
-// POST: Update the test with the associated ID in function of the parameters given in the body request
+// POST: Update the test with the associated ID in function of the parameters given in the body request (only the date and the configuration values can be updated)
 exports.updateTest = (req, res) => {
   User.hasAuthorization(req, ['master', 'owner'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
       var id = req.params.id;
       var body = req.body;
-      body.lastModification = Date.now();
-      Test.findByIdAndUpdate(id, body, (err, data) => {
+
+      Test.findById(id, (err, test) => {
         if (err) {
           res.send(err);
-        }
-        else {
-          if(data === null){
+        } else {
+          if (test === null) {
             res.json({name: 'Failed', message: 'This id doesn\'t exist'});
-          }
-          else {
-            res.json({name: 'Success', message: 'Test successfully modified', modified: body, before: data});
+          } else {
+            test.lastModification = Date.now();
+            if (body.date) {
+              test.date = body.date;
+            }
+            if (body.configuration && body.configuration.length > 0) {
+              body.configuration.forEach(function(newConfig) {
+                test.configuration.forEach(function(currentConfig) {
+                  if (newConfig.name === currentConfig.name) {
+                    currentConfig.value = newConfig.value;
+                  }
+                });
+              });
+            }
+            Test.findByIdAndUpdate(id, test, (err2, data) => {
+              if (err2) {
+                res.send(err2);
+              }
+              else {
+                res.json({name: 'Success', message: 'Test successfully modified', test: data});
+              }
+            });
           }
         }
       });

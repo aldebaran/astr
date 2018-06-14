@@ -19,7 +19,7 @@ module.exports = function(app) {
 
   app.route('/api/tests/id/:id')
   .get(test.getTest) // GET: Returns the test with the associated ID
-  .post(test.updateTest) // POST: Update the test with the associated ID in function of the parameters given in the body request
+  .post(test.updateTest) // POST: Update the test with the associated ID in function of the parameters given in the body request (only the date and the configuration values can be updated)
   .delete(test.deleteTest); // DELETE: Delete the test with the associated ID
 
   app.route('/api/tests/authors')

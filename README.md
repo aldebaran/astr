@@ -237,7 +237,7 @@ Tokens expiration dates are checked when the user logs in. If the date is passed
     - POST: Add a new test in the DB in function of the parameters given in the body request **(user must have write permission)**
 4. [/api/tests/id/:id](http://10.0.160.147:8000/api/tests/id/5adf356dda64c157e53c6b18)
     - GET: Returns the test with the associated ID
-    - POST: Update the test with the associated ID in function of the parameters given in the body request **(user must be master or owner of the test)**
+    - POST: Update the test with the associated ID in function of the parameters given in the body request (only the date and the configuration values can be updated) **(user must be master or owner of the test)**
     - DELETE: Delete the test with the associated ID **(user must be master or owner of the test)**
 5. [/api/tests/authors](http://10.0.160.147:8000/api/tests/authors)
     - GET: Returns the list of test authors (that wrote at least one test)
