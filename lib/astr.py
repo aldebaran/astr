@@ -10,7 +10,9 @@
 #
 
 import urllib.request, urllib.error, urllib.parse
+import requests
 import json, base64
+from typing import List, Dict
 
 class APIClient:
 	def __init__(self, base_url):
@@ -18,7 +20,7 @@ class APIClient:
 		self.token = ''
 		if not base_url.endswith('/'):
 			base_url += '/'
-		self.__url = base_url + 'api/'
+		self.url = base_url + 'api/'
 
 	#
 	# Send Get
@@ -79,7 +81,7 @@ class APIClient:
 	#
 	def __send_request(self, method, uri, data):
 		uri = urllib.parse.quote(uri)
-		url = self.__url + uri
+		url = self.url + uri
 		print('calling ' + method + ' ' + url)
 		if (method == 'DELETE'):
 			request = urllib.request.Request(url, method = 'DELETE')
@@ -127,7 +129,7 @@ class APIClient:
 	#
 	def download(self, uri, path):
 		uri = urllib.parse.quote(uri)
-		url = self.__url + uri
+		url = self.url + uri
 		print('downloading ' + ' ' + url)
 		request = urllib.request.Request(url)
 		auth = str(
@@ -167,8 +169,28 @@ class APIError(Exception):
 	pass
 
 class Test:
+	def __init__(self,
+				 client: APIClient,
+	 			 date: str,
+				 testSubject: str,
+				 configuration: Dict[str, str]):
+		self.date = date
+		self.type = testSubject
+		self.author = client.getUserName()
+		self.configuration = []
+		for key, value in configuration.items():
+			self.configuration.append({'name': key, 'value': value})
+
+	def __str__(self):
+		return str(self.__dict__)
+
+class Request:
 	def __init__(self, client):
 		self.client = client
+
+	#  --------------------------------  #
+	#       Requests to manage Tests     #
+	#  --------------------------------  #
 
 	def getAllTests(self):
 		return self.client.send_get('tests')
@@ -216,15 +238,31 @@ class Test:
 	def getConfigurationsOfTestSubject(self, testSubject):
 		return self.client.send_get('tests/configurations/' + testSubject)
 
+	def archiveTest(self, test: Test, paths: List[str]):
+		res = self.client.send_post('tests/add', test.__dict__)
+		if res['name'] == 'Failed':
+			return res
+		else:
+			testId = res['test']['_id']
+			url = self.client.url + 'upload'
+			files = []
+			filenames = []
+			for path in paths:
+				print()
+				files.append(('files', open(path, 'rb')))
+				filenames.append(path.split('/')[-1])
+			r = requests.post(url, data={'testId': testId, 'files': filenames}, files=files, auth=(self.client.email, self.client.token))
+			return r.text
+
 	def downloadTestById(self, id, path):
 		if not path.endswith('/'):
 			path += '/'
 		path += id + '.zip'
 		return self.client.download('download/id/' + id, path)
 
-class TestSubject:
-	def __init__(self, client):
-		self.client = client
+	#  --------------------------------  #
+	#  Requests to manage Test Subjects  #
+	#  --------------------------------  #
 
 	def getAllTestSubjects(self):
 		return self.client.send_get('test-subjects')

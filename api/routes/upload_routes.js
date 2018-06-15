@@ -88,7 +88,11 @@ module.exports = function(app) {
           }
         });
 
-        return res.status(200).send(req.file);
+        return res.status(200).send({
+          status: 'Success',
+          testId: req.body.testId,
+          uploadedFiles: req.body.files
+        });
 
       } else {
         res.status(401).send(error401);

@@ -63,7 +63,7 @@ exports.getTestSubjectByName = (req, res) => {
     }
     else {
       if(data === null){
-        res.json({name: 'Failed', message: 'This name doesn\'t exist'});
+        res.json({name: 'Failed', message: 'This test subject doesn\'t exist'});
       }
       else {
         res.json(data);

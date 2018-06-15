@@ -85,19 +85,50 @@ exports.addTest = (req, res) => {
       var newTest = new Test(req.body);
       newTest.created = Date.now();
       newTest.lastModification = Date.now();
+      // check if the test subject exists and if all configuration are given
       request.get({
         url: 'http://localhost:8000/api/test-subjects/name/' + newTest.type,
         json: true
       }, (err1, res1, testSubject) => {
-        newTest.testSubjectId = testSubject._id;
-        newTest.save((err, data) => {
-          if (err) {
-            res.send(err);
-          }
-          else {
-            res.json({name: 'Success', message: 'Test successfully added', test: data});
-          }
-        });
+        if (err1) {
+          res.send(err1);
+        } else if (testSubject.name === 'Failed') {
+          res.send(testSubject);
+        } else {
+          allSubjectConfigurationsAreInTest(newTest, testSubject)
+          .then((allSubjectConfigurationsAreInTest) => {
+            if (allSubjectConfigurationsAreInTest) {
+              newTest.testSubjectId = testSubject._id;
+              // delete configs that are not in the test subject
+              var subjectConfigNames = [];
+              testSubject.configuration.forEach(function(subjectConfig, idx) {
+                subjectConfigNames.push(subjectConfig.name);
+                if (idx === testSubject.configuration.length - 1) {
+                  newTest.configuration = newTest.configuration.filter(config => subjectConfigNames.includes(config.name))
+                }
+              });
+
+              // save the test in the database
+              newTest.save((err, data) => {
+                if (err) {
+                  res.send(err);
+                }
+                else {
+                  res.json({name: 'Success', message: 'Test successfully added', test: data});
+                }
+              });
+            } else {
+              missingConfigs(newTest, testSubject)
+              .then((missingConfigs) => {
+                res.send({
+                  name: 'Failed',
+                  message: 'The test must include all configurations of the test subject',
+                  missing_configurations: missingConfigs
+                });
+              });
+            }
+          });
+        }
       });
     } else {
       res.status(401).send(error401);
@@ -366,6 +397,44 @@ function checkIfTestsHaveAnArchive() {
               }
             });
             resolve();
+          }
+        });
+      }
+    });
+  });
+}
+
+function allSubjectConfigurationsAreInTest(newTest, testSubject) {
+  return new Promise((resolve) => {
+    var testConfigNames = [];
+    newTest.configuration.forEach(function(testConfig, idx) {
+      testConfigNames.push(testConfig.name);
+      if (idx === newTest.configuration.length - 1) {
+        testSubject.configuration.forEach(function(subjectConfig, index) {
+          if (!testConfigNames.includes(subjectConfig.name)) {
+            resolve(false);
+          } else if (index === testSubject.configuration.length - 1) {
+            resolve(true);
+          }
+        });
+      }
+    });
+  });
+}
+
+function missingConfigs(newTest, testSubject) {
+  return new Promise((resolve) => {
+    var res = [];
+    var testConfigNames = [];
+    newTest.configuration.forEach(function(testConfig, idx) {
+      testConfigNames.push(testConfig.name);
+      if (idx === newTest.configuration.length - 1) {
+        testSubject.configuration.forEach(function(subjectConfig, index) {
+          if (!testConfigNames.includes(subjectConfig.name)) {
+            res.push(subjectConfig.name)
+          }
+          if (index === testSubject.configuration.length - 1) {
+            resolve(res);
           }
         });
       }
