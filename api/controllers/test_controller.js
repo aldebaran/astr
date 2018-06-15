@@ -145,7 +145,7 @@ exports.getTest = (req, res) => {
     }
     else {
       if(data === null){
-        res.json({name: 'Failed', message: 'This id doesn\'t exist'});
+        res.status(404).json({name: 'Failed', message: 'This test id doesn\'t exist'});
       }
       else {
         res.json(data);
@@ -167,7 +167,7 @@ exports.updateTest = (req, res) => {
           res.send(err);
         } else {
           if (test === null) {
-            res.json({name: 'Failed', message: 'This id doesn\'t exist'});
+            res.status(404).json({name: 'Failed', message: 'This test id doesn\'t exist'});
           } else {
             test.lastModification = Date.now();
             if (body.date) {
@@ -216,7 +216,7 @@ exports.deleteTest = (req, res) => {
         }
         else {
           if(data === null){
-            res.json({name: 'Failed', message: 'This id doesn\'t exist'});
+            res.status(404).json({name: 'Failed', message: 'This test id doesn\'t exist'});
           }
           else {
             res.json({name: 'Success', message: 'Test successfully deleted', test: data});
@@ -295,7 +295,7 @@ exports.getOptionsOfConfig = (req, res) => {
       if(data.length === 1) {
         res.json(data[0].values);
       } else {
-        res.json({'error': 'Nothing found'});
+        res.status(404).json({'error': 'Nothing found'});
       }
     }
   });

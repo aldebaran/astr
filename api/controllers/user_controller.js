@@ -34,7 +34,7 @@ exports.getUser = (req, res) => {
   const id = req.params.id;
   User.findById(id, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
-      res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
+      res.status(404).json({name: 'Failed', message: 'This user id doesn\'t exist'});
     }
     else {
       res.json(data);
@@ -47,7 +47,7 @@ exports.getUserByEmail = (req, res) => {
   const email = req.params.email;
   User.findOne({email: email}, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
-      res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
+      res.status(404).json({name: 'Failed', message: 'This email doesn\'t exist'});
     }
     else {
       res.json(data);
@@ -66,17 +66,17 @@ exports.updateUser = (req, res) => {
       if(body.master == 'true') {
         body['write_permission'] = true;
       }
-      if('write_permission' in body || 'master' in body){
+      if('write_permission' in body || 'master' in body) {
         User.findByIdAndUpdate(id, body, {select: {password:0, tokens: 0}},(err, data) => {
           if (err) {
-            res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
+            res.status(404).json({name: 'Failed', message: 'This user id doesn\'t exist'});
           }
           else {
             res.json({name: 'Success', message: 'User successfully modified', modified: body, before: data});
           }
         });
       } else {
-        res.json({name: 'Failed', message: 'Only the variable "write_permission" and "master" can be modified'});
+        res.status(400).json({name: 'Failed', message: 'Only the variable "write_permission" and "master" can be modified'});
       }
     } else {
       res.status(401).send(error401);
@@ -95,7 +95,7 @@ exports.deleteUser = (req, res) => {
           res.send(err);
         }
         if(data === null) {
-          res.json({name: 'Failed', message: 'This user id doesn\'t exist'});
+          res.status(404).json({name: 'Failed', message: 'This user id doesn\'t exist'});
         }
         else {
           res.json({name: 'Success', message: 'User successfully deleted', user: data});
@@ -196,9 +196,9 @@ exports.getProfile = (req, res, next) => {
         return next(error);
       } else {
         if (user === null) {
-          return res.json({
+          return res.status(404).json({
             error: 'Not connected'
-          })
+          });
         } else {
           return res.json({
             id: user['_id'],
@@ -270,9 +270,9 @@ exports.newToken = (req, res, next) => {
         return next(error);
       } else {
         if (user === null) {
-          return res.json({
+          return res.status(404).json({
             error: 'Not connected'
-          })
+          });
         } else {
           return res.json({
             'key': key,
@@ -301,9 +301,9 @@ exports.deleteToken = (req, res, next) => {
             return next(error);
           } else {
             if (user === null) {
-              return res.json({
+              return res.status(404).json({
                 error: 'Not connected'
-              })
+              });
             } else {
               return res.json({
                 name: 'Success',

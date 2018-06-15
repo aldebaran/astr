@@ -45,7 +45,7 @@ exports.getTestSubject = (req, res) => {
     }
     else {
       if(data === null){
-        res.json({name: 'Failed', message: 'This id doesn\'t exist'});
+        res.status(404).json({name: 'Failed', message: 'This test subject id doesn\'t exist'});
       }
       else {
         res.json(data);
@@ -63,7 +63,7 @@ exports.getTestSubjectByName = (req, res) => {
     }
     else {
       if(data === null){
-        res.json({name: 'Failed', message: 'This test subject doesn\'t exist'});
+        res.status(404).json({name: 'Failed', message: 'This test subject name doesn\'t exist'});
       }
       else {
         res.json(data);
@@ -88,7 +88,7 @@ exports.updateTestSubject = (req, res) => {
         }
         else {
           if(data === null){
-            res.json({name: 'Failed', message: 'This id doesn\'t exist'});
+            res.status(404).json({name: 'Failed', message: 'This test subject id doesn\'t exist'});
           }
           else {
             res.json({name: 'Success', message: 'Test subject successfully modified', modified: body, before: data});
@@ -113,7 +113,7 @@ exports.deleteTestSubject = (req, res) => {
         }
         else {
           if(data === null){
-            res.json({name: 'Failed', message: 'This id doesn\'t exist'});
+            res.status(404).json({name: 'Failed', message: 'This test subject id doesn\'t exist'});
           }
           else {
             res.json({name: 'Success', message: 'Test subject successfully deleted', test: data});

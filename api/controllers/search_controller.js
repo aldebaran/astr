@@ -43,7 +43,7 @@ exports.getSearch = (req, res) => {
     }
     else {
       if(data === null){
-        res.json({name: 'Failed', message: 'This id doesn\'t exist'});
+        res.status(404).json({name: 'Failed', message: 'This id doesn\'t exist'});
       }
       else {
         res.json(data);
@@ -63,7 +63,7 @@ exports.deleteSearch = (req, res) => {
         }
         else {
           if(data === null){
-            res.json({name: 'Failed', message: 'This id doesn\'t exist'});
+            res.status(404).json({name: 'Failed', message: 'This id doesn\'t exist'});
           }
           else {
             res.json({name: 'Success', message: 'Search successfully deleted', search: data});
