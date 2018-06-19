@@ -5,7 +5,11 @@ archives
 
 ### Python ###
 __pycache__/
+*.pyc
+libastr.egg-info
+tests/
 script.py
+test-client.py
 
 ### DotSettings ###
 *.DotSettings
