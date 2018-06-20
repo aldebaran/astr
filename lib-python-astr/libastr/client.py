@@ -43,26 +43,27 @@ class AstrClient(object):
         if email is None or token is None:
             email, token = self._get_user_config()
 
-        if not base_url.endswith('/'):
-            base_url += '/'
+        if not base_url.endswith("/"):
+            base_url += "/"
 
         self.email = email
-        self.url = base_url + 'api/'
+        self.token = token
+        self.url = base_url + "api/"
         self.headers = {
-            'Authorization': 'Basic {authorization}'.format(authorization=str(
+            "Authorization": "Basic {authorization}".format(authorization=str(
                 base64.b64encode(
-                    bytes('%s:%s' % (self.email, token), 'utf-8')
+                    bytes("%s:%s" % (self.email, token), "utf-8")
                 ),
-                'ascii'
+                "ascii"
             ).strip()),
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         }
 
     # - [ Configuration ] ----------------------------------------------------
 
     def _get_base_url_config(self):
         try:
-            url = os.environ['LIBASTR_URL']
+            url = os.environ["LIBASTR_URL"]
         except KeyError:
             msg = "Cannot retrieve configuration, please set LIBASTR_URL env variable."
             self._logger.error(msg)
@@ -95,9 +96,9 @@ class AstrClient(object):
         try:
             response.raise_for_status()
         except HTTPError:
-            msg = 'The following request returned an error code {} -> {}'.format(response.status_code, url)
+            msg = "The following request returned an error code {} -> {}".format(response.status_code, url)
             self._logger.error(msg)
-            msg = 'ASTR error message -> {}'.format(response._content)
+            msg = "ASTR error message -> {}".format(response._content)
             self._logger.error(msg)
             if response.status_code == "401":
                 raise AuthenticationFailure(response)
@@ -129,21 +130,37 @@ class AstrClient(object):
         response = requests.get(url)
         try:
             response.raise_for_status()
-            path += '/' + url.split('/')[-1] + '.zip'
-            open(path, 'wb').write(response.content)
+            open(path, "wb").write(response.content)
         except HTTPError:
-            msg = 'The following request returned an error code {} -> {}'.format(response.status_code, url)
+            msg = "The following request returned an error code {} -> {}".format(response.status_code, url)
             self._logger.error(msg)
-            msg = 'ASTR error message -> {}'.format(response._content)
+            msg = "ASTR error message -> {}".format(response._content)
             self._logger.error(msg)
             if response.status_code == "401":
                 raise AuthenticationFailure(response)
             response.raise_for_status()
         return response.ok
 
-    def getUserName(self):
-        user = self.send_get('user/email/' + self.email)
+    def upload(self, uri, paths, archive_name):
+        uri = urllib.parse.quote(uri)
+        url = "{}{}".format(self.url, uri)
+        self._logger.debug("Upload: {}".format(url))
+        files = []
+        filenames = []
+        for path in paths:
+            files.append(("files", open(path, "rb")))
+            filenames.append(path.split("/")[-1])
+        r = requests.post(url,
+                          data={"testId": archive_name, "files": filenames},
+                          files=files,
+                          auth=(self.email, self.token))
+        return r.text
+
+    # - [ Utils ] ----------------------------------------------------------
+
+    def get_username(self):
+        user = self.send_get("user/email/" + self.email)
         if user is not None:
-            return user['firstname'] + ' ' + user['lastname']
+            return user["firstname"] + " " + user["lastname"]
         else:
-            return 'Error: user not found'
+            return "Error: user not found"

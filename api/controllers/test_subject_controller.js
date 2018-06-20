@@ -143,7 +143,7 @@ exports.getOptionsOfConfig = (req, res) => {
       if(data.length === 1) {
         res.json(data[0]['_id']);
       } else {
-        res.json({'error': 'Nothing found'});
+        res.status(404).json({'error': 'Nothing found'});
       }
     }
   });
