@@ -1,11 +1,17 @@
+"""
+libastr.client
+~~~~~~~~~~~~~~~~~~
+
+This module contains Astr client object.
+"""
+
 import urllib.parse
 import requests
-from requests import HTTPError
 import os
 import json
 import base64
 from .logger import get_logger
-
+from requests import HTTPError
 
 # - [ Exceptions ] -----------------------------------------------------------
 
@@ -35,6 +41,13 @@ class APIError(Exception):
 
 class AstrClient(object):
     def __init__(self, base_url=None, email=None, token=None):
+        """AstrClient object enable to send API requests to ASTR.
+
+        Args:
+            base_url: ASTR instance base url (e.g. http://10.0.160.147:8000)
+            email: a user email
+            token: a token of this user
+        """
         self._logger = get_logger(self.__class__.__name__)
 
         if base_url is None:
@@ -62,6 +75,11 @@ class AstrClient(object):
     # - [ Configuration ] ----------------------------------------------------
 
     def _get_base_url_config(self):
+        """Get ASTR base url from LIBASTR_URL environment variable.
+
+        Returns:
+            (str) base url
+        """
         try:
             url = os.environ["LIBASTR_URL"]
         except KeyError:
@@ -71,6 +89,11 @@ class AstrClient(object):
         return url
 
     def _get_user_config(self):
+        """Get user email and token from environment variable (LIBASTR_EMAIL, LIBASTR_TOKEN).
+
+        Returns:
+            (tuple) email and token
+        """
         try:
             email = os.environ["LIBASTR_EMAIL"]
             token = os.environ["LIBASTR_TOKEN"]
@@ -83,6 +106,16 @@ class AstrClient(object):
     # - [ Request ] ----------------------------------------------------------
 
     def _request(self, request_type, url, params=None):
+        """GET, POST and DELETE url requests to ASTR.
+
+        Args:
+            request_type (unicode): GET, POST or DELETE
+            url (unicode): request url
+            params (dict): request parameters (body request)
+
+        Returns:
+            (dict) Json response as a dictionary
+        """
         if request_type == "GET":
             response = requests.get(url, headers=self.headers, json=params)
         elif request_type == "DELETE":
@@ -106,24 +139,60 @@ class AstrClient(object):
         return response.json()
 
     def send_get(self, uri, params=None):
+        """GET request to ASTR
+
+        Args:
+            uri (unicode): get request uri (e.g. tests/id/5b29162874f5a43fc26f1f34)
+            params (dict): request parameters
+
+        Returns:
+            (dict) Json response as a dictionary
+        """
         uri = urllib.parse.quote(uri)
         url = "{}{}".format(self.url, uri)
         self._logger.debug("GET: {}, params: {}".format(url, params))
         return self._request("GET", url, params=params)
 
     def send_post(self, uri, params=None):
+        """POST request to ASTR.
+
+        Args:
+            uri (unicode): post request uri (e.g. tests/add)
+            params (dict): request parameters
+
+        Returns:
+            (dict) Json response as a dictionary
+        """
         uri = urllib.parse.quote(uri)
         url = "{}{}".format(self.url, uri)
         self._logger.debug("POST: {}, params: {}".format(url, params))
         return self._request("POST", url, params=params)
 
     def send_delete(self, uri, params=None):
+        """DELETE request to ASTR.
+
+        Args:
+            uri (unicode): post request uri (e.g. tests/id/5b29162874f5a43fc26f1f34)
+            params (dict): request parameters
+
+        Returns:
+            (dict) Json response as a dictionary
+        """
         uri = urllib.parse.quote(uri)
         url = "{}{}".format(self.url, uri)
         self._logger.debug("DELETE: {}, params: {}".format(url, params))
         return self._request("DELETE", url, params=params)
 
     def download(self, uri, path):
+        """Download file from ASTR.
+
+        Args:
+            uri (unicode): post request uri (e.g. download/id/5b29162874f5a43fc26f1f34)
+            path (str): location where the file will be saved
+
+        Returns:
+            (Boolean) True if success
+        """
         uri = urllib.parse.quote(uri)
         url = "{}{}".format(self.url, uri)
         self._logger.debug("Download: {}".format(url))
@@ -142,6 +211,16 @@ class AstrClient(object):
         return response.ok
 
     def upload(self, uri, paths, archive_name):
+        """Upload file(s) to ASTR.
+
+        Args:
+            uri (unicode): post request uri (e.g. upload)
+            paths (List[str]): list of files paths to upload
+            archive_name (str): name of the archive stored in ASTR
+
+        Returns:
+            (str) uploaded files
+        """
         uri = urllib.parse.quote(uri)
         url = "{}{}".format(self.url, uri)
         self._logger.debug("Upload: {}".format(url))
@@ -159,6 +238,11 @@ class AstrClient(object):
     # - [ Utils ] ----------------------------------------------------------
 
     def get_username(self):
+        """Get the client username.
+
+        Returns:
+            (str) client username
+        """
         user = self.send_get("user/email/" + self.email)
         if user is not None:
             return user["firstname"] + " " + user["lastname"]
