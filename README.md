@@ -212,7 +212,7 @@ curl -X DELETE \
       http://10.0.160.147:8000/api/tests/id/5b19442c5dd23f39e6f5e6d8
 ```
 
-In the [Python library](https://gitlab.aldebaran.lan/hardware-test/master/blob/dev/lib/astr.py), everything is already handled by the APIClient class, so that the user only has to create an instance of this class with his email and one of his tokens.
+In the [Python library](https://gitlab.aldebaran.lan/hardware-test/astr/tree/master/lib-python-astr), everything is already handled by [client.py](https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/lib-python-astr/libastr/client.py). The user only needs to configure his environment variables (cf. [configuration](#configuration))
 
 ### Tokens
 
@@ -250,12 +250,12 @@ mkvirtualenv libastr
 ```
 workon libastr
 ```
-  
+
 - Go to the lib-python-astr folder
 ```
 cd lib-python-astr
 ```
-  
+
 - Install the library (libastr should appear in `pip list`)
 ```
 pip install .
