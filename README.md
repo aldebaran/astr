@@ -237,26 +237,29 @@ Libastr is a **Python3** library designed to ease python scripting with A.S.T.R.
 
 ### Installation
 
-- Download [lib-python-astr](https://gitlab.aldebaran.lan/hardware-test/astr/tree/master/lib-python-astr) on your computer.
+1. Download [lib-python-astr](https://gitlab.aldebaran.lan/hardware-test/astr/tree/master/lib-python-astr) on your computer.
 
-- Pip install the library in a virtualenv.
+2. Pip install the library in a virtualenv:
 
-  - Create a virtual environment with [virtualenvwrapper](http://virtualenvwrapper.readthedocs.io/en/latest/)
-  ```
-  mkvirtualenv libastr
-  ```
-  - Switch to this environment (use `which python` to see the current environment)
-  ```
-  workon libastr
-  ```
-  - Go to the lib-python-astr folder
-  ```
-  cd lib-python-astr
-  ```
-  - Install the library (libastr should appear in `pip list`)
-  ```
-  pip install .
-  ```
+- Create a virtual environment with [virtualenvwrapper](http://virtualenvwrapper.readthedocs.io/en/latest/)
+```
+mkvirtualenv libastr
+```
+
+- Switch to this environment (use `which python` to see the current environment)
+```
+workon libastr
+```
+  
+- Go to the lib-python-astr folder
+```
+cd lib-python-astr
+```
+  
+- Install the library (libastr should appear in `pip list`)
+```
+pip install .
+```
 
 ### Configuration
 
@@ -271,7 +274,7 @@ export LIBASTR_TOKEN='b4b71bf6-a3dd-4975-85b8-03de05096fc0'
 
 ### Basic usage
 
-```
+```python
 from libastr import Astr
 
 astr = Astr()
