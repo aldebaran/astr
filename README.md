@@ -24,6 +24,11 @@
   - [Tokens](#tokens)
     - [Description](#description)
     - [Expiration](#expiration)
+- [Python library](#python-library)
+  - [Purpose](#purpose)
+  - [Installation](#installation-1)
+  - [Configuration](#configuration)
+  - [Basic usage](#basic-usage)
 - [API endpoints](#api-endpoints)
     - [Tests](#tests)
     - [Test subjects](#test-subjects)
@@ -223,6 +228,63 @@ Users have two types of tokens:
 #### Expiration
 
 Tokens expiration dates are checked when the user logs in. If the date is passed, then the token is removed from the list and therefore can no longer be used.
+
+## Python library
+
+### Purpose
+
+Libastr is a **Python3** library designed to ease python scripting with A.S.T.R. API. It includes multiple features like retrieving tests, downloading archives, upload new test archives, etc.
+
+### Installation
+
+- Download [lib-python-astr](https://gitlab.aldebaran.lan/hardware-test/astr/tree/master/lib-python-astr) on your computer.
+
+- Pip install the library in a virtualenv.
+
+  - Create a virtual environment with [virtualenvwrapper](http://virtualenvwrapper.readthedocs.io/en/latest/)
+  ```
+  mkvirtualenv libastr
+  ```
+  - Switch to this environment (use `which python` to see the current environment)
+  ```
+  workon libastr
+  ```
+  - Go to the lib-python-astr folder
+  ```
+  cd lib-python-astr
+  ```
+  - Install the library (libastr should appear in `pip list`)
+  ```
+  pip install .
+  ```
+
+### Configuration
+
+libastr needs the following environment variables.
+
+```
+export LIBASTR_URL='http://10.0.160.147:8000'
+export LIBASTR_EMAIL='john.doe@softbankrobotics.com'
+export LIBASTR_TOKEN='b4b71bf6-a3dd-4975-85b8-03de05096fc0'
+```
+
+
+### Basic usage
+
+```
+from libastr import Astr
+
+astr = Astr()
+
+# retrieve archived tests
+print(astr.test.get_by_args(author="John DOE",
+                            type="MOTOR CONTROL",
+                            configuration={"robot_type": "PEPPER"}))
+
+# download an archive
+astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
+                         path="/home/john.doe/Desktop")
+```
 
 ## API endpoints
 
