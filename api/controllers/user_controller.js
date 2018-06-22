@@ -176,7 +176,7 @@ exports.AddUserAndLogin = (req, res, next) => {
           if (err2) {
             console.log(err2);
           } else {
-            return res.cookie('session-token', token.key, {maxAge: 24*60*60*1000}).redirect('/'); // expires after 1 day
+            return res.cookie('session-token', token.key, {maxAge: 24*60*60*1000*30}).redirect('/'); // expires after 30 days
           }
         });
       }
@@ -253,7 +253,7 @@ exports.newToken = (req, res, next) => {
   var expires = new Date();
   var type = req.params.type;
   if (type === 'session') {
-    expires.setDate(expires.getDate() + 1) // one day
+    expires.setDate(expires.getDate() + 30) // 30 days
     req.params.name = 'session';
   } else if (type === 'persistent') {
     expires.setDate(expires.getDate() + 365) // 365 days
