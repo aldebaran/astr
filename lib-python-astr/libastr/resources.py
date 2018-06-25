@@ -6,9 +6,21 @@ This module contains ASTR resources objects.
 """
 
 import json
+import os.path
 from libastr.logger import get_logger
 from libastr.client import AstrClient
 
+
+# - [ Exceptions ] -----------------------------------------------------------
+
+class ArchiveError(Exception):
+    """ArchiveError Exception"""
+    pass
+
+
+class PathError(Exception):
+    """PathError Exception"""
+    pass
 
 # - [ Interface ] ------------------------------------------------------------
 
@@ -21,13 +33,13 @@ class Astr(object):
 
 # - [ Test ] ----------------------------------------------------------------
 
-class Test(Astr):
+class Test(object):
 
-    def __init__(self, date, type, configuration,
+    def __init__(self, date, test_subject, configuration,
                  author=None, id=None):
         self.id = id
         self.date = date
-        self.type = type
+        self.test_subject = test_subject
         self.author = author
         self.configuration = configuration
 
@@ -50,11 +62,11 @@ class Test(Astr):
         return Test(id=json["_id"],
                     author=json["author"],
                     date=json["date"],
-                    type=json["type"],
+                    test_subject=json["type"],
                     configuration=configuration)
 
     @staticmethod
-    def json_to_list_of_object(json):
+    def json_to_list_of_objects(json):
         """Converts the API array into a list of Tests.
 
         Args:
@@ -82,6 +94,7 @@ class Test(Astr):
         for key, value in test.configuration.items():
             configuration.append({"name": key, "value": value})
         test.configuration = configuration
+        test.type = test.test_subject
         return test
 
     @staticmethod
@@ -91,7 +104,7 @@ class Test(Astr):
         Returns:
             (List[Test]) list of all tests
         """
-        return Test.json_to_list_of_object(AstrClient().send_get("tests"))
+        return Test.json_to_list_of_objects(AstrClient().send_get("tests"))
 
     @staticmethod
     def get_by_id(id):
@@ -111,21 +124,23 @@ class Test(Astr):
 
         Args:
             query: mongoDB query (e.g. {type: "MOTOR CONTROL", author: "John DOE"})
+                   "test_subject" is called "type" in the API.
 
         Returns:
             (List[Test]) list of tests
         """
-        return Test.json_to_list_of_object(AstrClient().send_post("tests", params=query))
+        return Test.json_to_list_of_objects(AstrClient().send_post("tests", params=query))
 
     @staticmethod
-    def get_by_args(author=None, date=None, type=None, configuration=None):
+    def get_by_args(author=None, date=None, test_subject=None, configuration=None):
         """Get the tests that match with the arguments.
 
         Args:
-            author: test author (e.g. John DOE)
-            date: test date (e.g. 2018-05-30)
-            type: test subject (e.g. MOTOR CONTROL)
-            configuration: dictionary of configuration (e.g. {"robot_type": "NAO", "robot_version": "V6"})
+            author: (optional) test author (e.g. John DOE)
+            date: (optional) test date (e.g. 2018-05-30)
+            test_subject: (optional) type of test (e.g. MOTOR CONTROL)
+            configuration: (optional) dictionary of configuration
+                           (e.g. {"robot_type": "NAO", "robot_version": "V6"})
 
         Returns:
             (List[Test]) list of tests
@@ -135,8 +150,8 @@ class Test(Astr):
             query["author"] = author
         if date is not None:
             query["date"] = date
-        if type is not None:
-            query["type"] = type
+        if test_subject is not None:
+            query["type"] = test_subject
         if configuration is not None:
             config_list = []
             for key, value in configuration.items():
@@ -169,8 +184,9 @@ class Test(Astr):
 
         Args:
             id: test id (e.g. 5b29162874f5a43fc26f1f34)
-            date: test date (e.g. 2018-05-30)
-            configuration: dictionary of configuration (e.g. {"robot_type": "NAO", "robot_version": "V6"})
+            date: (optional) test date (e.g. 2018-05-30)
+            configuration: (optional) dictionary of configuration
+                           (e.g. {"robot_type": "NAO", "robot_version": "V6"})
                            only the values of existing configuration can be modified
 
         Returns:
@@ -208,13 +224,14 @@ class Test(Astr):
         return AstrClient().send_get("tests/configurations/" + test_subject)
 
     @staticmethod
-    def archive(date, type, configuration, paths):
+    def archive(date, test_subject, configuration, paths):
         """Archive a new test in ASTR.
 
         Args:
             date: test date (e.g. 2018-05-30)
-            type: test subject (e.g. MOTOR CONTROL)
-            configuration: dictionary of configuration (e.g. {"robot_type": "NAO", "robot_version": "V6"})
+            test_subject: type of test (e.g. MOTOR CONTROL)
+            configuration: dictionary of configuration
+                           (e.g. {"robot_type": "NAO", "robot_version": "V6"})
                            all the configurations of the test subject must be given
             paths: list of all the files to upload
                    (e.g. ["/home/john.doe/Desktop/measurement.csv",
@@ -223,15 +240,24 @@ class Test(Astr):
         Returns:
             (str) confirmation
         """
-        test = Test(date=date, type=type, configuration=configuration)
+        if len(paths) == 0:
+            raise PathError("Empty list of paths.")
+        elif len(paths) > 10:
+            raise PathError("Too many files to upload ({}). The limit is 10.".format(len(paths)))
+        for path in paths:
+            if not os.path.isfile(path):
+                raise PathError("{} is not a file".format(path))
+        test = Test(date=date, test_subject=test_subject,
+                    configuration=configuration)
         test = Test.object_to_json(test)
         test.author = AstrClient().get_username()
         res = AstrClient().send_post("tests/add", params=test.__dict__)
         if res["name"] == "Failed":
-            return res
+            raise ArchiveError(res)
         else:
             test_id = res['test']['_id']
-            return AstrClient().upload(uri="upload", paths=paths, archive_name=test_id)
+            return AstrClient().upload(uri="upload", paths=paths,
+                                       archive_name=test_id)
 
     @staticmethod
     def download_by_id(id, path):
@@ -245,6 +271,8 @@ class Test(Astr):
         Returns:
             (str) confirmation
         """
+        if not os.path.isdir(path):
+            raise PathError("{} is not a valid directory".format(path))
         if not path.endswith('/'):
             path += '/'
         path += id + '.zip'
@@ -255,7 +283,7 @@ class Test(Astr):
             return "Error while downloading {}".format(id)
 
 
-class TestSubject(Astr):
+class TestSubject(object):
 
     def __init__(self, id, name,
                  author, configuration):
@@ -286,7 +314,7 @@ class TestSubject(Astr):
                            configuration=configuration)
 
     @staticmethod
-    def json_to_list_of_object(json):
+    def json_to_list_of_objects(json):
         """Converts the API array into a list of TestSubjects.
 
         Args:
@@ -307,7 +335,7 @@ class TestSubject(Astr):
         Returns:
             (List[TestSubject]) list of all test subjects
         """
-        return TestSubject.json_to_list_of_object(AstrClient().send_get("test-subjects"))
+        return TestSubject.json_to_list_of_objects(AstrClient().send_get("test-subjects"))
 
     @staticmethod
     def get_by_id(id):

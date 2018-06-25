@@ -3,6 +3,7 @@ var fs = require('fs');
 var archiver = require('archiver');
 var User = require('../models/user_model');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
+var maxFiles = 10;
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -16,12 +17,19 @@ var storage = multer.diskStorage({
 var upload = multer({storage: storage});
 
 module.exports = function(app) {
-  app.post('/api/upload', upload.array('files', 10), function(req, res, next) {
+  app.post('/api/upload', upload.array('files', maxFiles), function(req, res, next) {
     User.hasAuthorization(req, ['write_permission'])
     .then((hasAuthorization) => {
       if (hasAuthorization) {
         console.log('*** Upload ***');
         console.log(req.body);
+        if (!req.body.files) {
+          console.log('Failed, no file received');
+          return res.status(400).send({
+            status: 'Failed',
+            message: 'No file received'
+          });
+        }
 
         // create a file to stream archive data to.
         var output = fs.createWriteStream('archives/' + req.body.testId + '.zip');
@@ -59,13 +67,13 @@ module.exports = function(app) {
           throw err;
         });
 
-        if(typeof req.body.files === 'string'){
+        if(typeof req.body.files === 'string') {
           // only one file uploaded
           var file = 'archives/' + req.body.files;
           archive.append(fs.createReadStream(file), {name: req.body.files});
         } else {
           // multiple files uploaded
-          req.body.files.forEach(function(filename){
+          req.body.files.forEach(function(filename) {
             var file = 'archives/' + filename;
             archive.append(fs.createReadStream(file), {name: filename});
           })
@@ -73,15 +81,15 @@ module.exports = function(app) {
 
         // zip the files
         archive.finalize()
-        .then(function(){
+        .then(function() {
           // then, delete the raw files (not in the zip)
-          if(typeof req.body.files === 'string'){
+          if(typeof req.body.files === 'string') {
             // only one file uploaded
             var file = 'archives/' + req.body.files;
             fs.unlink(file, (err) => {});
           } else {
             // multiple files uploaded
-            req.body.files.forEach(function(filename){
+            req.body.files.forEach(function(filename) {
               var file = 'archives/' + filename;
               fs.unlink(file, (err) => {});
             });

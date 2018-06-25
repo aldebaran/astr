@@ -13,6 +13,7 @@ import base64
 from .logger import get_logger
 from requests import HTTPError
 
+
 # - [ Exceptions ] -----------------------------------------------------------
 
 class ConfigurationError(Exception):
@@ -44,9 +45,10 @@ class AstrClient(object):
         """AstrClient object enable to send API requests to ASTR.
 
         Args:
-            base_url: ASTR instance base url (e.g. http://10.0.160.147:8000)
-            email: a user email
-            token: a token of this user
+            Arguments are optional. User should use environment variables.
+            base_url: (optional) ASTR instance base url (e.g. http://10.0.160.147:8000)
+            email: (optional) a user email
+            token: (optional) a token of this user
         """
         self._logger = get_logger(self.__class__.__name__)
 
@@ -199,7 +201,6 @@ class AstrClient(object):
         response = requests.get(url)
         try:
             response.raise_for_status()
-            open(path, "wb").write(response.content)
         except HTTPError:
             msg = "The following request returned an error code {} -> {}".format(response.status_code, url)
             self._logger.error(msg)
@@ -208,6 +209,8 @@ class AstrClient(object):
             if response.status_code == "401":
                 raise AuthenticationFailure(response)
             response.raise_for_status()
+        with open(path, "wb") as f:
+            f.write(response.content)
         return response.ok
 
     def upload(self, uri, paths, archive_name):
@@ -226,13 +229,27 @@ class AstrClient(object):
         self._logger.debug("Upload: {}".format(url))
         files = []
         filenames = []
-        for path in paths:
-            files.append(("files", open(path, "rb")))
-            filenames.append(path.split("/")[-1])
-        r = requests.post(url,
-                          data={"testId": archive_name, "files": filenames},
-                          files=files,
-                          auth=(self.email, self.token))
+        try:
+            for path in paths:
+                files.append(("files", open(path, "rb")))
+                filenames.append(path.split("/")[-1])
+            r = requests.post(url,
+                              data={"testId": archive_name, "files": filenames},
+                              files=files,
+                              auth=(self.email, self.token))
+            try:
+                r.raise_for_status()
+            except HTTPError:
+                msg = "The following request returned an error code {} -> {}".format(r.status_code, url)
+                self._logger.error(msg)
+                msg = "ASTR error message -> {}".format(r._content)
+                self._logger.error(msg)
+                if r.status_code == "401":
+                    raise AuthenticationFailure(response)
+                r.raise_for_status()
+        finally:
+            for f in files:
+                f[1].close()
         return r.text
 
     # - [ Utils ] ----------------------------------------------------------
