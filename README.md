@@ -208,7 +208,7 @@ If the user doesn't authentificate or give a wrong token, an 401 error (Unauthor
 An example with curl:
 ```
 curl -X DELETE \
-     -u guillaume.fradet@softbankrobotics.com:d2147e39-8b6e-4c7b-b4ca-f93529dfbbd1 \
+     -u john.doe@softbankrobotics.com:d2147e39-8b6e-4c7b-b4ca-f93529dfbbd1 \
       http://10.0.160.147:8000/api/tests/id/5b19442c5dd23f39e6f5e6d8
 ```
 
@@ -357,7 +357,7 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
     - GET: Returns the user with the associated ID
     - POST:  Update the user with the associated ID in function of the parameters given in the body request (only the variable *write_permission* and *master* can be modified) **(user must be master)**
     - DELETE: Delete the user with the associated ID **(user must be master)**
-4. [/api/user/email/:email](http://10.0.160.147:8000/api/user/email/guillaume.fradet@softbankrobotics.com)
+4. [/api/user/email/:email](http://10.0.160.147:8000/api/user/email/john.doe@softbankrobotics.com)
     - GET: Returns the user with the associated email
 5. [/api/user/profile](http://10.0.160.147:8000/api/user/profile)
     - GET: Returns the information about the user logged in the machine
