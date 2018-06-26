@@ -84,10 +84,8 @@ On the server:
 
 ### 1. Install MongoDB
 
-:warning: The installation process will differ depending of the Linux distribution. Follow the tutorial corresponding to yours:
-- [Ubuntu](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
-- [Debian 7 or 8](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
-- [Debian 9](https://www.globo.tech/learning-center/install-mongodb-debian-9/)
+- [Ubuntu 14.04 / 16.04](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
+- [Debian 7 / 8 / 9](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
 
 ### 2. Launch MongoDB
 
@@ -97,11 +95,6 @@ On the server:
 sudo service mongod start
 ```
 
-- Or (on Debian 9)
-
-```
-systemctl start mongodb
-```
 
 ### 3. Create the database
 

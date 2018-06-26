@@ -196,7 +196,7 @@ exports.getProfile = (req, res, next) => {
         return next(error);
       } else {
         if (user === null) {
-          return res.status(404).json({
+          return res.json({
             error: 'Not connected'
           });
         } else {

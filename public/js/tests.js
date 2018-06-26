@@ -25,7 +25,10 @@
   $('#form-search').change(function() {
     //create the body request
     var bodyRequest = {
-      '$and': []
+      '$and': [],
+      '_id': {
+        '$in': []
+      }
     };
     //add the author to the body request
     if($('#selectAuthor').val() !== 'default') {
@@ -38,6 +41,18 @@
     //add the date to the body request
     if($('#inputDate').val() !== '') {
       bodyRequest.date = $('#inputDate').val();
+    }
+    //add the IDs to the body request
+    if($('#inputIds').val().trim() !== '') {
+      var ids = $('#inputIds').val().split(',').map(id => id.trim());
+      var checkForHexRegExp = /^[a-f\d]{24}$/i
+      ids.forEach(function(id) {
+        if (checkForHexRegExp.test(id)) {
+          bodyRequest._id['$in'].push(id);
+        } else if (id !== '') {
+          showModal('Warning', id + ' is not a valid ID');
+        }
+      });
     }
     //add the configuration to the body request
     $('.inputConfig').each(function() {
@@ -52,6 +67,13 @@
         });
       }
     });
+
+    if (bodyRequest['$and'].length === 0) {
+      delete bodyRequest['$and'];
+    }
+    if (bodyRequest._id['$in'].length === 0) {
+      delete bodyRequest._id;
+    }
 
     //execute the search each time the box search content change
     search(bodyRequest, 1);
@@ -292,7 +314,10 @@
         $('#pagination').on('click', '.page-link', function() {
           //get the filters
           var bodyRequest = {
-            '$and': []
+            '$and': [],
+            '_id': {
+              '$in': []
+            }
           };
           if($('#selectAuthor').val() !== 'default') {
             bodyRequest.author = $('#selectAuthor').val();
@@ -302,6 +327,17 @@
           }
           if($('#inputDate').val() !== '') {
             bodyRequest.date = $('#inputDate').val();
+          }
+          if($('#inputIds').val().trim() !== '') {
+            var ids = $('#inputIds').val().split(',').map(id => id.trim());
+            var checkForHexRegExp = /^[a-f\d]{24}$/i
+            ids.forEach(function(id) {
+              if (checkForHexRegExp.test(id)) {
+                bodyRequest._id['$in'].push(id);
+              } else if (id !== '') {
+                showModal('Warning', id + ' is not a valid ID');
+              }
+            });
           }
           $('.inputConfig').each(function() {
             if($(this).val() !== '') {
@@ -317,6 +353,9 @@
           });
           if (bodyRequest['$and'].length === 0) {
             delete bodyRequest['$and'];
+          }
+          if (bodyRequest._id['$in'].length === 0) {
+            delete bodyRequest._id;
           }
 
           //redirect to the page

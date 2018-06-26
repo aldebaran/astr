@@ -3,7 +3,7 @@ var fs = require('fs');
 var archiver = require('archiver');
 var User = require('../models/user_model');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
-var maxFiles = 10;
+var maxFileNumber = 50;
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -17,7 +17,7 @@ var storage = multer.diskStorage({
 var upload = multer({storage: storage});
 
 module.exports = function(app) {
-  app.post('/api/upload', upload.array('files', maxFiles), function(req, res, next) {
+  app.post('/api/upload', upload.array('files', maxFileNumber), function(req, res, next) {
     User.hasAuthorization(req, ['write_permission'])
     .then((hasAuthorization) => {
       if (hasAuthorization) {

@@ -91,6 +91,10 @@
     '</li>');
   }
 
+  // Logout if no session-token in cookies
+  if(isConnected() && !getCookie('session-token')) {
+    window.location.href = 'api/user/logout'
+  }
 
   // -------------------------- Functions -------------------------- //
 
@@ -159,6 +163,12 @@
       }
     });
     return res;
+  }
+
+  function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
   }
 
 })(jQuery); // End of use strict

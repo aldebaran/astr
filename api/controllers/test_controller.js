@@ -372,26 +372,38 @@ function checkIfTestsHaveAnArchive() {
         request.get({
           url: 'http://localhost:8000/api/download/files',
           json: true,
-        }, (err, res2, archives) => {
-          if (err) {
-            console.log('Error:', err);
-            reject(err);
+        }, (err2, res, archives) => {
+          if (err2) {
+            console.log('Error:', err2);
+            reject(err2);
           } else {
             data.forEach(function(test, idx, array) {
               if ('archive' in test) {
                 if (test.archive !== archives.includes(test._id.toString())) {
-                  Test.findByIdAndUpdate(test._id, {archive: archives.includes(test._id.toString())}, (err, data) => {
-                    if (err) {
-                      console.log(err);
-                      reject(err);
+                  Test.findByIdAndUpdate(test._id, {archive: archives.includes(test._id.toString())}, (err3, data) => {
+                    if (err3) {
+                      console.log(err3);
+                      reject(err3);
                     }
                   });
                 }
+                if (test.archive === false) {
+                  // delete the test if not created today
+                  var today = new Date().setHours(0,0,0,0);
+                  if (today !== test.created.setHours(0,0,0,0)) {
+                    Test.findByIdAndRemove(test._id, (err3, data) => {
+                      if (err3) {
+                        console.log(err3);
+                        reject(err3);
+                      }
+                    });
+                  }
+                }
               } else {
-                Test.findByIdAndUpdate(test._id, {archive: archives.includes(test._id.toString())}, (err, data) => {
-                  if (err) {
-                    console.log(err);
-                    reject(err);
+                Test.findByIdAndUpdate(test._id, {archive: archives.includes(test._id.toString())}, (err3, data) => {
+                  if (err3) {
+                    console.log(err3);
+                    reject(err3);
                   }
                 });
               }
