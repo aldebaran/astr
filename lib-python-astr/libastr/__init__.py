@@ -4,6 +4,6 @@ if sys.version_info[0] < 3:
 else:
     try:
         from .resources import Astr
-    except ImportError:
-        print("Can't import the library")
-        print("You are running Python {}, try 3.5".format(sys.version_info[:2]))
+    except ImportError as e:
+        errmsg = "Can't import the library"
+        raise Exception(errmsg).with_traceback(e.__traceback__)

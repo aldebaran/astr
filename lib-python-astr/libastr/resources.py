@@ -10,6 +10,8 @@ import os.path
 from libastr.logger import get_logger
 from libastr.client import AstrClient
 
+MAX_FILE_NUMBER = 50
+
 
 # - [ Exceptions ] -----------------------------------------------------------
 
@@ -21,6 +23,7 @@ class ArchiveError(Exception):
 class PathError(Exception):
     """PathError Exception"""
     pass
+
 
 # - [ Interface ] ------------------------------------------------------------
 
@@ -242,8 +245,9 @@ class Test(object):
         """
         if len(paths) == 0:
             raise PathError("Empty list of paths.")
-        elif len(paths) > 10:
-            raise PathError("Too many files to upload ({}). The limit is 10.".format(len(paths)))
+        elif len(paths) > MAX_FILE_NUMBER:
+            raise PathError("Too many files to upload ({}). The limit is {}."
+                            .format(len(paths), MAX_FILE_NUMBER))
         for path in paths:
             if not os.path.isfile(path):
                 raise PathError("{} is not a file".format(path))
