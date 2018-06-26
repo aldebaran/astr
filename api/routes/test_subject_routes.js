@@ -8,34 +8,17 @@ module.exports = function(app) {
   });
 
   app.route('/api/test-subjects')
-    .get(testSubject.getAllTestSubjects)
-    .post(testSubject.addTestSubject);
+  .get(testSubject.getAllTestSubjects) // GET: Returns the list of all test subjects
+  .post(testSubject.addTestSubject); // POST:  Add a new test subject in the DB in function of the parameters given in the body request
 
-  app.get('/api/test-subjects/id/:id', (req, res) => {
-    const id = req.params.id;
-    testSubject.getTestSubject(id, res);
-  });
+  app.route('/api/test-subjects/id/:id')
+  .get(testSubject.getTestSubject) // GET: Returns the test subject with the associated ID
+  .post(testSubject.updateTestSubject) // POST:  Update the test subject with the associated ID in function of the parameters given in the body request
+  .delete(testSubject.deleteTestSubject); // DELETE: Delete the test subject with the associated ID
 
-  app.get('/api/test-subjects/name/:name', (req, res) => {
-    const name = req.params.name;
-    testSubject.getTestSubjectByName(name, res);
-  });
+  app.route('/api/test-subjects/name/:name')
+  .get(testSubject.getTestSubjectByName); // GET: Returns the test subject with the associated name
 
-  app.post('/api/test-subjects/id/:id', (req, res) => {
-    const id = req.params.id;
-    const body = req.body;
-    testSubject.updateTestSubject(id, body, res);
-  });
-
-  app.delete('/api/test-subjects/id/:id', (req, res) => {
-    const id = req.params.id;
-    testSubject.deleteTestSubject(id, res);
-  });
-
-  app.get('/api/test-subjects/options/:subject/:configName', (req, res) => {
-    const subjectName = req.params.subject;
-    const configName = req.params.configName;
-    testSubject.getOptionsOfConfig(subjectName, configName, res);
-  });
-
+  app.route('/api/test-subjects/options/:subject/:configName')
+  .get(testSubject.getOptionsOfConfig); // GET: Returns the options of a configuration
 };

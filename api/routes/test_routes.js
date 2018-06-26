@@ -8,63 +8,45 @@ module.exports = function(app) {
   });
 
   app.route('/api/tests')
-    .get(test.getAllTests)
-    .post(test.getTestsByQuery);
+  .get(test.getAllTests) // GET: Returns the list of all tests
+  .post(test.getTestsByQuery); // POST: Returns the list of tests that match with the parameters given in the body request
 
   app.route('/api/tests/page/:page/:resultPerPage')
-    .post(test.getTestsByQueryAndPage);
+  .post(test.getTestsByQueryAndPage); // POST: Returns the list of tests that match with the parameters given in the body request, with pagination
 
   app.route('/api/tests/add')
-    .post(test.addTest);
+  .post(test.addTest); // POST: Add a new test in the DB in function of the parameters given in the body request
 
-  app.get('/api/tests/id/:id', (req, res) => {
-    const id = req.params.id;
-    test.getTest(id, res);
-  });
-
-  app.post('/api/tests/id/:id', (req, res) => {
-    const id = req.params.id;
-    const body = req.body;
-    test.updateTest(id, body, res);
-  });
-
-  app.delete('/api/tests/id/:id', (req, res) => {
-    const id = req.params.id;
-    test.deleteTest(id, res);
-  });
+  app.route('/api/tests/id/:id')
+  .get(test.getTest) // GET: Returns the test with the associated ID
+  .post(test.updateTest) // POST: Update the test with the associated ID in function of the parameters given in the body request (only the date and the configuration values can be updated)
+  .delete(test.deleteTest); // DELETE: Delete the test with the associated ID
 
   app.route('/api/tests/authors')
-    .get(test.getDistinctAuthors);
+  .get(test.getDistinctAuthors); // GET: Returns the list of test authors (that wrote at least one test)
 
   app.route('/api/tests/subjects')
-    .get(test.getDistinctSubjects);
+  .get(test.getDistinctSubjects); // GET: Returns the list of test subjects (used at least by one test)
 
   app.route('/api/tests/configurations')
-    .get(test.getDistinctConfigurations);
+  .get(test.getDistinctConfigurations); // GET: Returns the list of configurations (used at least by one test)
 
-  app.get('/api/tests/configurations/:subject', (req, res) => {
-    const subject = req.params.subject;
-    test.getConfigurationsOfSubject(subject, res);
-  });
+  app.route('/api/tests/configurations/:subject')
+  .get(test.getConfigurationsOfSubject); // GET: Returns the list of configurations of the associated subject (used at least by one test)
 
-  app.get('/api/tests/options/:configname', (req, res) => {
-    const configName = req.params.configname;
-    test.getOptionsOfConfig(configName, res);
-  });
+  app.route('/api/tests/options/:configname')
+  .get(test.getOptionsOfConfig); // GET: Returns the  options of the associated configuration (used at least one time)
 
-  app.post('/api/tests/changeTestSubjectName', (req, res) => {
-    test.changeTestSubjectName(req, res);
-  });
+  app.route('/api/tests/changeTestSubjectName')
+  .post(test.changeTestSubjectName); // POST: Change the test type of all the tests matched by {type: previousName} (body contains previousName and newName)
 
-  app.post('/api/tests/addConfig', (req, res) => {
-    test.addConfig(req, res);
-  });
+  app.route('/api/tests/addConfig')
+  .post(test.addConfig); // POST: Push a new configuration in all tests matched by the test type/subject (body contains subject and config: {name, value})
 
-  app.post('/api/tests/changeConfigName', (req, res) => {
-    test.changeConfigName(req, res);
-  });
+  app.route('/api/tests/changeConfigName')
+  .post(test.changeConfigName); // POST: Change the name of the matched configuration in all tests matched by the test type/subject (body contains subject, previousName and newName)
 
   app.route('/api/tests/withoutArchive')
-    .get(test.getAllTestsWithoutArchive);
+  .get(test.getAllTestsWithoutArchive); // GET: Returns the list of all tests without any archive (to delete them)
 
 };

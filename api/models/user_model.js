@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
+var md5 = require('md5');
+var request = require('request');
 
 var UserSchema = new mongoose.Schema({
   email: {
@@ -35,10 +37,15 @@ var UserSchema = new mongoose.Schema({
   master: {
     type: Boolean,
     required: false,
-  }
+  },
+  tokens: [{
+    key: {type: String},
+    name: {type: String},
+    expires: {type: Date}
+  }]
 });
 
-//authenticate input against database
+// authenticate input against database
 UserSchema.statics.authenticate = function (email, password, callback) {
   User.findOne({ email: email })
     .exec(function (err, user) {
@@ -59,7 +66,7 @@ UserSchema.statics.authenticate = function (email, password, callback) {
     });
 }
 
-//hashing a password before saving it to the database
+// hashing a password before saving it to the database
 UserSchema.pre('save', function (next) {
   var user = this;
   bcrypt.hash(user.password, 10, function (err, hash) {
@@ -71,6 +78,90 @@ UserSchema.pre('save', function (next) {
   })
 });
 
+UserSchema.statics.hasAuthorization = function (req, permissions) {
+  // permissions -> Array ['master', 'write_permission', 'owner']
+  return new Promise((resolve) => {
+    if (req.headers.authorization) {
+      var tmp = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString();
+      var auth = {
+        email: tmp.split(':')[0],
+        token: tmp.split(':')[1]
+      };
+      User.findOne({email: auth.email}, (err, user) => {
+        if (err) {
+          console.log(err);
+          resolve(false);
+        } else if (user) {
+          tokenIsInTheList(auth.token, user.tokens)
+          .then((tokenIsInTheList) => {
+            if (tokenIsInTheList) {
+              if (permissions.length > 0) {
+                if (permissions.includes('master') && user.master === true) {
+                  // require to be master
+                  resolve(true);
+                } else if (permissions.includes('write_permission') && user.write_permission === true) {
+                  // require to have write_permission
+                  resolve(true);
+                } else if (permissions.includes('owner') && req.url.includes('tests')) {
+                  // require to have be owner of the test
+                  request('http://' + req.get('host') + '/api/tests/id/' + req.params.id, {json: true}, (err2, res2, test) => {
+                    if (test.author === user.firstname + ' ' + user.lastname) {
+                      resolve(true);
+                    } else {
+                      resolve(false);
+                    }
+                  });
+                } else if (permissions.includes('owner') && req.url.includes('search')) {
+                  // require to have be owner of the search
+                  request('http://' + req.get('host') + '/api/search/id/' + req.params.id, {json: true}, (err2, res2, search) => {
+                    if (search.user === user.firstname + ' ' + user.lastname) {
+                      resolve(true);
+                    } else {
+                      resolve(false);
+                    }
+                  });
+                } else {
+                  resolve(false);
+                }
+              } else {
+                // No permissions needed except authentication
+                resolve(true);
+              }
+            } else {
+              resolve(false);
+            }
+          })
+        } else {
+          resolve(false);
+        }
+      });
+    } else {
+      resolve(false);
+    }
+  });
+}
+// User.hasAuthorization(req, ['master', 'write_permission', 'owner'])
+// .then((hasAuthorization) => {
+//   if (hasAuthorization) {
+//
+//   } else {
+//     res.status(401).send(error401);
+//   }
+// });
+
+function tokenIsInTheList(givenToken, tokens) {
+  return new Promise((resolve) => {
+    // hash the given token to compare it with the others
+    givenToken = md5(givenToken);
+    tokens.forEach(function(token, idx) {
+      if (givenToken === token.key) {
+        resolve(true);
+      } else if (idx === tokens.length - 1) {
+        resolve(false);
+      }
+    });
+  });
+}
 
 var User = mongoose.model('User', UserSchema);
 module.exports = User;

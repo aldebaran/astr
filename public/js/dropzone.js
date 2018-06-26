@@ -1,5 +1,14 @@
-(function($){
+(function($) {
   "use strict";
+
+  // ----------------------------------------------//
+  //                                               //
+  //                 /!\ INFO /!\                  //
+  //  Scroll to the bottom to change the options!  //
+  //                 (Line 3540)                   //
+  //          Don't touch anything else            //
+  //                                               //
+  // ----------------------------------------------//
 
   var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -3529,24 +3538,31 @@
      return "files";
   }
 
+  // ----------------------------------------------//
+  //                                               //
+  //                   /!\ INFO /!\                //
+  //              You can edit this part           //
+  //                                               //
+  // ----------------------------------------------//
 
   Dropzone.options.myDropzone = {
+    method: 'POST',
     url: '/api/upload',
+    headers: {"Authorization": "Basic " + btoa(getAuthentification())},
     maxFilesize: 512, // MB
     maxFiles: 10,
     autoProcessQueue: false,
     uploadMultiple: true,
     paramName: paramNameForSend,
-    method: 'post',
     parallelUploads: 10,
     init: function() {
       var myDropzone = this;
 
-      myDropzone.on("addedfile", function(file){
+      myDropzone.on("addedfile", function(file) {
         if (file.upload.total < this.options.maxFilesize * 1024 * 1024) {
           $('#isFileUploaded').val('true');
         } else {
-          alert('ERROR\n\nThis file is too big !\nMax size: ' + this.options.maxFilesize + 'MB');
+          showModal('Error', 'This file is too big.<br>Max size: ' + this.options.maxFilesize + 'MB');
           this.removeFile(file);
         }
       });
@@ -3559,15 +3575,21 @@
 
       myDropzone.on("complete", function (file) {
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0 && file.status !== 'error') {
-          alert('Your test is now saved !\n\nNote that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped :)');
-          location.reload();
+          $('#myModal').modal({
+              backdrop: 'static',
+              keyboard: false
+          });
+          showModal('Success', 'Your test is now saved !<br><br>Note that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped :) <div class="loader"></div>');
+          setTimeout(function() {
+            location.reload();
+          }, 3000);
         }
       });
 
-      $('form').submit(function(e){
+      $('form').submit(function(e) {
         e.preventDefault();
         // wait 200ms to make sure the test is pushed in the DB
-        setTimeout(function(){
+        setTimeout(function() {
           if($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
             console.log($('#testId').html())
             myDropzone.processQueue(); // Tell Dropzone to process all queued files.
@@ -3593,5 +3615,29 @@
     }, 100);
   });
 
+  function getAuthentification() {
+    var res;
+    $.ajax({
+      type: 'GET',
+      url: 'api/user/profile',
+      async: false,
+      success: function(user) {
+        res = user.email + ':' + getCookie('session-token');
+      }
+    });
+    return res;
+  }
+
+  function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+  }
+
+  function showModal(title, message) {
+    $('#myModal .modal-header').html('<h4 class="modal-title">' + title + '</h4>');
+    $('#myModal .modal-body').html('<p>' + message + '<p>');
+    $('#myModal').modal('show');
+  }
 
 })(jQuery)

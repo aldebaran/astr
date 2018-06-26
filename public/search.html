@@ -76,101 +76,36 @@
         <li class="breadcrumb-item">
           <a href="tests.html">Tests</a>
         </li>
-        <li class="breadcrumb-item active">Test Subjects</li>
+        <li class="breadcrumb-item active">My Searches</li>
       </ol>
 
-      <div class="row">
-        <div class="col-sm test-subject-card" id="cardExistingSubject">
-          <div class="card mb-3">
-            <div class="card-header">
-              <h5>Existing test subjects</h5>
-            </div>
-            <div class="card-body">
-              <form>
-                <div class="form-group">
-                  <label for="selectSubject">Select a subject</label>
-                  <select class="form-control" id="selectSubject">
-                    <option value="default"></option>
-                  </select>
-                </div>
-              </form>
-              <div id="infoSubject">
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm test-subject-card">
-          <div class="card mb-3">
-            <div class="card-header">
-              <h5>Create a new test subject</h5>
-            </div>
-            <div class="card-body">
-              <form id="submitNewSubject">
-                <div class="form-group">
-                  <h5 for="inputName">Name</h5>
-                  <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="Enter the subject name" required>
-                  <small id="nameHelp" class="form-text text-muted">Example: Motor Control</small>
-                </div>
-                <br>
-                <h5>Configuration</h5>
-                <div id="formConfig">
-                  <div class="form-group">
-                    <div class="row config">
-                      <div class="col">
-                        <label id="labelConfigName">Configuration name</label>
-                        <input type="text" class="form-control inputConfigName" placeholder="Enter the configuration name" required>
-                        <small class="form-text text-muted">Example: Robot type</small>
-                      </div>
-                      <div class="col">
-                        <label>Options</label>
-                        <input class="form-control inputOption" type="text" placeholder="Enter an option" style="margin-top: 0px;">
-                        <small class="form-text text-muted">Example: Pepper</small>
-                        <button type="button" class="btn btn-outline-primary" id="buttonMoreOption"><i class="fa fa-plus-circle"></i> Option</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <button type="button" class="btn btn-outline-primary" id="buttonMoreConfig"><i class="fa fa-plus-circle"></i> Configuration</button>
-                <br><br>
-                <input type="submit" value="Submit" class="btn btn-info">
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- modal to edit the subject -->
-      <div class="modal fade" id="modalEdit">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Edit test subject</h4>
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <form class="form-edit">
-              <div class="modal-body">
-              </div>
-              <div class="modal-footer">
-                <input type="submit" value="Submit" class="btn btn-info">
-              </div>
-            </form>
-          </div>
-        </div>
+      <div id="mySearches">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Subject</th>
+              <th scope="col">Author</th>
+              <th scope="col">Date</th>
+              <th scope="col">Configuration</th>
+              <th scope="col">Link <span class="text-muted">(that you can share with anyone)</span> </th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
       </div>
 
       <div class="modal fade" id="myModal">
         <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-            </div>
+          <div class="modal-content bg-success">
             <div class="modal-body">
+              <p class="text-center text-white"><strong>Token copied to clipboard!</strong></p>
             </div>
           </div>
         </div>
       </div>
-
-
-
 
     </div>
 
@@ -195,8 +130,7 @@
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="js/index.js"></script>
-    <!-- Specific script for tests-->
-    <script src="js/test-subjects.js"></script>
+    <script src="js/search.js"></script>
   </div>
 </body>
 

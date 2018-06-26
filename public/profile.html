@@ -74,30 +74,79 @@
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="tests.html">Tests</a>
+          <a href="profile.html">My Profile</a>
         </li>
-        <li class="breadcrumb-item active">My Searches</li>
+        <li class="breadcrumb-item active">Personnal information</li>
       </ol>
 
-      <div id="myFilters">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Subject</th>
-              <th scope="col">Author</th>
-              <th scope="col">Date</th>
-              <th scope="col">Configuration</th>
-              <th scope="col">Link <span class="text-muted">(that you can share with anyone)</span> </th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+
+      <div id="personnal-info">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>User</h5>
+          </div>
+          <div class="card-body">
+          </div>
+        </div>
+      </div>
+      <div id="tokens-list" style="display: none;">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>Tokens</h5>
+          </div>
+          <div class="card-body" style="padding: 0px;">
+            <table class="table" style="margin: 0px;">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Expiration Date</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
+      <div class="modal fade" id="myModal" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">New token</h4>
+            </div>
+            <form id="formNewToken">
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="inputTokenName">Token name</label>
+                  <input type="text" class="form-control" id="inputTokenName" aria-describedby="tokenNameHelp" placeholder="Enter token name" required>
+                  <small id="tokenNameHelp" class="form-text text-muted">Example: DELL laptop</small>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-info" type="submit">Submit</button>
+                <button class="btn btn-primary" data-dismiss="modal">Close</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="modalCopyToClipboard">
+        <div class="modal-dialog">
+          <div class="modal-content bg-success">
+            <div class="modal-body">
+              <p class="text-center text-white"><strong>Token copied to clipboard!</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
     </div>
+
 
     <!-- Footer -->
     <footer class="sticky-footer">
@@ -120,7 +169,8 @@
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="js/index.js"></script>
-    <script src="js/filters.js"></script>
+    <!-- Specific script for this page -->
+    <script src="js/profile.js"></script>
   </div>
 </body>
 
