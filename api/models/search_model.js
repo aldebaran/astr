@@ -27,6 +27,11 @@ var SearchSchema = new Schema({
     required: false,
     trim: true
   },
+  ids: {
+    type: [String],
+    unique: false,
+    required: false
+  },
   configuration: [{
     name: { type: String, lowercase: true, trim: true },
     value: { type: String, uppercase: true, trim: true }

@@ -8,7 +8,7 @@
       searches.forEach(function(search) {
         if(search.user === user) {
           count++;
-          var link = window.location.origin + '/tests.html?search=' + search['_id'];
+          var link = 'tests.html?search=' + search['_id'];
           if(!search.testSubjectName) {
             search.testSubjectName = '<span class="null">ALL</span>';
           } else {
@@ -25,13 +25,14 @@
             search.date = '<span class="key">' + search.date + '</span>';
           }
           $('tbody').append('' +
-          '<tr id="' + search['_id'] + '">' +
+          '<tr id="' + search['_id'] + '" class="clickableRow" data-href="' + link + '">' +
             '<th scope="row">' + count + '</th>' +
             '<td>' + search.testSubjectName + '</td>' +
             '<td>' + search.testAuthor + '</td>' +
             '<td>' + search.date + '</td>' +
             '<td class="config"></td>' +
-            '<td><a href="' + link + '">' + link + '</a> <button class="btn btn-outline-success" id="copyToClipboard" style="float: right;  ">Copy to clipboard</button></td>' +
+            '<td class="ids"></td>' +
+            '<td><a href="' + window.location.origin + '/' + link + '"><i class="fa fa-link" aria-hidden="true"></i> ' + link + '</a> <button class="btn btn-outline-success" id="copyToClipboard" style="float: right;  ">Copy to clipboard</button></td>' +
             '<td><button type="button" class="btn btn-danger admin-user" id="deleteSearch"><i class="fa fa-trash" aria-hidden="true"></i></button></td>' +
           '</tr>');
           if(search.configuration.length > 0) {
@@ -41,6 +42,18 @@
           } else {
             $('.config:last').html('<span class="null">ALL</span>');
           }
+          if(search.ids.length > 0) {
+            search.ids.forEach(function(id, index) {
+              if (index !== search.ids.length - 1) {
+                $('.ids:last').append('<div><span class="key">' + id + ',</span></div>')
+              } else {
+                $('.ids:last').append('<div><span class="key">' + id + '</span></div>')
+              }
+
+            });
+          } else {
+            $('.ids:last').html('<span class="null">ALL</span>');
+          }
         }
       });
     });
@@ -49,7 +62,12 @@
     $('#mySearches').html('<p>Log in to see your saved searches.</p>');
   }
 
-  $('table').on('click', '#deleteSearch', function() {
+  $('table').on('click', '.clickableRow', function() {
+    window.location.href = $(this).data('href');
+  })
+
+  $('table').on('click', '#deleteSearch', function(e) {
+    e.stopPropagation();
     var r = confirm('Please confirm that you want to delete this search.');
     if(r === true) {
       $.ajax({
@@ -63,7 +81,8 @@
     }
   });
 
-  $('table').on('click', '#copyToClipboard', function() {
+  $('table').on('click', '#copyToClipboard', function(e) {
+    e.stopPropagation();
     var $temp = $("<input>");
     $("body").append($temp);
     $temp.val($(this).prev().attr('href')).select();

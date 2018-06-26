@@ -1,48 +1,48 @@
 (function($) {
   "use strict";
 
-  //Search
-  //get all test authors
+  // Search
+  // get all test authors
   $.get('api/tests/authors', function(authors) {
     authors.forEach(function(author) {
       $('#selectAuthor').append('<option>' + author + '</option>');
     });
   });
-  //get all test subjects
+  // get all test subjects
   $.get('api/tests/subjects', function(subjects) {
     subjects.forEach(function(subject) {
       $('#selectSubject').append('<option>' + subject + '</option>');
     });
   });
-  //get all test configuration
+  // get all test configuration
   $.get('api/tests/configurations', function(configurations) {
     configurations.forEach(function(config) {
       $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
     });
   });
 
-  // search
+  // action search when the search-box changes
   $('#form-search').change(function() {
-    //create the body request
+    // create the body request
     var bodyRequest = {
       '$and': [],
       '_id': {
         '$in': []
       }
     };
-    //add the author to the body request
+    // add the author to the body request
     if($('#selectAuthor').val() !== 'default') {
       bodyRequest.author = $('#selectAuthor').val();
     }
-    //add the test subject to the body request
+    // add the test subject to the body request
     if($('#selectSubject').val() !== 'default') {
       bodyRequest.type = $('#selectSubject').val();
     }
-    //add the date to the body request
+    // add the date to the body request
     if($('#inputDate').val() !== '') {
       bodyRequest.date = $('#inputDate').val();
     }
-    //add the IDs to the body request
+    // add the IDs to the body request
     if($('#inputIds').val().trim() !== '') {
       var ids = $('#inputIds').val().split(',').map(id => id.trim());
       var checkForHexRegExp = /^[a-f\d]{24}$/i
@@ -54,7 +54,7 @@
         }
       });
     }
-    //add the configuration to the body request
+    // add the configuration to the body request
     $('.inputConfig').each(function() {
       if($(this).val() !== '') {
         bodyRequest['$and'].push({
@@ -75,13 +75,13 @@
       delete bodyRequest._id;
     }
 
-    //execute the search each time the box search content change
+    // execute the search each time the box search content change
     search(bodyRequest, 1);
   });
 
   $('#selectSubject').change(function() {
     if($('#selectSubject').val() !== 'default') {
-      //select only the configuration of the test subject
+      // select only the configuration of the test subject
       $.get('api/tests/configurations/' + $('#selectSubject').val(), function(configurations) {
         $('#selectConfig').html('<option value="default">Click here to add filters</option>');
         configurations.forEach(function(config) {
@@ -97,7 +97,7 @@
       });
     }
 
-    //delete existing configuration
+    // delete existing configuration
     $('.config-group').each(function() {
       $(this).remove();
     })
@@ -108,7 +108,7 @@
     e.preventDefault();
   })
 
-  //add input when a new configuration is selected
+  // add input when a new configuration is selected
   var selectedConfig = [];
   $('#selectConfig').change(function() {
     if($('#selectConfig').val() !== 'default' && !selectedConfig.includes($('#selectConfig').val())) {
@@ -139,11 +139,11 @@
     }
   });
 
-  //delete config input
+  // delete config input
   $('#form-search').on('click', '.deleteConfig', function() {
-    //remove config from the array
+    // remove config from the array
     selectedConfig.splice(selectedConfig.indexOf($(this).closest('.form-group').find('label').html()), 1);
-    //remove config input from the page
+    // remove config input from the page
     $(this).closest('.form-group').remove();
     $('#form-search').trigger('change');
   })
@@ -154,7 +154,7 @@
       var matchedTests = [];
       $('#tests-grid').html('');
       if(isConnected() && isMaster()) {
-        //if the user is Master
+        // if the user is Master
         tests.forEach(function(test) {
           matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
@@ -177,7 +177,7 @@
           });
         });
       } else if (isConnected()) {
-        //if the user is connected but not a master --> can only modify his own tests
+        // if the user is connected but not a master --> can only modify his own tests
         const username = getUserName();
         tests.forEach(function(test) {
           matchedTests.push(test['_id']);
@@ -206,7 +206,7 @@
           }
         });
       } else {
-        //if the user isn't logged
+        // if the user isn't logged
         tests.forEach(function(test) {
           matchedTests.push(test['_id']);
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
@@ -312,7 +312,7 @@
         $('#page-item' + page).addClass('active');
 
         $('#pagination').on('click', '.page-link', function() {
-          //get the filters
+          // get the filters
           var bodyRequest = {
             '$and': [],
             '_id': {
@@ -358,7 +358,7 @@
             delete bodyRequest._id;
           }
 
-          //redirect to the page
+          // redirect to the page
           if (bodyRequest['$and'] || bodyRequest.author || bodyRequest.type || bodyRequest.date) {
             window.location.href = '?page=' + $(this).html() + '&query=' + JSON.stringify(bodyRequest);
           } else {
@@ -478,14 +478,24 @@
     }
   });
 
-  //save the search
+  // Save the search
   $('#buttonSaveSearch').click(function() {
     var search = {
       user: getUserName(),
+      ids: [],
       configuration: []
     };
     if($('#inputDate').val() !== '') {
       search.date = $('#inputDate').val();
+    }
+    if($('#inputIds').val().trim() !== '') {
+      var ids = $('#inputIds').val().split(',').map(id => id.trim());
+      var checkForHexRegExp = /^[a-f\d]{24}$/i
+      ids.forEach(function(id) {
+        if (checkForHexRegExp.test(id)) {
+          search.ids.push(id);
+        }
+      });
     }
     if($('#selectSubject').val() !== 'default') {
       search.testSubjectName = $('#selectSubject').val();
@@ -504,31 +514,42 @@
     });
 
     if(isConnected()) {
-      if(search.configuration.length > 0 || search.date || search.testAuthor || search.testSubjectName) {
+      if(search.configuration.length > 0 || search.ids.length > 0 || search.date || search.testAuthor || search.testSubjectName) {
         // check if search already exist
         $.get('api/search', function(savedSearches) {
-          var alreadyExist = false;
-          savedSearches.forEach(function(savedSearch) {
-            if((savedSearch.user === search.user) && (savedSearch.testSubjectName === search.testSubjectName) && (savedSearch.testAuthor === search.testAuthor) && (savedSearch.date === search.date) && configurationsAreTheSame(savedSearch.configuration, search.configuration)) {
-              alreadyExist = true;
+          return new Promise(function(resolve) {
+            if (savedSearches.length === 0) {
+              resolve(false);
+            } else {
+              savedSearches.forEach(function(savedSearch, idx) {
+                idsAreTheSame(savedSearch.ids, search.ids)
+                .then(function(idsAreTheSame) {
+                  if ((savedSearch.user === search.user) && (savedSearch.testSubjectName === search.testSubjectName) && (savedSearch.testAuthor === search.testAuthor) && (savedSearch.date === search.date) && configurationsAreTheSame(savedSearch.configuration, search.configuration) && idsAreTheSame) {
+                    resolve(true);
+                  } else if (idx === savedSearches.length - 1) {
+                    resolve(false);
+                  }
+                });
+              });
             }
-          });
-          if (alreadyExist === false) {
-            $.ajax({
-              method: 'POST',
-              url: 'api/search',
-              headers: {"Authorization": "Basic " + btoa(getAuthentification())},
-              data: search,
-              success: function(data) {
-                console.log(data);
-                if(data.name === 'Success') {
-                  showModal('Success', 'Your search has been saved !<br><br>You can now find it in "My Searches" to reuse it or to share it.');
+          }).then(function(alreadyExist) {
+            if (alreadyExist === false) {
+              $.ajax({
+                method: 'POST',
+                url: 'api/search',
+                headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                data: search,
+                success: function(data) {
+                  console.log(data);
+                  if(data.name === 'Success') {
+                    showModal('Success', 'Your search has been saved !<br><br>You can now find it in "My Searches" to reuse it or to share it.');
+                  }
                 }
-              }
-            });
-          } else {
-            showModal('Error','You already saved this search !<br><br>Check the page "My Searches" to manage them.');
-          }
+              });
+            } else {
+              showModal('Error','You already saved this search !<br><br>Check the page "My Searches" to manage them.');
+            }
+          })
         });
 
 
@@ -540,48 +561,53 @@
     }
   });
 
-  //use the saved search if present in URL
+  // use the saved search if present in URL
   if(getUrlParameter('search')) {
     $.get('api/search/id/' + getUrlParameter('search'), function(search) {
       if (search['_id']) {
-        if (search.date) {
-          $('#inputDate').val(search.date);
-        }
-        if (search.testSubjectName) {
-          $('#selectSubject').val(search.testSubjectName);
-        }
-        if (search.testAuthor) {
-          $('#selectAuthor').val(search.testAuthor);
-        }
-        if (search.configuration.length > 0) {
-          search.configuration.forEach(function(config) {
-            selectedConfig.push(config.name);
-            $('#form-search').append('' +
-            '<div class="form-group config-group">' +
-              '<label class="labelConfig">' + config.name + '</label>' +
-              '<div class="row">' +
-                '<div class="col">' +
-                  '<select class="form-control inputConfig ' + config.name + '">' +
-                    '<option></option>' +
-                  '</select>' +
+        return new Promise(function(resolve) {
+          if (search.date) {
+            $('#inputDate').val(search.date);
+          }
+          if (search.testSubjectName) {
+            $('#selectSubject').val(search.testSubjectName);
+          }
+          if (search.testAuthor) {
+            $('#selectAuthor').val(search.testAuthor);
+          }
+          if (search.configuration.length > 0) {
+            search.configuration.forEach(function(config) {
+              selectedConfig.push(config.name);
+              $('#form-search').append('' +
+              '<div class="form-group config-group">' +
+                '<label class="labelConfig">' + config.name + '</label>' +
+                '<div class="row">' +
+                  '<div class="col">' +
+                    '<select class="form-control inputConfig ' + config.name + '">' +
+                      '<option></option>' +
+                    '</select>' +
+                  '</div>' +
+                  '<div class="col-2">' +
+                    '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+                  '</div>' +
                 '</div>' +
-                '<div class="col-2">' +
-                  '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
-                '</div>' +
-              '</div>' +
-            '</div>'
-            );
-            $.get('/api/tests/options/' + config.name, function(options) {
-              options.forEach(function(option) {
-                $('.inputConfig.' + config.name).append('<option>' + option + '</option>');
+              '</div>'
+              );
+              $.get('/api/tests/options/' + config.name, function(options) {
+                options.forEach(function(option) {
+                  $('.inputConfig.' + config.name).append('<option>' + option + '</option>');
+                });
+                $('.inputConfig.' + config.name).val(config.value);
               });
-              $('.inputConfig.' + config.name).val(config.value);
             });
-          });
-        }
-        setTimeout(function() {
+          }
+          if (search.ids.length > 0) {
+            $('#inputIds').val(search.ids.join(', '));
+          }
+          resolve();
+        }).then(function() {
           $('#form-search').trigger('change');
-        }, 100);
+        });
       } else {
         console.log('Error with the search ID in params.');
         console.log(search);
@@ -589,7 +615,7 @@
     });
   }
 
-  // Search without filter at the loading of the page
+  // search without filter at the loading of the page
   if(getUrlParameter('page') && getUrlParameter('query')) {
     var page = getUrlParameter('page');
     var query = JSON.parse(getUrlParameter('query'));
@@ -765,6 +791,26 @@
       return false;
     }
     return true;
+  }
+
+  function idsAreTheSame(firstIdsArray, secondIdsArray) {
+    return new Promise(function(resolve) {
+      if (firstIdsArray.length === secondIdsArray.length) {
+        if (firstIdsArray.length === 0) {
+          resolve(true);
+        } else {
+          firstIdsArray.forEach(function(id, index) {
+            if (!secondIdsArray.includes(id)) {
+              resolve(false);
+            } else if (index === firstIdsArray.length - 1) {
+              resolve(true);
+            }
+          });
+        }
+      } else {
+        resolve(false);
+      }
+    });
   }
 
   function showModal(title, message) {

@@ -686,3 +686,7 @@ span.text-muted {
 #waitDialog .modal-content {
   padding: 2em;
 }
+
+.clickableRow {
+  cursor: pointer;
+}
