@@ -22,7 +22,7 @@ var SearchSchema = new Schema({
     uppercase: true
   },
   date: {
-    type: String,
+    type: Schema.Types.Mixed,
     unique: false,
     required: false,
     trim: true

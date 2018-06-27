@@ -9,7 +9,7 @@ var TestSchema = new Schema({
     trim: true
   },
   date: {
-    type: String,
+    type: Date,
     unique: false,
     required: true,
     trim: true

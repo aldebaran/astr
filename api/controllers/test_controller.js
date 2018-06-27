@@ -43,16 +43,37 @@ exports.getAllTestsWithoutArchive = (req, res) => {
 exports.getTestsByQuery = (req, res) => {
   checkIfTestsHaveAnArchive()
   .then(() => {
-    Test.find(req.body)
-    .where('archive').equals(true)
-    .exec((err, data) => {
-      if (err) {
-        res.send(err);
-      }
-      else {
-        res.json(data);
-      }
-    });
+    if (req.body.date && typeof req.body.date !== 'string') {
+      // search test between two dates
+      var from = new Date(req.body.date[0])
+      var to = new Date(req.body.date[1])
+      req.body.date = {
+        '$gte': from,
+        '$lte': to
+      };
+      Test.find(req.body)
+      .where('archive').equals(true)
+      .exec((err, data) => {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.json(data);
+        }
+      });
+    } else {
+      Test.find(req.body)
+      .where('archive').equals(true)
+      .exec((err, data) => {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.json(data);
+        }
+      });
+    }
+
   });
 };
 
@@ -62,18 +83,40 @@ exports.getTestsByQueryAndPage = (req, res) => {
   .then(() => {
     var page = Number(req.params.page);
     var resultPerPage = Number(req.params.resultPerPage);
-    Test.find(req.body)
-    .where('archive').equals(true)
-    .limit(resultPerPage)
-    .skip((page-1)*resultPerPage)
-    .exec((err, data) => {
-      if (err) {
-        res.send(err);
-      }
-      else {
-        res.send(data);
-      }
-    });
+    if (req.body.date && typeof req.body.date !== 'string') {
+      // search test between two dates
+      var from = new Date(req.body.date[0])
+      var to = new Date(req.body.date[1])
+      req.body.date = {
+        '$gte': from,
+        '$lte': to
+      };
+      Test.find(req.body)
+      .where('archive').equals(true)
+      .limit(resultPerPage)
+      .skip((page-1)*resultPerPage)
+      .exec((err, data) => {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.send(data);
+        }
+      });
+    } else {
+      Test.find(req.body)
+      .where('archive').equals(true)
+      .limit(resultPerPage)
+      .skip((page-1)*resultPerPage)
+      .exec((err, data) => {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.send(data);
+        }
+      });
+    }
   });
 };
 
@@ -85,6 +128,7 @@ exports.addTest = (req, res) => {
       var newTest = new Test(req.body);
       newTest.created = Date.now();
       newTest.lastModification = Date.now();
+      newTest.date = new Date(newTest.date);
       // check if the test subject exists and if all configuration are given
       request.get({
         url: 'http://localhost:8000/api/test-subjects/name/' + newTest.type,
@@ -107,7 +151,7 @@ exports.addTest = (req, res) => {
                   newTest.configuration = newTest.configuration.filter(config => subjectConfigNames.includes(config.name))
                 }
               });
-              
+
               // sort configuration by name
               newTest.configuration.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );
 
@@ -174,7 +218,7 @@ exports.updateTest = (req, res) => {
           } else {
             test.lastModification = Date.now();
             if (body.date) {
-              test.date = body.date;
+              test.date = new Date(body.date);
             }
             if (body.configuration && body.configuration.length > 0) {
               body.configuration.forEach(function(newConfig) {

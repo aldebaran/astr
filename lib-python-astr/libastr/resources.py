@@ -140,7 +140,8 @@ class Test(object):
 
         Args:
             author: (optional) test author (e.g. John DOE)
-            date: (optional) test date (e.g. 2018-05-30)
+            date: (optional) test date or range of dates
+                  (e.g. "2018-05-30" or ["2018-05-30", "2018-06-15"])
             test_subject: (optional) type of test (e.g. MOTOR CONTROL)
             configuration: (optional) dictionary of configuration
                            (e.g. {"robot_type": "NAO", "robot_version": "V6"})

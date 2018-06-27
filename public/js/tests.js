@@ -32,19 +32,28 @@
       }
     };
     // add the author to the body request
-    if($('#selectAuthor').val() !== 'default') {
+    if ($('#selectAuthor').val() !== 'default') {
       bodyRequest.author = $('#selectAuthor').val();
     }
     // add the test subject to the body request
-    if($('#selectSubject').val() !== 'default') {
+    if ($('#selectSubject').val() !== 'default') {
       bodyRequest.type = $('#selectSubject').val();
     }
     // add the date to the body request
-    if($('#inputDate').val() !== '') {
-      bodyRequest.date = $('#inputDate').val();
+    if ($('#inputDate').val() !== '') {
+      if ($('#checkboxDateRange').is(':checked') && $('#inputDate2').val() !== '') {
+        // date range
+        bodyRequest.date = [
+          $('#inputDate').val(),
+          $('#inputDate2').val(),
+        ];
+      } else {
+        // unique date
+        bodyRequest.date = $('#inputDate').val();
+      }
     }
     // add the IDs to the body request
-    if($('#inputIds').val().trim() !== '') {
+    if ($('#inputIds').val().trim() !== '') {
       var ids = $('#inputIds').val().split(',').map(id => id.trim());
       var checkForHexRegExp = /^[a-f\d]{24}$/i
       ids.forEach(function(id) {
@@ -57,7 +66,7 @@
     }
     // add the configuration to the body request
     $('.inputConfig').each(function() {
-      if($(this).val() !== '') {
+      if ($(this).val() !== '') {
         bodyRequest['$and'].push({
           "configuration": {
             "$elemMatch": {
@@ -81,7 +90,7 @@
   });
 
   $('#selectSubject').change(function() {
-    if($('#selectSubject').val() !== 'default') {
+    if ($('#selectSubject').val() !== 'default') {
       // select only the configuration of the test subject
       $.get('api/tests/configurations/' + $('#selectSubject').val(), function(configurations) {
         $('#selectConfig').html('<option value="default">Click here to add filters</option>');
@@ -112,7 +121,7 @@
   // add input when a new configuration is selected
   var selectedConfig = [];
   $('#selectConfig').change(function() {
-    if($('#selectConfig').val() !== 'default' && !selectedConfig.includes($('#selectConfig').val())) {
+    if ($('#selectConfig').val() !== 'default' && !selectedConfig.includes($('#selectConfig').val())) {
       selectedConfig.push($('#selectConfig').val());
       $('#form-search').append('' +
       '<div class="form-group config-group">' +
@@ -147,14 +156,35 @@
     // remove config input from the page
     $(this).closest('.form-group').remove();
     $('#form-search').trigger('change');
-  })
+  });
+
+  // range of dates
+  $('#checkboxDateRange').click(function() {
+    if ($(this).is(':checked')) {
+      $(this).next().removeClass('text-secondary');
+      $('#dateFromTo').show();
+    } else {
+      $(this).next().addClass('text-secondary');
+      $('#dateFromTo').hide();
+    }
+  });
+
+  // enable second date
+  $('#inputDate').change(function() {
+    if ($(this).val()) {
+      $('#inputDate2').prop('disabled', false);
+      $('#inputDate2').attr('min', $(this).val());
+    } else {
+      $('#inputDate2').prop('disabled', true);
+    }
+  });
 
   function search(body, page) {
     var resultPerPage = 30;
     $.post('api/tests/page/' + page + '/' + resultPerPage, body, function(tests) {
       var matchedTests = [];
       $('#tests-grid').html('');
-      if(isConnected() && isMaster()) {
+      if (isConnected() && isMaster()) {
         // if the user is Master
         tests.forEach(function(test) {
           matchedTests.push(test['_id']);
@@ -162,7 +192,7 @@
             '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
-              '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
+              '<span class="key">Date: </span><span class="value">' + test.date.substr(0,10) + '</span><br>' +
             '</div>' +
             '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
@@ -199,7 +229,7 @@
             $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
           });
 
-          if(username === test.author) {
+          if (username === test.author) {
             $('#button-footer'+test['_id']).html('' +
             '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
             '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#modalEdit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
@@ -231,7 +261,7 @@
 
       // display number of results
       $.post('api/tests', body, function(totalTests) {
-        if(totalTests.length > 1) {
+        if (totalTests.length > 1) {
           $('#header-result').html('' +
           '<div class="card mb-3">' +
             '<div class="card-header">' +
@@ -321,16 +351,25 @@
               '$in': []
             }
           };
-          if($('#selectAuthor').val() !== 'default') {
+          if ($('#selectAuthor').val() !== 'default') {
             bodyRequest.author = $('#selectAuthor').val();
           }
-          if($('#selectSubject').val() !== 'default') {
+          if ($('#selectSubject').val() !== 'default') {
             bodyRequest.type = $('#selectSubject').val();
           }
-          if($('#inputDate').val() !== '') {
-            bodyRequest.date = $('#inputDate').val();
+          if ($('#inputDate').val() !== '') {
+            if ($('#checkboxDateRange').is(':checked') && $('#inputDate2').val() !== '') {
+              // date range
+              bodyRequest.date = [
+                $('#inputDate').val(),
+                $('#inputDate2').val(),
+              ];
+            } else {
+              // unique date
+              bodyRequest.date = $('#inputDate').val();
+            }
           }
-          if($('#inputIds').val().trim() !== '') {
+          if ($('#inputIds').val().trim() !== '') {
             var ids = $('#inputIds').val().split(',').map(id => id.trim());
             var checkForHexRegExp = /^[a-f\d]{24}$/i
             ids.forEach(function(id) {
@@ -342,7 +381,7 @@
             });
           }
           $('.inputConfig').each(function() {
-            if($(this).val() !== '') {
+            if ($(this).val() !== '') {
               bodyRequest['$and'].push({
                 "configuration": {
                   "$elemMatch": {
@@ -375,7 +414,7 @@
 
   $('#tests-grid').on('click', '#deleteTest', function() {
     var r = confirm('Please confirm that you want to delete this test.');
-    if(r === true) {
+    if (r === true) {
       $.ajax({
         method: 'DELETE',
         url: 'api/tests/id/' + $(this).parent().parent().parent().attr('id'),
@@ -394,7 +433,7 @@
       $('#modalEdit .modal-body').html('' +
       '<div class="form-group">' +
         '<label for="inputDateEdit">Date</label>' +
-        '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date + '" required>' +
+        '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date.substr(0,10) + '" required>' +
       '</div>'
       );
       test.configuration.forEach(function(config) {
@@ -407,12 +446,12 @@
         '</div>'
         );
         $.get('api/test-subjects/options/' + test.type + '/' + config.name, function(options) {
-          if(options.length > 0) {
+          if (options.length > 0) {
             options.forEach(function(option, idx, array) {
-              if(option !== $('.selectConfigEdit.' + config.name).val()) {
+              if (option !== $('.selectConfigEdit.' + config.name).val()) {
                 $('.selectConfigEdit.' + config.name).append('<option>' + option + '</option>');
               }
-              if(idx === array.length-1) {
+              if (idx === array.length-1) {
                 $('.selectConfigEdit.' + config.name).append('<option>Other</option>');
               }
             });
@@ -431,7 +470,7 @@
 
   // add an input if the user select "Other" on a configuration
   $('#modalEdit').on('change', '.selectConfigEdit', function() {
-    if($(this).val() === 'Other') {
+    if ($(this).val() === 'Other') {
       $(this).closest('.form-group').append('<input type="text" class="form-control inputConfigEdit" required>');
     } else {
       $(this).closest('.form-group').find('.inputConfigEdit').remove();
@@ -441,14 +480,14 @@
   $('.form-edit').submit(function(e) {
     e.preventDefault();
     var r = confirm('Please confirm that you want to modify this test.');
-    if(r === true) {
+    if (r === true) {
       var okayToPush = true;
       var test = {
         date: $('#inputDateEdit').val(),
         configuration: [],
       };
       $('.selectConfigEdit').each(function() {
-        if($(this).val() !== 'Other') {
+        if ($(this).val() !== 'Other') {
           test.configuration.push({
             name: $(this).prev().html(),
             value: $(this).val().trim()
@@ -456,7 +495,7 @@
         }
       });
       $('.inputConfigEdit').each(function() {
-        if($(this).val().trim() === "") {
+        if ($(this).val().trim() === "") {
           okayToPush = false;
         } else {
           test.configuration.push({
@@ -466,7 +505,7 @@
         }
       });
 
-      if(okayToPush === true) {
+      if (okayToPush === true) {
         $.ajax({
           method: 'POST',
           url: 'api/tests/id/' + $('.form-edit').attr('id'),
@@ -490,10 +529,19 @@
       ids: [],
       configuration: []
     };
-    if($('#inputDate').val() !== '') {
-      search.date = $('#inputDate').val();
+    if ($('#inputDate').val() !== '') {
+      if ($('#checkboxDateRange').is(':checked') && $('#inputDate2').val() !== '') {
+        // date range
+        search.date = [
+          $('#inputDate').val(),
+          $('#inputDate2').val(),
+        ];
+      } else {
+        // unique date
+        search.date = $('#inputDate').val();
+      }
     }
-    if($('#inputIds').val().trim() !== '') {
+    if ($('#inputIds').val().trim() !== '') {
       var ids = $('#inputIds').val().split(',').map(id => id.trim());
       var checkForHexRegExp = /^[a-f\d]{24}$/i
       ids.forEach(function(id) {
@@ -502,15 +550,15 @@
         }
       });
     }
-    if($('#selectSubject').val() !== 'default') {
+    if ($('#selectSubject').val() !== 'default') {
       search.testSubjectName = $('#selectSubject').val();
     }
-    if($('#selectAuthor').val() !== 'default') {
+    if ($('#selectAuthor').val() !== 'default') {
       search.testAuthor = $('#selectAuthor').val();
     }
 
     $('.config-group').each(function() {
-      if($(this).find('.inputConfig').val() !== '') {
+      if ($(this).find('.inputConfig').val() !== '') {
         search.configuration.push({
           name: $(this).find('.labelConfig').html(),
           value: $(this).find('.inputConfig').val()
@@ -518,8 +566,8 @@
       }
     });
 
-    if(isConnected()) {
-      if(search.configuration.length > 0 || search.ids.length > 0 || search.date || search.testAuthor || search.testSubjectName) {
+    if (isConnected()) {
+      if (search.configuration.length > 0 || search.ids.length > 0 || search.date || search.testAuthor || search.testSubjectName) {
         // check if search already exist
         $.get('api/search', function(savedSearches) {
           return new Promise(function(resolve) {
@@ -529,7 +577,7 @@
               savedSearches.forEach(function(savedSearch, idx) {
                 idsAreTheSame(savedSearch.ids, search.ids)
                 .then(function(idsAreTheSame) {
-                  if ((savedSearch.user === search.user) && (savedSearch.testSubjectName === search.testSubjectName) && (savedSearch.testAuthor === search.testAuthor) && (savedSearch.date === search.date) && configurationsAreTheSame(savedSearch.configuration, search.configuration) && idsAreTheSame) {
+                  if ((savedSearch.user === search.user) && (savedSearch.testSubjectName === search.testSubjectName) && (savedSearch.testAuthor === search.testAuthor) && (JSON.stringify(savedSearch.date) === JSON.stringify(search.date)) && configurationsAreTheSame(savedSearch.configuration, search.configuration) && idsAreTheSame) {
                     resolve(true);
                   } else if (idx === savedSearches.length - 1) {
                     resolve(false);
@@ -546,7 +594,7 @@
                 data: search,
                 success: function(data) {
                   console.log(data);
-                  if(data.name === 'Success') {
+                  if (data.name === 'Success') {
                     showModal('Success', 'Your search has been saved !<br><br>You can now find it in "My Searches" to reuse it or to share it.');
                   }
                 }
@@ -570,13 +618,22 @@
   // ---------------------------- Page Loading ----------------------------- //
 
   // use the saved search if present in URL
-  if(getUrlParameter('search')) {
+  if (getUrlParameter('search')) {
     $.get('api/search/id/' + getUrlParameter('search'), function(search) {
       if (search['_id']) {
         return new Promise(function(resolve) {
           setTimeout(function() {
             if (search.date) {
-              $('#inputDate').val(search.date);
+              if (typeof search.date === 'string') {
+                // unique date
+                $('#inputDate').val(search.date);
+              } else {
+                // date range
+                $('#checkboxDateRange').trigger('click');
+                $('#inputDate2').prop('disabled', false);
+                $('#inputDate').val(search.date[0]);
+                $('#inputDate2').val(search.date[1]);
+              }
             }
             if (search.testSubjectName) {
               $('#selectSubject').val(search.testSubjectName);
@@ -623,7 +680,7 @@
         console.log(search);
       }
     });
-  } else if(getUrlParameter('page') && getUrlParameter('query')) {
+  } else if (getUrlParameter('page') && getUrlParameter('query')) {
     var page = getUrlParameter('page');
     var query = JSON.parse(getUrlParameter('query'));
 
@@ -633,7 +690,16 @@
         $('#selectAuthor').val(query.author);
       }
       if (query.date) {
-        $('#inputDate').val(query.date);
+        if (typeof query.date === 'string') {
+          // unique date
+          $('#inputDate').val(query.date);
+        } else {
+          // date range
+          $('#checkboxDateRange').trigger('click');
+          $('#inputDate2').prop('disabled', false);
+          $('#inputDate').val(query.date[0]);
+          $('#inputDate2').val(query.date[1]);
+        }
       }
       if (query.type) {
         $('#selectSubject').val(query.type);
