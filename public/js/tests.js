@@ -1,7 +1,8 @@
 (function($) {
   "use strict";
 
-  // Search
+  // ------------------------------ Search -------------------------------- //
+
   // get all test authors
   $.get('api/tests/authors', function(authors) {
     authors.forEach(function(author) {
@@ -288,7 +289,8 @@
           });
         });
 
-        // navigation
+        // ------------------------- Pagination ---------------------------- //
+
         var numberOfPages = Math.ceil(totalTests.length / resultPerPage);
         var from = resultPerPage * page - resultPerPage + 1;
         var to = resultPerPage * page;
@@ -369,7 +371,8 @@
     });
   }
 
-  // Delete a test
+  // ---------------------------- Delete Test ------------------------------ //
+
   $('#tests-grid').on('click', '#deleteTest', function() {
     var r = confirm('Please confirm that you want to delete this test.');
     if(r === true) {
@@ -384,7 +387,8 @@
     }
   });
 
-  // Edit a test
+  // ------------------------------ Edit Test ------------------------------ //
+
   $('#tests-grid').on('click', '#editTest', function() {
     $.get('api/tests/id/' + $(this).parent().parent().parent().attr('id'), function(test) {
       $('#modalEdit .modal-body').html('' +
@@ -478,7 +482,8 @@
     }
   });
 
-  // Save the search
+  // --------------------------- Save research ---------------------------- //
+
   $('#buttonSaveSearch').click(function() {
     var search = {
       user: getUserName(),
@@ -561,50 +566,55 @@
     }
   });
 
+
+  // ---------------------------- Page Loading ----------------------------- //
+
   // use the saved search if present in URL
   if(getUrlParameter('search')) {
     $.get('api/search/id/' + getUrlParameter('search'), function(search) {
       if (search['_id']) {
         return new Promise(function(resolve) {
-          if (search.date) {
-            $('#inputDate').val(search.date);
-          }
-          if (search.testSubjectName) {
-            $('#selectSubject').val(search.testSubjectName);
-          }
-          if (search.testAuthor) {
-            $('#selectAuthor').val(search.testAuthor);
-          }
-          if (search.configuration.length > 0) {
-            search.configuration.forEach(function(config) {
-              selectedConfig.push(config.name);
-              $('#form-search').append('' +
-              '<div class="form-group config-group">' +
-                '<label class="labelConfig">' + config.name + '</label>' +
-                '<div class="row">' +
-                  '<div class="col">' +
-                    '<select class="form-control inputConfig ' + config.name + '">' +
-                      '<option></option>' +
-                    '</select>' +
+          setTimeout(function() {
+            if (search.date) {
+              $('#inputDate').val(search.date);
+            }
+            if (search.testSubjectName) {
+              $('#selectSubject').val(search.testSubjectName);
+            }
+            if (search.testAuthor) {
+              $('#selectAuthor').val(search.testAuthor);
+            }
+            if (search.configuration.length > 0) {
+              search.configuration.forEach(function(config) {
+                selectedConfig.push(config.name);
+                $('#form-search').append('' +
+                '<div class="form-group config-group">' +
+                  '<label class="labelConfig">' + config.name + '</label>' +
+                  '<div class="row">' +
+                    '<div class="col">' +
+                      '<select class="form-control inputConfig ' + config.name + '">' +
+                        '<option></option>' +
+                      '</select>' +
+                    '</div>' +
+                    '<div class="col-2">' +
+                      '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+                    '</div>' +
                   '</div>' +
-                  '<div class="col-2">' +
-                    '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
-                  '</div>' +
-                '</div>' +
-              '</div>'
-              );
-              $.get('/api/tests/options/' + config.name, function(options) {
-                options.forEach(function(option) {
-                  $('.inputConfig.' + config.name).append('<option>' + option + '</option>');
+                '</div>'
+                );
+                $.get('/api/tests/options/' + config.name, function(options) {
+                  options.forEach(function(option) {
+                    $('.inputConfig.' + config.name).append('<option>' + option + '</option>');
+                  });
+                  $('.inputConfig.' + config.name).val(config.value);
                 });
-                $('.inputConfig.' + config.name).val(config.value);
               });
-            });
-          }
-          if (search.ids.length > 0) {
-            $('#inputIds').val(search.ids.join(', '));
-          }
-          resolve();
+            }
+            if (search.ids.length > 0) {
+              $('#inputIds').val(search.ids.join(', '));
+            }
+            resolve();
+          }, 100)
         }).then(function() {
           $('#form-search').trigger('change');
         });
@@ -613,12 +623,11 @@
         console.log(search);
       }
     });
-  }
-
-  // search without filter at the loading of the page
-  if(getUrlParameter('page') && getUrlParameter('query')) {
+  } else if(getUrlParameter('page') && getUrlParameter('query')) {
     var page = getUrlParameter('page');
     var query = JSON.parse(getUrlParameter('query'));
+
+    // put the query in the search-box
     setTimeout(function() {
       if (query.author) {
         $('#selectAuthor').val(query.author);
@@ -655,9 +664,8 @@
           });
         });
       }
+      search(query, page);
     }, 100);
-
-    search(query, page);
   } else if (getUrlParameter('page')) {
     var page = getUrlParameter('page');
     search({}, page);
