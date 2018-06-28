@@ -1,25 +1,25 @@
 (function($) {
-  "use strict"; // Start of use strict
+  'use strict'; // Start of use strict
   // Configure tooltips for collapsed side navigation
   $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
-    template: '<div class="tooltip navbar-sidenav-tooltip" role="tooltip" style="pointer-events: none;"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
-  })
+    template: '<div class="tooltip navbar-sidenav-tooltip" role="tooltip" style="pointer-events: none;"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+  });
   // Toggle the side navigation
-  $("#sidenavToggler").click(function(e) {
+  $('#sidenavToggler').click(function(e) {
     e.preventDefault();
-    $("body").toggleClass("sidenav-toggled");
-    $(".navbar-sidenav .nav-link-collapse").addClass("collapsed");
-    $(".navbar-sidenav .sidenav-second-level, .navbar-sidenav .sidenav-third-level").removeClass("show");
+    $('body').toggleClass('sidenav-toggled');
+    $('.navbar-sidenav .nav-link-collapse').addClass('collapsed');
+    $('.navbar-sidenav .sidenav-second-level, .navbar-sidenav .sidenav-third-level').removeClass('show');
   });
   // Force the toggled class to be removed when a collapsible nav link is clicked
-  $(".navbar-sidenav .nav-link-collapse").click(function(e) {
+  $('.navbar-sidenav .nav-link-collapse').click(function(e) {
     e.preventDefault();
-    $("body").removeClass("sidenav-toggled");
+    $('body').removeClass('sidenav-toggled');
   });
   // Prevent the content wrapper from scrolling when the fixed side navigation hovered over
   $('body.fixed-nav .navbar-sidenav, body.fixed-nav .sidenav-toggler, body.fixed-nav .navbar-collapse').on('mousewheel DOMMouseScroll', function(e) {
-    var e0 = e.originalEvent,
-      delta = e0.wheelDelta || -e0.detail;
+    var e0 = e.originalEvent;
+    var delta = e0.wheelDelta || -e0.detail;
     this.scrollTop += (delta < 0 ? 1 : -1) * 30;
     e.preventDefault();
   });
@@ -33,18 +33,18 @@
     }
   });
   // Configure tooltips globally
-  $('[data-toggle="tooltip"]').tooltip()
+  $('[data-toggle="tooltip"]').tooltip();
   // Smooth scrolling using jQuery easing
   $(document).on('click', 'a.scroll-to-top', function(event) {
     var $anchor = $(this);
     $('.content-wrapper').stop().animate({
-      scrollTop: ($($anchor.attr('href')).offset().top)
+      scrollTop: ($($anchor.attr('href')).offset().top),
     }, 1000, 'easeInOutExpo');
     event.preventDefault();
   });
 
   // navigation menu (top)
-  if(isConnected() && isMaster()) {
+  if (isConnected() && isMaster()) {
     $('#navbar-top').html('' +
     '<li class="nav-item dropdown">' +
       '<a class="nav-link dropdown-toggle mr-lg-2" id="userDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
@@ -66,7 +66,7 @@
       '<a class="nav-link" href="/api/user/logout">' +
         '<i class="fa fa-fw fa-sign-out"></i>Logout</a>' +
     '</li>');
-  } else if(isConnected()) {
+  } else if (isConnected()) {
     $('#navbar-top').html('' +
     '<li class="nav-item dropdown">' +
       '<a class="nav-link dropdown-toggle mr-lg-2" id="userDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
@@ -92,8 +92,8 @@
   }
 
   // Logout if no session-token in cookies
-  if(isConnected() && !getCookie('session-token')) {
-    window.location.href = 'api/user/logout'
+  if (isConnected() && !getCookie('session-token')) {
+    window.location.href = 'api/user/logout';
   }
 
   // -------------------------- Functions -------------------------- //
@@ -106,20 +106,7 @@
       async: false,
       success: function(user) {
         res = !user.error;
-      }
-    });
-    return res;
-  }
-
-  function hasWritePermission() {
-    var res = false;
-    $.ajax({
-      type: 'GET',
-      url: 'api/user/profile',
-      async: false,
-      success: function(user) {
-        res = user['write_permission'];
-      }
+      },
     });
     return res;
   }
@@ -132,7 +119,7 @@
       async: false,
       success: function(user) {
         res = user.master;
-      }
+      },
     });
     return res;
   }
@@ -145,30 +132,14 @@
       async: false,
       success: function(user) {
         res = user.name;
-      }
-    });
-    return res;
-  }
-
-  function getMasterList() {
-    var res = "";
-    $.ajax({
-      type: 'GET',
-      url: 'api/user/master',
-      async: false,
-      success: function(masters) {
-        masters.forEach(function(master) {
-          res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
-        });
-      }
+      },
     });
     return res;
   }
 
   function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
+    var value = '; ' + document.cookie;
+    var parts = value.split('; ' + name + '=');
+    if (parts.length == 2) return parts.pop().split(';').shift();
   }
-
 })(jQuery); // End of use strict

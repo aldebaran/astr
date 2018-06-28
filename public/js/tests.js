@@ -1,5 +1,5 @@
 (function($) {
-  "use strict";
+  'use strict';
 
   // ------------------------------ Search -------------------------------- //
 
@@ -28,8 +28,8 @@
     var bodyRequest = {
       '$and': [],
       '_id': {
-        '$in': []
-      }
+        '$in': [],
+      },
     };
     // add the author to the body request
     if ($('#selectAuthor').val() !== 'default') {
@@ -54,8 +54,8 @@
     }
     // add the IDs to the body request
     if ($('#inputIds').val().trim() !== '') {
-      var ids = $('#inputIds').val().split(',').map(id => id.trim());
-      var checkForHexRegExp = /^[a-f\d]{24}$/i
+      var ids = $('#inputIds').val().split(',').map((id) => id.trim());
+      var checkForHexRegExp = /^[a-f\d]{24}$/i;
       ids.forEach(function(id) {
         if (checkForHexRegExp.test(id)) {
           bodyRequest._id['$in'].push(id);
@@ -68,12 +68,12 @@
     $('.inputConfig').each(function() {
       if ($(this).val() !== '') {
         bodyRequest['$and'].push({
-          "configuration": {
-            "$elemMatch": {
-              "name": $(this).closest('.form-group').find('label').html(),
-              "value": $(this).val()
-            }
-          }
+          'configuration': {
+            '$elemMatch': {
+              'name': $(this).closest('.form-group').find('label').html(),
+              'value': $(this).val(),
+            },
+          },
         });
       }
     });
@@ -110,13 +110,13 @@
     // delete existing configuration
     $('.config-group').each(function() {
       $(this).remove();
-    })
+    });
     selectedConfig = [];
-  })
+  });
 
   $('#form-search').submit(function(e) {
     e.preventDefault();
-  })
+  });
 
   // add input when a new configuration is selected
   var selectedConfig = [];
@@ -140,7 +140,7 @@
       );
       $.get('/api/tests/options/' + $('#selectConfig').val(), function(options) {
         options.forEach(function(option) {
-          $('.inputConfig:last').append('<option>' + option + '</option>')
+          $('.inputConfig:last').append('<option>' + option + '</option>');
         });
         $('#selectConfig').val('default');
       });
@@ -179,6 +179,11 @@
     }
   });
 
+  /**
+   * Search tests in function of body and page
+   * @param {object} body
+   * @param {string} page
+   */
   function search(body, page) {
     var resultPerPage = 30;
     $.post('api/tests/page/' + page + '/' + resultPerPage, body, function(tests) {
@@ -192,7 +197,7 @@
             '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
               '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
-              '<span class="key">Date: </span><span class="value">' + test.date.substr(0,10) + '</span><br>' +
+              '<span class="key">Date: </span><span class="value">' + test.date.substr(0, 10) + '</span><br>' +
             '</div>' +
             '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
@@ -305,16 +310,16 @@
 
         // "Download All" button handler
         $('#buttonDownloadAll').click(function() {
-          $("#waitDialog").modal('show');
+          $('#waitDialog').modal('show');
           $('#waitDialog').modal({
             backdrop: 'static',
-            keyboard: false
+            keyboard: false,
           });
           $.post('api/download/multiple', {ids: matchedTests}, function(data) {
             window.location.href = 'api/download/id/multiple';
             var timer = window.setInterval(function() {
               clearInterval(timer);
-              $("#waitDialog").modal('hide');
+              $('#waitDialog').modal('hide');
             }, 1000);
           });
         });
@@ -348,8 +353,8 @@
           var bodyRequest = {
             '$and': [],
             '_id': {
-              '$in': []
-            }
+              '$in': [],
+            },
           };
           if ($('#selectAuthor').val() !== 'default') {
             bodyRequest.author = $('#selectAuthor').val();
@@ -370,8 +375,8 @@
             }
           }
           if ($('#inputIds').val().trim() !== '') {
-            var ids = $('#inputIds').val().split(',').map(id => id.trim());
-            var checkForHexRegExp = /^[a-f\d]{24}$/i
+            var ids = $('#inputIds').val().split(',').map((id) => id.trim());
+            var checkForHexRegExp = /^[a-f\d]{24}$/i;
             ids.forEach(function(id) {
               if (checkForHexRegExp.test(id)) {
                 bodyRequest._id['$in'].push(id);
@@ -383,12 +388,12 @@
           $('.inputConfig').each(function() {
             if ($(this).val() !== '') {
               bodyRequest['$and'].push({
-                "configuration": {
-                  "$elemMatch": {
-                    "name": $(this).closest('.form-group').find('label').html(),
-                    "value": $(this).val()
-                  }
-                }
+                'configuration': {
+                  '$elemMatch': {
+                    'name': $(this).closest('.form-group').find('label').html(),
+                    'value': $(this).val(),
+                  },
+                },
               });
             }
           });
@@ -418,10 +423,10 @@
       $.ajax({
         method: 'DELETE',
         url: 'api/tests/id/' + $(this).parent().parent().parent().attr('id'),
-        headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+        headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
         success: function() {
           location.reload();
-        }
+        },
       });
     }
   });
@@ -433,7 +438,7 @@
       $('#modalEdit .modal-body').html('' +
       '<div class="form-group">' +
         '<label for="inputDateEdit">Date</label>' +
-        '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date.substr(0,10) + '" required>' +
+        '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date.substr(0, 10) + '" required>' +
       '</div>'
       );
       test.configuration.forEach(function(config) {
@@ -490,17 +495,17 @@
         if ($(this).val() !== 'Other') {
           test.configuration.push({
             name: $(this).prev().html(),
-            value: $(this).val().trim()
+            value: $(this).val().trim(),
           });
         }
       });
       $('.inputConfigEdit').each(function() {
-        if ($(this).val().trim() === "") {
+        if ($(this).val().trim() === '') {
           okayToPush = false;
         } else {
           test.configuration.push({
             name: $(this).prev().prev().html(),
-            value: $(this).val().trim().toLowerCase().replace(/\s+/g, ' ')
+            value: $(this).val().trim().toLowerCase().replace(/\s+/g, ' '),
           });
         }
       });
@@ -509,11 +514,11 @@
         $.ajax({
           method: 'POST',
           url: 'api/tests/id/' + $('.form-edit').attr('id'),
-          headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+          headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
           data: test,
           success: function() {
           location.reload();
-          }
+          },
         });
       } else {
         showModal('Error', 'Your test was not added because you left an empty field.');
@@ -527,7 +532,7 @@
     var search = {
       user: getUserName(),
       ids: [],
-      configuration: []
+      configuration: [],
     };
     if ($('#inputDate').val() !== '') {
       if ($('#checkboxDateRange').is(':checked') && $('#inputDate2').val() !== '') {
@@ -542,8 +547,8 @@
       }
     }
     if ($('#inputIds').val().trim() !== '') {
-      var ids = $('#inputIds').val().split(',').map(id => id.trim());
-      var checkForHexRegExp = /^[a-f\d]{24}$/i
+      var ids = $('#inputIds').val().split(',').map((id) => id.trim());
+      var checkForHexRegExp = /^[a-f\d]{24}$/i;
       ids.forEach(function(id) {
         if (checkForHexRegExp.test(id)) {
           search.ids.push(id);
@@ -561,7 +566,7 @@
       if ($(this).find('.inputConfig').val() !== '') {
         search.configuration.push({
           name: $(this).find('.labelConfig').html(),
-          value: $(this).find('.inputConfig').val()
+          value: $(this).find('.inputConfig').val(),
         });
       }
     });
@@ -577,7 +582,11 @@
               savedSearches.forEach(function(savedSearch, idx) {
                 idsAreTheSame(savedSearch.ids, search.ids)
                 .then(function(idsAreTheSame) {
-                  if ((savedSearch.user === search.user) && (savedSearch.testSubjectName === search.testSubjectName) && (savedSearch.testAuthor === search.testAuthor) && (JSON.stringify(savedSearch.date) === JSON.stringify(search.date)) && configurationsAreTheSame(savedSearch.configuration, search.configuration) && idsAreTheSame) {
+                  if (
+                    (savedSearch.user === search.user) && (savedSearch.testSubjectName === search.testSubjectName)
+                    && (savedSearch.testAuthor === search.testAuthor) && (JSON.stringify(savedSearch.date) === JSON.stringify(search.date))
+                    && configurationsAreTheSame(savedSearch.configuration, search.configuration) && idsAreTheSame
+                  ) {
                     resolve(true);
                   } else if (idx === savedSearches.length - 1) {
                     resolve(false);
@@ -590,22 +599,20 @@
               $.ajax({
                 method: 'POST',
                 url: 'api/search',
-                headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
                 data: search,
                 success: function(data) {
                   console.log(data);
                   if (data.name === 'Success') {
                     showModal('Success', 'Your search has been saved !<br><br>You can now find it in "My Searches" to reuse it or to share it.');
                   }
-                }
+                },
               });
             } else {
-              showModal('Error','You already saved this search !<br><br>Check the page "My Searches" to manage them.');
+              showModal('Error', 'You already saved this search !<br><br>Check the page "My Searches" to manage them.');
             }
-          })
+          });
         });
-
-
       } else {
         showModal('Error', 'Add some filters to your search before saving it.');
       }
@@ -671,7 +678,7 @@
               $('#inputIds').val(search.ids.join(', '));
             }
             resolve();
-          }, 100)
+          }, 100);
         }).then(function() {
           $('#form-search').trigger('change');
         });
@@ -749,20 +756,7 @@
       async: false,
       success: function(user) {
         res = !user.error;
-      }
-    });
-    return res;
-  }
-
-  function hasWritePermission() {
-    var res = false;
-    $.ajax({
-      type: 'GET',
-      url: 'api/user/profile',
-      async: false,
-      success: function(user) {
-        res = user['write_permission'];
-      }
+      },
     });
     return res;
   }
@@ -775,7 +769,7 @@
       async: false,
       success: function(user) {
         res = user.master;
-      }
+      },
     });
     return res;
   }
@@ -788,22 +782,7 @@
       async: false,
       success: function(user) {
         res = user.name;
-      }
-    });
-    return res;
-  }
-
-  function getMasterList() {
-    var res = "";
-    $.ajax({
-      type: 'GET',
-      url: 'api/user/master',
-      async: false,
-      success: function(masters) {
-        masters.forEach(function(master) {
-          res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
-        });
-      }
+      },
     });
     return res;
   }
@@ -816,22 +795,22 @@
       async: false,
       success: function(user) {
         res = user.email + ':' + getCookie('session-token');
-      }
+      },
     });
     return res;
   }
 
   function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
+    var value = '; ' + document.cookie;
+    var parts = value.split('; ' + name + '=');
+    if (parts.length == 2) return parts.pop().split(';').shift();
   }
 
   function getUrlParameter(sParam) {
-    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-      sURLVariables = sPageURL.split('&'),
-      sParameterName,
-      i;
+    var sPageURL = decodeURIComponent(window.location.search.substring(1));
+    var sURLVariables = sPageURL.split('&');
+    var sParameterName;
+    var i;
 
     for (i = 0; i < sURLVariables.length; i++) {
       sParameterName = sURLVariables[i].split('=');
@@ -892,5 +871,4 @@
     $('#myModal .modal-body').html('<p>' + message + '<p>');
     $('#myModal').modal('show');
   }
-
 })(jQuery);

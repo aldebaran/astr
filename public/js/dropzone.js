@@ -1,5 +1,5 @@
 (function($) {
-  "use strict";
+  'use strict';
 
   // ----------------------------------------------//
   //                                               //
@@ -3548,7 +3548,7 @@
   Dropzone.options.myDropzone = {
     method: 'POST',
     url: '/api/upload',
-    headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+    headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
     maxFilesize: 512, // MB
     maxFiles: 10,
     autoProcessQueue: false,
@@ -3558,7 +3558,7 @@
     init: function() {
       var myDropzone = this;
 
-      myDropzone.on("addedfile", function(file) {
+      myDropzone.on('addedfile', function(file) {
         if (file.upload.total < this.options.maxFilesize * 1024 * 1024) {
           $('#isFileUploaded').val('true');
         } else {
@@ -3567,17 +3567,17 @@
         }
       });
 
-      myDropzone.on("sending", function(file, xhr, formData) {
-        //put the test ID in the body request to modify to filename later with the API
-        formData.set("testId", $('#testId').html());
-        formData.append("files", file.name);
+      myDropzone.on('sending', function(file, xhr, formData) {
+        // put the test ID in the body request to modify to filename later with the API
+        formData.set('testId', $('#testId').html());
+        formData.append('files', file.name);
       });
 
-      myDropzone.on("complete", function (file) {
+      myDropzone.on('complete', function(file) {
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0 && file.status !== 'error') {
           $('#myModal').modal({
               backdrop: 'static',
-              keyboard: false
+              keyboard: false,
           });
           showModal('Success', 'Your test is now saved !<br><br>Note that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped :) <div class="loader"></div>');
           setTimeout(function() {
@@ -3590,18 +3590,17 @@
         e.preventDefault();
         // wait 200ms to make sure the test is pushed in the DB
         setTimeout(function() {
-          if($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
-            console.log($('#testId').html())
+          if ($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
             myDropzone.processQueue(); // Tell Dropzone to process all queued files.
           }
         }, 200);
       });
-    }
-  }
+    },
+  };
 
-  $(document).bind('dragover', function (e) {
-    var dropZone = $('#dropzone'),
-      timeout = window.dropZoneTimeout;
+  $(document).bind('dragover', function(e) {
+    var dropZone = $('#dropzone');
+    var timeout = window.dropZoneTimeout;
     if (timeout) {
       clearTimeout(timeout);
     } else {
@@ -3609,7 +3608,7 @@
     }
     var hoveredDropZone = $(e.target).closest(dropZone);
     dropZone.toggleClass('hover', hoveredDropZone.length);
-    window.dropZoneTimeout = setTimeout(function () {
+    window.dropZoneTimeout = setTimeout(function() {
       window.dropZoneTimeout = null;
       dropZone.removeClass('in hover');
     }, 100);
@@ -3623,15 +3622,15 @@
       async: false,
       success: function(user) {
         res = user.email + ':' + getCookie('session-token');
-      }
+      },
     });
     return res;
   }
 
   function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
+    var value = '; ' + document.cookie;
+    var parts = value.split('; ' + name + '=');
+    if (parts.length == 2) return parts.pop().split(';').shift();
   }
 
   function showModal(title, message) {

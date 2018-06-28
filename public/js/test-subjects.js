@@ -1,14 +1,14 @@
 (function($) {
-  "use strict";
+  'use strict';
 
-  if(!isMaster()) {
+  if (!isMaster()) {
     showModal('Information', 'Welcome on the Test Subject page !<br><br>Since you are not a Master, you won\'t be able to modify or create new test subjects. But you can still take a look at the existing subjects.');
   }
 
   // Create a new test subject
   $('#buttonMoreConfig').click(function() {
     // check if the last configuration row is not empty
-    if($('.inputConfigName:last').val().trim() !== '') {
+    if ($('.inputConfigName:last').val().trim() !== '') {
       $('#formConfig').append('' +
       '<div class="form-group">' +
         '<div class="row config border-top">' +
@@ -30,7 +30,7 @@
 
   $('#formConfig').on('click', '#buttonMoreOption', function() {
     // check if the last option row is not empty
-    if($(this).parent().find('input:last').val().trim() !== '') {
+    if ($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOption" type="text" placeholder="Enter an option">').insertBefore(this);
     } else {
       showModal('Warning', 'Fulfill the actual option to add another.');
@@ -59,26 +59,26 @@
     e.preventDefault();
 
     // if the user is logged and is master
-    if(isConnected() && isMaster()) {
-      var r = confirm('Please confirm that you want to add this new test subject.')
-      if(r === true) {
+    if (isConnected() && isMaster()) {
+      var r = confirm('Please confirm that you want to add this new test subject.');
+      if (r === true) {
         var subject = {
           name: $('#inputName').val().trim().replace(/\s+/g, ' '),
           author: getUserName(),
           configuration: [],
-        }
+        };
         $('.inputConfigName').each(function() {
           var configName = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
           var options = [];
           $(this).closest('.row').find('.inputOption').each(function() {
-            if($(this).val().trim() !== '') {
+            if ($(this).val().trim() !== '') {
               options.push($(this).val().trim().toUpperCase().replace(/\s+/g, ' '));
             }
           });
-          if(configName !== '') {
+          if (configName !== '') {
             subject.configuration.push({
               name: configName,
-              options: options
+              options: options,
             });
           }
         });
@@ -87,14 +87,14 @@
         $.ajax({
           method: 'POST',
           url: 'api/test-subjects',
-          headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+          headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
           data: subject,
           success: function() {
             location.reload();
-          }
+          },
         });
       }
-    } else if(isConnected()) {
+    } else if (isConnected()) {
       // if the user is logged but without permission
       showModal('Error', 'Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.<br><br>Admins:<br>' + getMasterList().replace(/\n/g, '<br>'));
     } else {
@@ -112,7 +112,7 @@
   });
 
   $('#selectSubject').change(function() {
-    if($('#selectSubject').val() !== 'default') {
+    if ($('#selectSubject').val() !== 'default') {
       $.get('api/test-subjects/id/' + $('#selectSubject').val(), function(data) {
         $('#infoSubject').attr('val', data['_id']);
         $('#infoSubject').html('' +
@@ -129,7 +129,7 @@
         });
 
         // master can delete and edit the subject
-        if(isMaster()) {
+        if (isMaster()) {
           $('#infoSubject').append('' +
             '<div class="button-footer">' +
               '<button type="button" class="btn btn-danger admin-user" id="deleteTestSubject"><i class="fa fa-times" aria-hidden="true"></i> Delete</button>' +
@@ -139,14 +139,14 @@
 
           $('#deleteTestSubject').click(function() {
             var r = confirm('Please confirm that you want to delete this test subject.');
-            if(r === true) {
+            if (r === true) {
               $.ajax({
                 type: 'DELETE',
                 url: 'api/test-subjects/id/' + $(this).closest('#infoSubject').attr('val'),
-                headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
                 success: function() {
                   location.reload();
-                }
+                },
               });
             }
           });
@@ -155,7 +155,7 @@
     } else {
       $('#infoSubject').html('');
     }
-  })
+  });
 
   // Edit test subject
   $('#cardExistingSubject').on('click', '#editTestSubject', function() {
@@ -188,7 +188,7 @@
           '</div>' +
         '</div>');
 
-        if(config.options.length > 0) {
+        if (config.options.length > 0) {
           config.options.forEach(function(option) {
             $('<input class="form-control inputOptionEdit" type="text" value="' + option + '">').insertAfter('#label'+config.name);
           });
@@ -204,7 +204,7 @@
 
   // modal button listener (new config)
   $('#modalEdit .modal-body').on('click', '#buttonMoreConfigEdit', function() {
-    if(!$(this).parent().find('.form-group:last').find('.inputConfigNameEdit').length > 0 || $(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== '') {
+    if (!$(this).parent().find('.form-group:last').find('.inputConfigNameEdit').length > 0 || $(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== '') {
       $('' +
       '<div class="form-group">' +
         '<div class="row config border-top">' +
@@ -226,7 +226,7 @@
 
   // modal button listener (new option)
   $('#modalEdit .modal-body').on('click', '#buttonMoreOptionEdit', function() {
-    if($(this).parent().find('input:last').val().trim() !== '') {
+    if ($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOptionEdit" type="text" placeholder="Enter an option">').insertBefore(this);
     } else {
       showModal('Warning', 'Fulfill the actual option to add another.');
@@ -258,20 +258,20 @@
   $('.form-edit').submit(function(e) {
     e.preventDefault();
     var r = confirm('⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️\n\nThis will modify all the associated tests ! If you deleted some configurations, they will stay in the tests.\nPlease confirm that you want to modify this test subject.');
-    if(r === true) {
+    if (r === true) {
       var editedSubject = {
         name: $('#inputNameEdit').val().replace(/\s+/g, ' '),
-        configuration: []
+        configuration: [],
       };
       if ($('.inputConfigNameEdit').length > 0) {
         $('.inputConfigNameEdit').each(function() {
-          if(!$(this).hasClass('newConfig') || ($(this).hasClass('newConfig') && $(this).val().trim() !== '')) {
+          if (!$(this).hasClass('newConfig') || ($(this).hasClass('newConfig') && $(this).val().trim() !== '')) {
             var config = {
               name: $(this).val(),
-              options: []
+              options: [],
             };
             $(this).closest('.form-group').find('.inputOptionEdit').each(function() {
-              if($(this).val().trim() !== '') {
+              if ($(this).val().trim() !== '') {
                 config.options.push($(this).val());
               }
             });
@@ -285,60 +285,60 @@
       $.ajax({
         method: 'POST',
         url: 'api/test-subjects/id/' + $('#infoSubject').attr('val'),
-        headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+        headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
         data: editedSubject,
         success: function(data) {
-          if(data.name === 'Success') {
+          if (data.name === 'Success') {
             // modify all the associated tests
             $.post('api/tests', {testSubjectId: $('#infoSubject').attr('val')}, function(tests) {
               new Promise(function(resolve, reject) {
-                if(tests.length > 0) {
+                if (tests.length > 0) {
                   if (subjectNameChanged(data.before, data.modified)) {
                     $.ajax({
                       method: 'POST',
                       url: 'api/tests/changeTestSubjectName',
-                      headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                      headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
                       data: {previousName: data.before.name, newName: data.modified.name},
                       success: function(data) {
                         console.log(data);
-                      }
+                      },
                     });
                   }
                   // handle changes on configuration
                   $('.inputConfigNameEdit').each(function() {
-                    if($(this).hasClass('newConfig') && $(this).val().trim() !== '') {
+                    if ($(this).hasClass('newConfig') && $(this).val().trim() !== '') {
                       // add this config to all tests with the associated subject
                       var body = {
                         subject: editedSubject.name,
                         config: {
                           name: $(this).val().trim(),
-                          value: ''
-                        }
+                          value: '',
+                        },
                       };
                       $.ajax({
                         method: 'POST',
                         url: 'api/tests/addConfig',
-                        headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                        headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
                         data: body,
                         success: function(data) {
                           console.log(data);
-                        }
+                        },
                       });
                     } else if ($(this).hasClass('nameChanged') && $(this).val().trim() !== '') {
                       // change this config name on all tests with the associated subject
                       var body = {
                         subject: editedSubject.name,
                         previousName: $(this).attr('previousname'),
-                        newName: $(this).val().trim()
+                        newName: $(this).val().trim(),
                       };
                       $.ajax({
                         method: 'POST',
                         url: 'api/tests/changeConfigName',
-                        headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+                        headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
                         data: body,
                         success: function(data) {
                           console.log(data);
-                        }
+                        },
                       });
                     }
                   });
@@ -348,10 +348,8 @@
           } else {
             showModal('Error', 'Someting went wrong.');
           }
-        }
+        },
       });
-
-
     }
   });
 
@@ -365,20 +363,7 @@
       async: false,
       success: function(user) {
         res = !user.error;
-      }
-    });
-    return res;
-  }
-
-  function hasWritePermission() {
-    var res = false;
-    $.ajax({
-      type: 'GET',
-      url: 'api/user/profile',
-      async: false,
-      success: function(user) {
-        res = user['write_permission'];
-      }
+      },
     });
     return res;
   }
@@ -391,7 +376,7 @@
       async: false,
       success: function(user) {
         res = user.master;
-      }
+      },
     });
     return res;
   }
@@ -404,13 +389,13 @@
       async: false,
       success: function(user) {
         res = user.name;
-      }
+      },
     });
     return res;
   }
 
   function getMasterList() {
-    var res = "";
+    var res = '';
     $.ajax({
       type: 'GET',
       url: 'api/user/master',
@@ -419,7 +404,7 @@
         masters.forEach(function(master) {
           res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
         });
-      }
+      },
     });
     return res;
   }
@@ -432,15 +417,15 @@
       async: false,
       success: function(user) {
         res = user.email + ':' + getCookie('session-token');
-      }
+      },
     });
     return res;
   }
 
   function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
+    var value = '; ' + document.cookie;
+    var parts = value.split('; ' + name + '=');
+    if (parts.length == 2) return parts.pop().split(';').shift();
   }
 
   function subjectNameChanged(testSubjectBefore, testSubjectAfter) {
@@ -456,5 +441,4 @@
     $('#myModal .modal-body').html('<p>' + message + '<p>');
     $('#myModal').modal('show');
   }
-
 })(jQuery);
