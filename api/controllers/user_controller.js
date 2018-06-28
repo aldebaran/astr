@@ -7,11 +7,10 @@ var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and yo
 
 // GET: Returns the list of all the users
 exports.getAllUsers = (req, res) => {
-  User.find({},{password:0, tokens: 0}, (err, data) => {
+  User.find({}, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
       res.send(err);
-    }
-    else {
+    } else {
       res.json(data);
     }
   });
@@ -19,11 +18,10 @@ exports.getAllUsers = (req, res) => {
 
 // GET: Returns the list of all the masters
 exports.getAllMasters = (req, res) => {
-  User.find({master: true},{password:0, tokens: 0}, (err, data) => {
+  User.find({master: true}, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
       res.send(err);
-    }
-    else {
+    } else {
       res.json(data);
     }
   });
@@ -34,9 +32,11 @@ exports.getUser = (req, res) => {
   const id = req.params.id;
   User.findById(id, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
-      res.status(404).json({name: 'Failed', message: 'This user id doesn\'t exist'});
-    }
-    else {
+      res.status(404).json({
+        name: 'Failed',
+        message: 'This user id doesn\'t exist',
+      });
+    } else {
       res.json(data);
     }
   });
@@ -47,9 +47,11 @@ exports.getUserByEmail = (req, res) => {
   const email = req.params.email;
   User.findOne({email: email}, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
-      res.status(404).json({name: 'Failed', message: 'This email doesn\'t exist'});
-    }
-    else {
+      res.status(404).json({
+        name: 'Failed',
+        message: 'This email doesn\'t exist',
+      });
+    } else {
       res.json(data);
     }
   });
@@ -63,20 +65,30 @@ exports.updateUser = (req, res) => {
     if (hasAuthorization) {
       const id = req.params.id;
       var body = req.body;
-      if(body.master == 'true') {
+      if (body.master == 'true') {
         body['write_permission'] = true;
       }
-      if('write_permission' in body || 'master' in body) {
-        User.findByIdAndUpdate(id, body, {select: {password:0, tokens: 0}},(err, data) => {
+      if ('write_permission' in body || 'master' in body) {
+        User.findByIdAndUpdate(id, body, {select: {password: 0, tokens: 0}}, (err, data) => {
           if (err) {
-            res.status(404).json({name: 'Failed', message: 'This user id doesn\'t exist'});
-          }
-          else {
-            res.json({name: 'Success', message: 'User successfully modified', modified: body, before: data});
+            res.status(404).json({
+              name: 'Failed',
+              message: 'This user id doesn\'t exist',
+            });
+          } else {
+            res.json({
+              name: 'Success',
+              message: 'User successfully modified',
+              modified: body,
+              before: data,
+            });
           }
         });
       } else {
-        res.status(400).json({name: 'Failed', message: 'Only the variable "write_permission" and "master" can be modified'});
+        res.status(400).json({
+          name: 'Failed',
+          message: 'Only the variable "write_permission" and "master" can be modified',
+        });
       }
     } else {
       res.status(401).send(error401);
@@ -94,11 +106,17 @@ exports.deleteUser = (req, res) => {
         if (err) {
           res.send(err);
         }
-        if(data === null) {
-          res.status(404).json({name: 'Failed', message: 'This user id doesn\'t exist'});
-        }
-        else {
-          res.json({name: 'Success', message: 'User successfully deleted', user: data});
+        if (data === null) {
+          res.status(404).json({
+            name: 'Failed',
+            message: 'This user id doesn\'t exist',
+          });
+        } else {
+          res.json({
+            name: 'Success',
+            message: 'User successfully deleted',
+            user: data,
+          });
         }
       });
     } else {
@@ -114,7 +132,7 @@ exports.AddUserAndLogin = (req, res, next) => {
   if (req.body.password !== req.body.passwordConf) {
     var err = new Error('Passwords do not match.');
     err.status = 400;
-    res.send("passwords dont match");
+    res.send('Passwords do not match.');
     return next(err);
   }
 
@@ -127,10 +145,10 @@ exports.AddUserAndLogin = (req, res, next) => {
       password: req.body.password,
       write_permission: false,
       master: false,
-      tokens: []
-    }
+      tokens: [],
+    };
 
-    User.create(userData, function (error, user) {
+    User.create(userData, function(error, user) {
       if (error) {
         return next(error);
       } else {
@@ -140,21 +158,20 @@ exports.AddUserAndLogin = (req, res, next) => {
             url: 'http://localhost:8000/api/user/newToken/session',
             json: true,
             body: {
-              userId: user._id
-            }
+              userId: user._id,
+            },
         }, (err2, res2, token) => {
           if (err2) {
             console.log(err2);
           } else {
-            return res.cookie('session-token', token.key, {maxAge: 24*60*60*1000}).redirect('/'); // expires after 1 day
+            return res.cookie('session-token', token.key, {maxAge: 24*60*60*1000*30}).redirect('/'); // expires after 30 days
           }
         });
       }
     });
-
   } else if (req.body.logemail && req.body.logpassword) {
     // Login
-    User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
+    User.authenticate(req.body.logemail, req.body.logpassword, function(error, user) {
       if (error || !user) {
         var err = new Error('Wrong email or password.');
         err.status = 401;
@@ -170,8 +187,8 @@ exports.AddUserAndLogin = (req, res, next) => {
             url: 'http://localhost:8000/api/user/newToken/session/session',
             json: true,
             body: {
-              userId: user._id
-            }
+              userId: user._id,
+            },
         }, (err2, res2, token) => {
           if (err2) {
             console.log(err2);
@@ -191,13 +208,13 @@ exports.AddUserAndLogin = (req, res, next) => {
 // GET: Returns the information about the user logged in the machine
 exports.getProfile = (req, res, next) => {
   User.findById(req.session.userId)
-    .exec(function (error, user) {
+    .exec(function(error, user) {
       if (error) {
         return next(error);
       } else {
         if (user === null) {
           return res.json({
-            error: 'Not connected'
+            error: 'Not connected',
           });
         } else {
           return res.json({
@@ -206,8 +223,8 @@ exports.getProfile = (req, res, next) => {
             email: user.email,
             write_permission: user.write_permission,
             master: user.master,
-            tokens: user.tokens
-          })
+            tokens: user.tokens,
+          });
         }
       }
     });
@@ -218,8 +235,8 @@ exports.logout = (req, res, next) => {
   if (req.session) {
     // delele session-tokken in database
     if (req.cookies['session-token']) {
-      User.findByIdAndUpdate(req.session.userId, { '$pull': { 'tokens': { 'key': md5(req.cookies['session-token']) }}})
-        .exec(function (error, user) {
+      User.findByIdAndUpdate(req.session.userId, {'$pull': {'tokens': {'key': md5(req.cookies['session-token'])}}})
+        .exec(function(error, user) {
           if (error) {
             console.log(error);
           } else {
@@ -231,7 +248,7 @@ exports.logout = (req, res, next) => {
     }
 
     // delete session object
-    req.session.destroy(function (err) {
+    req.session.destroy(function(err) {
       if (err) {
         return next(err);
       } else {
@@ -253,35 +270,35 @@ exports.newToken = (req, res, next) => {
   var expires = new Date();
   var type = req.params.type;
   if (type === 'session') {
-    expires.setDate(expires.getDate() + 30) // 30 days
+    expires.setDate(expires.getDate() + 30); // 30 days
     req.params.name = 'session';
   } else if (type === 'persistent') {
-    expires.setDate(expires.getDate() + 365) // 365 days
+    expires.setDate(expires.getDate() + 365); // 365 days
   }
 
   var token = {
     key: md5(key),
     name: req.params.name,
-    expires: expires
+    expires: expires,
   };
-  User.findByIdAndUpdate(userId, { '$push': { 'tokens': token }})
-    .exec(function (error, user) {
+  User.findByIdAndUpdate(userId, {'$push': {'tokens': token}})
+    .exec(function(error, user) {
       if (error) {
         return next(error);
       } else {
         if (user === null) {
           return res.status(404).json({
-            error: 'Not connected'
+            error: 'Not connected',
           });
         } else {
           return res.json({
             'key': key,
-            'expires': expires
-          })
+            'expires': expires,
+          });
         }
       }
     });
-}
+};
 
 exports.deleteToken = (req, res, next) => {
   User.hasAuthorization(req, [])
@@ -295,19 +312,19 @@ exports.deleteToken = (req, res, next) => {
       }
       const id = req.params.id;
 
-      User.findByIdAndUpdate(userId, { '$pull': { 'tokens': {'_id': mongoose.Types.ObjectId(id) }}})
-        .exec(function (error, user) {
+      User.findByIdAndUpdate(userId, {'$pull': {'tokens': {'_id': mongoose.Types.ObjectId(id)}}})
+        .exec(function(error, user) {
           if (error) {
             return next(error);
           } else {
             if (user === null) {
               return res.status(404).json({
-                error: 'Not connected'
+                error: 'Not connected',
               });
             } else {
               return res.json({
                 name: 'Success',
-                message: 'Token successfully deleted'
+                message: 'Token successfully deleted',
               });
             }
           }
@@ -316,12 +333,17 @@ exports.deleteToken = (req, res, next) => {
       res.status(401).send(error401);
     }
   });
-}
+};
 
+/**
+ * Compare today's date to each token of the user.
+ * Delete them if the expiration date is passed.
+ * @param {String} userId
+ */
 function deleteExpiredTokens(userId) {
   var today = new Date();
-  User.findByIdAndUpdate(userId, { '$pull': { 'tokens': { 'expires': { '$lte': today } }}})
-    .exec(function (error, user) {
+  User.findByIdAndUpdate(userId, {'$pull': {'tokens': {'expires': {'$lte': today }}}})
+    .exec(function(error, user) {
       if (error) {
         console.log(error);
       } else {

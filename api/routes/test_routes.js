@@ -2,8 +2,8 @@ module.exports = function(app) {
   var test = require('../controllers/test_controller');
 
   app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
 
@@ -48,5 +48,4 @@ module.exports = function(app) {
 
   app.route('/api/tests/withoutArchive')
   .get(test.getAllTestsWithoutArchive); // GET: Returns the list of all tests without any archive (to delete them)
-
 };

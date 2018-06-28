@@ -6,13 +6,13 @@ var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and yo
 var maxFileNumber = 50;
 
 var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'archives/')
+  destination: function(req, file, cb) {
+    cb(null, 'archives/');
   },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname)
-  }
-})
+  filename: function(req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
 
 var upload = multer({storage: storage});
 
@@ -27,14 +27,14 @@ module.exports = function(app) {
           console.log('Failed, no file received');
           return res.status(400).send({
             status: 'Failed',
-            message: 'No file received'
+            message: 'No file received',
           });
         }
 
         // create a file to stream archive data to.
         var output = fs.createWriteStream('archives/' + req.body.testId + '.zip');
         var archive = archiver('zip', {
-          zlib: { level: 9 } // Sets the compression level.
+          zlib: {level: 9}, // Sets the compression level.
         });
 
         // listen for all archive data to be written
@@ -67,7 +67,7 @@ module.exports = function(app) {
           throw err;
         });
 
-        if(typeof req.body.files === 'string') {
+        if (typeof req.body.files === 'string') {
           // only one file uploaded
           var file = 'archives/' + req.body.files;
           archive.append(fs.createReadStream(file), {name: req.body.files});
@@ -76,14 +76,14 @@ module.exports = function(app) {
           req.body.files.forEach(function(filename) {
             var file = 'archives/' + filename;
             archive.append(fs.createReadStream(file), {name: filename});
-          })
+          });
         }
 
         // zip the files
         archive.finalize()
         .then(function() {
           // then, delete the raw files (not in the zip)
-          if(typeof req.body.files === 'string') {
+          if (typeof req.body.files === 'string') {
             // only one file uploaded
             var file = 'archives/' + req.body.files;
             fs.unlink(file, (err) => {});
@@ -99,9 +99,8 @@ module.exports = function(app) {
         return res.status(200).send({
           status: 'Success',
           testId: req.body.testId,
-          uploadedFiles: req.body.files
+          uploadedFiles: req.body.files,
         });
-
       } else {
         res.status(401).send(error401);
       }
