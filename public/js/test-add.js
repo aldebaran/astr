@@ -64,6 +64,9 @@
         author: getUserName(),
         configuration: [],
       };
+      if ($('#inputComments').val().trim() !== '') {
+        test.comments = $('#inputComments').val().trim();
+      }
       $('.inputConfig').each(function() {
         if ($(this).val().trim() === '') {
           okayToPush = false;

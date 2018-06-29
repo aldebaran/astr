@@ -24,6 +24,12 @@ var TestSchema = new Schema({
     name: {type: String, lowercase: true, trim: true},
     value: {type: String, uppercase: true, trim: true},
   }],
+  comments: {
+    type: String,
+    unique: false,
+    required: false,
+    trim: true,
+  },
   created: {
     type: Date,
     default: Date.Now,

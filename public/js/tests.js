@@ -196,8 +196,9 @@
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
             '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
-              '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
-              '<span class="key">Date: </span><span class="value">' + test.date.substr(0, 10) + '</span><br>' +
+              '<div><span class="key">Author: </span><span class="value">' + test.author + '</span></div>' +
+              '<div><span class="key">Date: </span><span class="value">' + test.date.substr(0, 10) + '</span></div>' +
+              '<div class="comments" style="display: none;"><span class="key">Comments: </span><span class="value">' + test.comments + '</span></div>' +
             '</div>' +
             '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
@@ -211,6 +212,9 @@
           test.configuration.forEach(function(config) {
             $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
           });
+          if (test.comments) {
+            $('#body'+test['_id']+' .comments').show();
+          }
         });
       } else if (isConnected()) {
         // if the user is connected but not a master --> can only modify his own tests
@@ -220,8 +224,9 @@
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
             '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
-              '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
-              '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
+              '<div><span class="key">Author: </span><span class="value">' + test.author + '</span></div>' +
+              '<div><span class="key">Date: </span><span class="value">' + test.date.substr(0, 10) + '</span></div>' +
+              '<div class="comments" style="display: none;"><span class="key">Comments: </span><span class="value">' + test.comments + '</span></div>' +
             '</div>' +
             '<div class="card-footer small text-muted"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
@@ -233,6 +238,9 @@
           test.configuration.forEach(function(config) {
             $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
           });
+          if (test.comments) {
+            $('#body'+test['_id']+' .comments').show();
+          }
 
           if (username === test.author) {
             $('#button-footer'+test['_id']).html('' +
@@ -248,8 +256,9 @@
           $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
             '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
             '<div class="card-body tests" id="body' + test['_id'] + '">' +
-              '<span class="key">Author: </span><span class="value">' + test.author + '</span><br>' +
-              '<span class="key">Date: </span><span class="value">' + test.date + '</span><br>' +
+              '<div><span class="key">Author: </span><span class="value">' + test.author + '</span></div>' +
+              '<div><span class="key">Date: </span><span class="value">' + test.date.substr(0, 10) + '</span></div>' +
+              '<div class="comments" style="display: none;"><span class="key">Comments: </span><span class="value">' + test.comments + '</span></div>' +
             '</div>' +
             '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
@@ -261,6 +270,9 @@
           test.configuration.forEach(function(config) {
             $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
           });
+          if (test.comments) {
+            $('#body'+test['_id']+' .comments').show();
+          }
         });
       }
 
@@ -439,8 +451,20 @@
       '<div class="form-group">' +
         '<label for="inputDateEdit">Date</label>' +
         '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date.substr(0, 10) + '" required>' +
-      '</div>'
-      );
+      '</div>');
+      if (test.comments) {
+        $('#modalEdit .modal-body').append('' +
+        '<div class="form-group">' +
+          '<label for="inputCommentsEdit">Comments (optional)</label>' +
+          '<textarea id="inputCommentsEdit" class="form-control">' + test.comments + '</textarea>' +
+        '</div>');
+      } else {
+        $('#modalEdit .modal-body').append('' +
+        '<div class="form-group">' +
+          '<label for="inputCommentsEdit">Comments (optional)</label>' +
+          '<textarea id="inputCommentsEdit" class="form-control"></textarea>' +
+        '</div>');
+      }
       test.configuration.forEach(function(config) {
         $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
@@ -491,6 +515,9 @@
         date: $('#inputDateEdit').val(),
         configuration: [],
       };
+      if ($('#inputCommentsEdit').val().trim() !== '') {
+        test.comments = $('#inputCommentsEdit').val().trim();
+      }
       $('.selectConfigEdit').each(function() {
         if ($(this).val() !== 'Other') {
           test.configuration.push({

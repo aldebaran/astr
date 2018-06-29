@@ -200,7 +200,7 @@ exports.getTest = (req, res) => {
   });
 };
 
-// POST: Update the test with the associated ID in function of the parameters given in the body request (only the date and the configuration values can be updated)
+// POST: Update the test with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated)
 exports.updateTest = (req, res) => {
   User.hasAuthorization(req, ['master', 'owner'])
   .then((hasAuthorization) => {
@@ -221,6 +221,9 @@ exports.updateTest = (req, res) => {
             test.lastModification = Date.now();
             if (body.date) {
               test.date = new Date(body.date);
+            }
+            if (body.comments) {
+              test.comments = body.comments;
             }
             if (body.configuration && body.configuration.length > 0) {
               body.configuration.forEach(function(newConfig) {
