@@ -1,6 +1,7 @@
 var multer = require('multer');
 var fs = require('fs');
 var archiver = require('archiver');
+var request = require('request');
 var User = require('../models/user_model');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
 var maxFileNumber = 50;
@@ -67,39 +68,57 @@ module.exports = function(app) {
           throw err;
         });
 
-        if (typeof req.body.files === 'string') {
-          // only one file uploaded
-          var file = 'archives/' + req.body.files;
-          archive.append(fs.createReadStream(file), {name: req.body.files});
-        } else {
-          // multiple files uploaded
-          req.body.files.forEach(function(filename) {
-            var file = 'archives/' + filename;
-            archive.append(fs.createReadStream(file), {name: filename});
+        new Promise(function(resolve) {
+          // get the test to include a txt file with its configuration in the archive
+          request.get({
+            url: 'http://localhost:8000/api/tests/txtformat/id/' + req.body.testId,
+            json: true,
+          }, (err, res, test) => {
+            console.log(test);
+            fs.writeFile('archives/info.txt', test, (error) => {
+              if (error) {
+                console.log(error);
+              }
+              archive.append(fs.createReadStream('archives/info.txt'), {name: 'info.txt'});
+              resolve();
+            });
           });
-        }
-
-        // zip the files
-        archive.finalize()
-        .then(function() {
-          // then, delete the raw files (not in the zip)
+        }).then(function() {
           if (typeof req.body.files === 'string') {
             // only one file uploaded
             var file = 'archives/' + req.body.files;
-            fs.unlink(file, (err) => {});
+            archive.append(fs.createReadStream(file), {name: req.body.files});
           } else {
             // multiple files uploaded
             req.body.files.forEach(function(filename) {
               var file = 'archives/' + filename;
-              fs.unlink(file, (err) => {});
+              archive.append(fs.createReadStream(file), {name: filename});
             });
           }
-        });
 
-        return res.status(200).send({
-          status: 'Success',
-          testId: req.body.testId,
-          uploadedFiles: req.body.files,
+          // zip the files
+          archive.finalize()
+          .then(function() {
+            // then, delete the raw files (not in the zip)
+            if (typeof req.body.files === 'string') {
+              // only one file uploaded
+              var file = 'archives/' + req.body.files;
+              fs.unlink(file, (err) => {});
+            } else {
+              // multiple files uploaded
+              req.body.files.forEach(function(filename) {
+                var file = 'archives/' + filename;
+                fs.unlink(file, (err) => {});
+              });
+            }
+            fs.unlink('archives/info.txt', (err) => {});
+          });
+
+          return res.status(200).send({
+            status: 'Success',
+            testId: req.body.testId,
+            uploadedFiles: req.body.files,
+          });
         });
       } else {
         res.status(401).send(error401);

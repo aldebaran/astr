@@ -1,6 +1,7 @@
 var fs = require('fs');
 var request = require('request');
 var mongoose = require('mongoose');
+var AdmZip = require('adm-zip');
 var User = require('../models/user_model');
 var Test = mongoose.model('Test');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
@@ -200,6 +201,38 @@ exports.getTest = (req, res) => {
   });
 };
 
+// GET: Returns the test with the associated ID in a text format, to store it in the archive
+exports.getTestInTxtFormat = (req, res) => {
+  var id = req.params.id;
+  Test.findById(id, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      if (data === null) {
+        res.status(404).json({
+          name: 'Failed',
+          message: 'This test id doesn\'t exist',
+        });
+      } else {
+        var txt = ('======== Test Info ========' + '\n\n\n' +
+                 'ID: ' + data._id + '\n\n' +
+                 'Date: ' + data.date.toISOString().substr(0, 10) + '\n\n' +
+                 'Author: ' + data.author + '\n\n' +
+                 'Test subject: ' + data.type + '\n\n'
+        );
+        if (data.comments) {
+          txt += 'Comments: ' + data.comments + '\n\n';
+        }
+        txt += 'Configurations:\n';
+        data.configuration.forEach(function(config) {
+          txt += '    ' + config.name + ': ' + config.value + '\n';
+        });
+        res.send(txt);
+      }
+    }
+  });
+};
+
 // POST: Update the test with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated)
 exports.updateTest = (req, res) => {
   User.hasAuthorization(req, ['master', 'owner'])
@@ -238,6 +271,19 @@ exports.updateTest = (req, res) => {
               if (err2) {
                 res.send(err2);
               } else {
+                // update txt file inside the archive (info)
+                request.get({
+                  url: 'http://localhost:8000/api/tests/txtformat/id/' + test._id,
+                }, (err, res, testInfo) => {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    var zip = new AdmZip('archives/' + test._id + '.zip');
+                    zip.updateFile('info.txt', testInfo);
+                    zip.writeZip('archives/' + test._id + '.zip');
+                  }
+                });
+
                 res.json({
                   name: 'Success',
                   message: 'Test successfully modified',

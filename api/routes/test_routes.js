@@ -22,6 +22,9 @@ module.exports = function(app) {
   .post(test.updateTest) // POST: Update the test with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated)
   .delete(test.deleteTest); // DELETE: Delete the test with the associated ID
 
+  app.route('/api/tests/txtformat/id/:id')
+  .get(test.getTestInTxtFormat); // GET: Returns the test with the associated ID in a text format, to store it in the archive
+
   app.route('/api/tests/authors')
   .get(test.getDistinctAuthors); // GET: Returns the list of test authors (that wrote at least one test)
 
