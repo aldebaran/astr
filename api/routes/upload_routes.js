@@ -74,7 +74,6 @@ module.exports = function(app) {
             url: 'http://localhost:8000/api/tests/txtformat/id/' + req.body.testId,
             json: true,
           }, (err, res, test) => {
-            console.log(test);
             fs.writeFile('archives/info.txt', test, (error) => {
               if (error) {
                 console.log(error);

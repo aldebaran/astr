@@ -3549,12 +3549,12 @@
     method: 'POST',
     url: '/api/upload',
     headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
-    maxFilesize: 512, // MB
-    maxFiles: 10,
+    maxFilesize: 10240, // 10Go
+    maxFiles: 50,
     autoProcessQueue: false,
     uploadMultiple: true,
     paramName: paramNameForSend,
-    parallelUploads: 10,
+    parallelUploads: 50,
     init: function() {
       var myDropzone = this;
 
@@ -3591,6 +3591,7 @@
         // wait 200ms to make sure the test is pushed in the DB
         setTimeout(function() {
           if ($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
+            $('#cardAddNewTest form').children().wrapAll('<fieldset disabled></fieldset>');
             myDropzone.processQueue(); // Tell Dropzone to process all queued files.
           }
         }, 200);
