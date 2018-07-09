@@ -44,6 +44,10 @@ var TestSchema = new Schema({
     type: Boolean,
     required: false,
   },
+  archiveContent: {
+    type: [String],
+    require: false,
+  },
   testSubjectId: {
     type: String,
     unique: false,

@@ -102,7 +102,7 @@ UserSchema.statics.hasAuthorization = function(req, permissions) {
                 } else if (permissions.includes('write_permission') && user.write_permission === true) {
                   // require to have write_permission
                   resolve(true);
-                } else if (permissions.includes('owner') && req.url.includes('tests')) {
+                } else if (permissions.includes('owner') && (req.url.includes('tests') || req.url.includes('archive'))) {
                   // require to have be owner of the test
                   request('http://' + req.get('host') + '/api/tests/id/' + req.params.id, {json: true}, (err2, res2, test) => {
                     if (test.author === user.firstname + ' ' + user.lastname) {

@@ -14,6 +14,7 @@
   <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <!-- Custom style -->
   <link href="css/index.css" rel="stylesheet">
+  <link href="css/dropzone.css" rel="stylesheet">
   <!-- Favicon -->
   <link rel="shortcut icon" href="favicon.ico" />
 </head>
@@ -138,10 +139,10 @@
           <div id="tests-grid" class="row">
           </div>
 
-            <nav id="pagination">
-              <ul class="pagination flex-wrap">
-              </ul>
-            </nav>
+          <nav id="pagination">
+            <ul class="pagination flex-wrap">
+            </ul>
+          </nav>
 
         </div>
       </div>
@@ -187,6 +188,8 @@
         </div>
       </div>
 
+      <input id="isFileUploaded" type="text" style="display: none;" value="false">
+
     </div>
 
     <!-- Footer -->
@@ -212,6 +215,8 @@
     <script src="js/index.js"></script>
     <!-- Specific script for tests-->
     <script src="js/tests.js"></script>
+    <!-- Specific script to upload file by drag and drop-->
+    <script src="js/dropzone_edit.js"></script>
   </div>
 </body>
 

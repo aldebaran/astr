@@ -2,6 +2,8 @@ var multer = require('multer');
 var fs = require('fs');
 var archiver = require('archiver');
 var request = require('request');
+var mongoose = require('mongoose');
+var Test = mongoose.model('Test');
 var User = require('../models/user_model');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
 var maxFileNumber = 50;
@@ -18,6 +20,8 @@ var storage = multer.diskStorage({
 var upload = multer({storage: storage});
 
 module.exports = function(app) {
+  // POST: Upload files to the server in a ZIP. The name of the archive is the ID of the test
+  // **(user must have write permission)**
   app.post('/api/upload', upload.array('files', maxFileNumber), function(req, res, next) {
     User.hasAuthorization(req, ['write_permission'])
     .then((hasAuthorization) => {
@@ -111,14 +115,41 @@ module.exports = function(app) {
               });
             }
             fs.unlink('archives/info.txt', (err) => {});
-          });
 
-          return res.status(200).send({
-            status: 'Success',
-            testId: req.body.testId,
-            uploadedFiles: req.body.files,
+            // update the test with the content of the archive
+            request.get({
+              url: 'http://localhost:8000/api/archive/id/' + req.body.testId,
+              json: true,
+            }, (err2, res2, files) => {
+              Test.findByIdAndUpdate(req.body.testId, {'$set': {'archiveContent': files}}, {new: true}, (err, test) => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  console.log(test);
+                  return res.status(200).send({
+                    status: 'Success',
+                    testId: req.body.testId,
+                    uploadedFiles: req.body.files,
+                  });
+                }
+              });
+            });
           });
         });
+      } else {
+        res.status(401).send(error401);
+      }
+    });
+  });
+
+  app.post('/api/upload/newfiles', upload.array('files', maxFileNumber), function(req, res, next) {
+    // POST: Upload files to the server (not zipped), to put them in an existing archive
+    // **(user must have write permission)**
+    User.hasAuthorization(req, ['write_permission'])
+    .then((hasAuthorization) => {
+      if (hasAuthorization) {
+        res.send('okay');
+        console.log('okay');
       } else {
         res.status(401).send(error401);
       }

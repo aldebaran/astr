@@ -5,7 +5,7 @@
   //                                               //
   //                 /!\ INFO /!\                  //
   //  Scroll to the bottom to change the options!  //
-  //                 (Line 3540)                   //
+  //                 (Line 3549)                   //
   //          Don't touch anything else            //
   //                                               //
   // ----------------------------------------------//
@@ -429,7 +429,7 @@
           /**
            * The text used before any files are dropped.
            */
-          dictDefaultMessage: "Drop files (or click here) to upload on the server",
+          dictDefaultMessage: "Drop files (or click here) to add files in the archive",
 
           /**
            * The text that replaces the default message text it the browser is not supported.
@@ -501,6 +501,7 @@
            * You can add event listeners here
            */
           init: function init() {},
+
 
           /**
            * Can be an **object** of additional parameters to transfer to the server, **or** a `Function`
@@ -3545,9 +3546,9 @@
   //                                               //
   // ----------------------------------------------//
 
-  Dropzone.options.myDropzone = {
+  Dropzone.options.dropzone = {
     method: 'POST',
-    url: '/api/upload',
+    url: '/api/upload/newfiles',
     headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
     maxFilesize: 10240, // 10Go
     maxFiles: 50,
@@ -3557,6 +3558,7 @@
     parallelUploads: 50,
     init: function() {
       var myDropzone = this;
+      var filenames = [];
 
       myDropzone.on('addedfile', function(file) {
         if (file.upload.total < this.options.maxFilesize * 1024 * 1024) {
@@ -3568,9 +3570,8 @@
       });
 
       myDropzone.on('sending', function(file, xhr, formData) {
-        // put the test ID in the body request to modify to filename later with the API
-        formData.set('testId', $('#testId').html());
         formData.append('files', file.name);
+        filenames.push(file.name);
       });
 
       myDropzone.on('complete', function(file) {
@@ -3579,25 +3580,35 @@
               backdrop: 'static',
               keyboard: false,
           });
-          showModal('Success', 'Your test is now saved !<br><br>Note that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped :) <div class="loader"></div>');
-          setTimeout(function() {
-            location.reload();
-          }, 3000);
+          showModal('Uploading', 'Please wait...<br>Your files are being added in the archive<div class="loader"></div>');
+          $.ajax({
+            method: 'POST',
+            url: 'api/archive/id/' + $('.form-edit').attr('id'),
+            headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
+            data: {
+              add: filenames,
+            },
+            success: function() {
+              location.reload();
+            },
+          });
         }
       });
 
-      $('form').submit(function(e) {
+      $('.form-edit').submit(function(e) {
         e.preventDefault();
-        // wait 200ms to make sure the test is pushed in the DB
-        setTimeout(function() {
-          if ($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
-            $('#cardAddNewTest form').children().wrapAll('<fieldset disabled></fieldset>');
-            myDropzone.processQueue(); // Tell Dropzone to process all queued files.
-          }
-        }, 200);
+        $('#modalEdit').data('bs.modal', null);
+        $('#modalEdit').modal({backdrop: 'static', keyboard: false});
+        $('.form-edit').children().wrapAll('<fieldset disabled></fieldset>');
+        myDropzone.processQueue(); // Tell Dropzone to process all queued files.
       });
     },
   };
+
+  $('#modalEdit').on('shown.bs.modal', function(e) {
+    // Initialize Dropzone
+    $('div#dropzone').dropzone();
+  });
 
   $(document).bind('dragover', function(e) {
     var dropZone = $('#dropzone');

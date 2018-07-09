@@ -465,6 +465,26 @@
           '<textarea id="inputCommentsEdit" class="form-control"></textarea>' +
         '</div>');
       }
+      $('#modalEdit .modal-body').append('' +
+      '<div class="form-group" id="archiveContentDisabled">' +
+        '<label for="inputFiles">Files</label>' +
+        '<textarea id="inputFiles" class="form-control" rows="' + test.archiveContent.length + '" disabled>' + test.archiveContent.join('\n') + '</textarea>' +
+      '</div>' +
+      '<div class="form-group" id="archiveContentEnabled" style="display: none;">' +
+        '<label for="inputFiles">Files</label>' +
+        '<div id="dropzone" class="dropzone"></div>' +
+      '</div>' +
+      '<button type="button" class="btn btn-outline-info" id="buttonUpdateArchiveContent">Update archive content</button>');
+      test.archiveContent.forEach(function(filename) {
+        $('<div class="row deleteFile" style="margin-bottom: 1em;">' +
+          '<div class="col">' +
+            '<input type="text" class="form-control" value="' + filename + '" disabled>' +
+          '</div>' +
+          '<div class="col-2">' +
+            '<button type="button" class="btn btn-danger admin-user ButtonDeleteFile"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
+          '</div>' +
+        '</div>').insertBefore('#dropzone');
+      });
       test.configuration.forEach(function(config) {
         $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
@@ -544,13 +564,54 @@
           headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
           data: test,
           success: function() {
-          location.reload();
+            if ($('#isFileUploaded').val() === 'false') {
+              $('#myModal').modal({
+                  backdrop: 'static',
+                  keyboard: false,
+              });
+              showModal('Success', 'You will be redirected...<div class="loader"></div>');
+              setTimeout(function() {
+                location.reload();
+              }, 3000);
+            }
           },
         });
       } else {
         showModal('Error', 'Your test was not added because you left an empty field.');
       }
+
+      // update archive content
+      if ($('#archiveContentEnabled').is(':visible')) {
+        var filesToDelete = [];
+        $('.deleteFile').each(function() {
+          if ($(this).is(':hidden')) {
+            filesToDelete.push($(this).find('input').val());
+          }
+        });
+        $.ajax({
+          method: 'POST',
+          url: 'api/archive/id/' + $('.form-edit').attr('id'),
+          headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
+          data: {
+            delete: filesToDelete,
+          },
+          success: function() {
+          // location.reload();
+          },
+        });
+      }
     }
+  });
+
+  // Update archive content
+  $('#modalEdit').on('click', '#buttonUpdateArchiveContent', function() {
+    $('#archiveContentDisabled').hide();
+    $('#archiveContentEnabled').show();
+    $(this).hide();
+  });
+
+  $('#modalEdit').on('click', '.ButtonDeleteFile', function() {
+    $(this).closest('.row').hide();
   });
 
   // --------------------------- Save research ---------------------------- //

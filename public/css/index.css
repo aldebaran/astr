@@ -690,3 +690,7 @@ span.text-muted {
 .clickableRow {
   cursor: pointer;
 }
+
+#buttonUpdateArchiveContent {
+  margin-bottom: 1em;
+}

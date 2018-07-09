@@ -42,6 +42,7 @@ var searchRoutes = require('./api/routes/search_routes');
 var userRoutes = require('./api/routes/user_routes');
 var uploadRoutes = require('./api/routes/upload_routes');
 var downloadRoutes = require('./api/routes/download_routes');
+var archiveRoutes = require('./api/routes/archive_routes');
 
 // register the routes
 testRoutes(app);
@@ -50,6 +51,7 @@ searchRoutes(app);
 userRoutes(app);
 uploadRoutes(app);
 downloadRoutes(app);
+archiveRoutes(app);
 
 // start the server
 app.listen(port);
