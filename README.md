@@ -318,7 +318,7 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
 13. [/api/tests/withoutArchive](http://10.0.160.147:8000/api/tests/withoutArchive)
     - GET: Returns the list of all tests without any archive (to delete them)
 14. [/api/tests/YAMLformat/id/:id]((http://10.0.160.147:8000/api/tests/YAMLformat/id/:id)
-    - GET: Returns the test with the associated ID in a text format, to store it in the archive
+    - GET: Returns the test with the associated ID in a YAML format, to store it in the archive
 
 #### Test subjects
 

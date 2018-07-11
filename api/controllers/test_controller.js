@@ -394,7 +394,7 @@ exports.getOptionsOfConfig = (req, res) => {
       res.send(err);
     } else {
       if (data.length === 1) {
-        res.json(data[0].values);
+        res.json(data[0].values.sort());
       } else {
         res.status(404).json({'error': 'Nothing found'});
       }
