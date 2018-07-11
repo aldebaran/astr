@@ -201,8 +201,8 @@ exports.getTest = (req, res) => {
   });
 };
 
-// GET: Returns the test with the associated ID in a text format, to store it in the archive
-exports.getTestInTxtFormat = (req, res) => {
+// GET: Returns the test with the associated ID in a YAML format, to store it in the archive
+exports.getTestInYAMLFormat = (req, res) => {
   var id = req.params.id;
   Test.findById(id, (err, data) => {
     if (err) {
@@ -214,18 +214,18 @@ exports.getTestInTxtFormat = (req, res) => {
           message: 'This test id doesn\'t exist',
         });
       } else {
-        var txt = ('======== Test Info ========' + '\n\n\n' +
-                 'ID: ' + data._id + '\n\n' +
-                 'Date: ' + data.date.toISOString().substr(0, 10) + '\n\n' +
-                 'Author: ' + data.author + '\n\n' +
-                 'Test subject: ' + data.type + '\n\n'
+        var txt = ('---\n' +
+                 'id: ' + data._id + '\n' +
+                 'date: ' + data.date.toISOString().substr(0, 10) + '\n' +
+                 'author: ' + data.author + '\n' +
+                 'test_subject: ' + data.type + '\n'
         );
         if (data.comments) {
-          txt += 'Comments: ' + data.comments + '\n\n';
+          txt += 'comments: ' + data.comments + '\n';
         }
-        txt += 'Configurations:\n';
+        txt += 'configurations:\n';
         data.configuration.forEach(function(config) {
-          txt += '    ' + config.name + ': ' + config.value + '\n';
+          txt += '  ' + config.name + ': ' + config.value + '\n';
         });
         res.send(txt);
       }
@@ -273,7 +273,7 @@ exports.updateTest = (req, res) => {
               } else {
                 // update txt file inside the archive (info)
                 request.get({
-                  url: 'http://localhost:8000/api/tests/txtformat/id/' + test._id,
+                  url: 'http://localhost:8000/api/tests/YAMLformat/id/' + test._id,
                 }, (err, res, testInfo) => {
                   if (err) {
                     console.log(err);
