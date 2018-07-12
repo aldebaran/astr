@@ -333,6 +333,8 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
     - GET: Returns the test subject with the associated name
 4. [/api/test-subjects/options/:subject/:configName](http://10.0.160.147:8000/api/test-subjects/options/WIFI/robot_type)
     - GET: Returns the options of a configuration
+4. [/api/test-subjects/links/:subject](http://10.0.160.147:8000/api/test-subjects/links/:subject)
+    - GET: Returns the links of a test subject
 
 #### Search
 

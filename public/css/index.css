@@ -646,6 +646,20 @@ a.download-button {
   margin-top: 1em;
 }
 
+#buttonMakeLink {
+  margin-top: 1em;
+  margin-right: 10px;
+}
+
+#buttonMakeLinkEdit {
+  margin-top: 1em;
+  margin-right: 10px;
+}
+
+.makeLink {
+  margin-top: 1em;
+}
+
 #buttonMoreOptionEdit {
   float: right;
 }
@@ -708,4 +722,30 @@ span.text-muted {
 
 #buttonUpdateArchiveContent {
   margin-bottom: 1em;
+}
+
+.infoLinkIcon {
+  font-size: 1.5em;
+
+}
+
+.infobulle {
+	display: none;
+	color: #fff;
+	background: rgba(51,51,51,0.9);
+	padding: 20px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	width: 150%;
+	text-align: center;
+	position: absolute;
+	z-index: 10;
+  word-wrap: break-word
+}
+.infoLink {
+  display: inline-block;
+}
+.infoLink:hover .infobulle {
+	display:block;
 }

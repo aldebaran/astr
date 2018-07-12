@@ -11,10 +11,35 @@
     if ($('.inputConfigName:last').val().trim() !== '') {
       $('#formConfig').append('' +
       '<div class="form-group">' +
-        '<div class="row config border-top">' +
+        '<div class="row config border-bottom">' +
           '<div class="col">' +
             '<label id="labelConfigName">Configuration name</label>' +
             '<input type="text" class="form-control inputConfigName" placeholder="Enter the configuration name">' +
+            '<div class="makeLinkDisabled">' +
+              '<button type="button" class="btn btn-outline-primary" id="buttonMakeLink"><i class="fa fa-link"></i> Link</button>' +
+              '<small class="form-text text-muted infoLink"><i class="fa fa-question-circle infoLinkIcon" aria-hidden="true"></i>' +
+                '<span class="infobulle">You can turn this configuration into a link.<br>' +
+                  'Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>' +
+                  '<strong>Example</strong><br>' +
+                  'Configuration name: <i>Issue ID</i><br>' +
+                  'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
+                  'Configuration value: <i>42305</i><br>' +
+                  'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
+                  '<i class="fa fa-warning" aria-hidden="true"></i> Don\'t forget the "/" at the end of the base URL.' +
+                '</span>' +
+              '</small>' +
+            '</div>' +
+            '<div class="makeLinkEnabled" style="display: none;">' +
+              '<div class="row makeLink">' +
+                '<div class="col">' +
+                  '<input class="form-control inputUrlBase" type="text" placeholder="Enter the base URL">' +
+                '</div>' +
+                '<div class="col-2">' +
+                  '<button type="button" class="btn btn-warning deleteLink" id="deleteLink"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+                '</div>' +
+              '</div>' +
+              '<small class="form-text text-muted">Example: https://redmine.aldebaran.lan/issues/</small>' +
+            '</div>' +
           '</div>' +
           '<div class="col">' +
             '<label>Options</label>' +
@@ -35,6 +60,16 @@
     } else {
       showModal('Warning', 'Fulfill the actual option to add another.');
     }
+  });
+
+  $('#formConfig').on('click', '#buttonMakeLink', function() {
+    $(this).closest('div').hide();
+    $(this).closest('div').next().show();
+  });
+
+  $('#formConfig').on('click', '#deleteLink', function() {
+    $(this).closest('.makeLinkEnabled').hide();
+    $(this).closest('.makeLinkEnabled').prev().show();
   });
 
   // modify test subject name
@@ -76,10 +111,20 @@
             }
           });
           if (configName !== '') {
-            subject.configuration.push({
-              name: configName,
-              options: options,
-            });
+            if ($(this).siblings('.makeLinkEnabled').is(':visible') && $(this).siblings('.makeLinkEnabled').find('.inputUrlBase').val().trim() !== '') {
+              // configuration with link
+              subject.configuration.push({
+                name: configName,
+                options: options,
+                baseUrl: $(this).siblings('.makeLinkEnabled').find('.inputUrlBase').val().trim(),
+              });
+            } else {
+              // simple configuration
+              subject.configuration.push({
+                name: configName,
+                options: options,
+              });
+            }
           }
         });
 
@@ -121,8 +166,12 @@
         '<span class="key"> Created: </span><span class="value">' + new Date(data.created).toLocaleDateString() + '</span><br>' +
         '<span class="key"> Configuration</span><br>');
         data.configuration.forEach(function(config) {
-          if (config.options.length > 0) {
+          if (config.options.length > 0 && config.baseUrl) {
+            $('#infoSubject').append('<li class="config"><span><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + '</span><span class="value"> <a href="' + config.baseUrl + '">(' + config.baseUrl + '[:' + config.name + '])</a> [' + config.options.join(', ') + ']' + '</span></li>');
+          } else if (config.options.length > 0) {
             $('#infoSubject').append('<li class="config"><span>' + config.name + '</span><span class="value"> [' + config.options.join(', ') + ']' + '</span></li>');
+          } else if (config.baseUrl) {
+            $('#infoSubject').append('<li class="config"><span><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + '</span><span class="value"> <a href="' + config.baseUrl + '">(' + config.baseUrl + '[:' + config.name + '])</a></span></li>');
           } else {
             $('#infoSubject').append('<li class="config"><span>' + config.name + '</span></li>');
           }
@@ -169,10 +218,34 @@
       subject.configuration.forEach(function(config) {
         $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
-          '<div class="row config border-top">' +
+          '<div class="row config border-bottom">' +
             '<div class="col">' +
               '<label id="labelConfigNameEdit">Configuration name</label>' +
               '<input type="text" class="form-control inputConfigNameEdit" value="' + config.name + '" previousname="' + config.name + '" required>' +
+              '<div class="makeLinkDisabledEdit">' +
+                '<button type="button" class="btn btn-outline-primary" id="buttonMakeLinkEdit"><i class="fa fa-link"></i> Link</button>' +
+                '<small class="form-text text-muted infoLink"><i class="fa fa-question-circle infoLinkIcon" aria-hidden="true"></i>' +
+                  '<span class="infobulle">You can turn this configuration into a link.<br>' +
+                    'Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>' +
+                    '<strong>Example</strong><br>' +
+                    'Configuration name: <i>Issue ID</i><br>' +
+                    'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
+                    'Configuration value: <i>42305</i><br>' +
+                    'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
+                    '<i class="fa fa-warning" aria-hidden="true"></i> Don\'t forget the "/" at the end of the base URL.' +
+                  '</span>' +
+                '</small>' +
+              '</div>' +
+              '<div class="makeLinkEnabledEdit" style="display: none;">' +
+                '<div class="row makeLink">' +
+                  '<div class="col">' +
+                    '<input class="form-control inputUrlBaseEdit" type="text" placeholder="Enter the base URL">' +
+                  '</div>' +
+                  '<div class="col-2">' +
+                    '<button type="button" class="btn btn-warning deleteLink" id="deleteLinkEdit"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
             '</div>' +
             '<div class="col">' +
               '<label id="label' + config.name + '">Options</label>' +
@@ -188,12 +261,23 @@
           '</div>' +
         '</div>');
 
+        // exisiting options
         if (config.options.length > 0) {
           config.options.forEach(function(option) {
             $('<input class="form-control inputOptionEdit" type="text" value="' + option + '">').insertAfter('#label'+config.name);
           });
         } else {
           $('<input class="form-control inputOptionEdit" type="text" value="">').insertAfter('#label'+config.name);
+        }
+
+        // exisiting links
+        if (config.baseUrl) {
+          $('.inputConfigNameEdit').each(function() {
+            if ($(this).val() === config.name) {
+              $(this).siblings('.makeLinkDisabledEdit').find('#buttonMakeLinkEdit').trigger('click');
+              $(this).siblings('.makeLinkEnabledEdit').find('.inputUrlBaseEdit').val(config.baseUrl);
+            }
+          });
         }
       });
 
@@ -207,10 +291,23 @@
     if (!$(this).parent().find('.form-group:last').find('.inputConfigNameEdit').length > 0 || $(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== '') {
       $('' +
       '<div class="form-group">' +
-        '<div class="row config border-top">' +
+        '<div class="row config border-bottom">' +
           '<div class="col">' +
             '<label id="labelConfigNameEdit">Configuration name</label>' +
             '<input type="text" class="form-control inputConfigNameEdit newConfig" placeholder="Enter the name">' +
+            '<div class="makeLinkDisabledEdit">' +
+              '<button type="button" class="btn btn-outline-primary" id="buttonMakeLinkEdit"><i class="fa fa-link"></i> Link</button>' +
+            '</div>' +
+            '<div class="makeLinkEnabledEdit" style="display: none;">' +
+              '<div class="row makeLink">' +
+                '<div class="col">' +
+                  '<input class="form-control inputUrlBaseEdit" type="text" placeholder="Enter the base URL">' +
+                '</div>' +
+                '<div class="col-2">' +
+                  '<button type="button" class="btn btn-warning deleteLink" id="deleteLinkEdit"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
           '</div>' +
           '<div class="col">' +
             '<label>Options</label>' +
@@ -239,6 +336,18 @@
     if (r === true) {
       $(this).closest('.form-group').remove();
     }
+  });
+
+  // modal button listener (link)
+  $('#modalEdit .modal-body').on('click', '#buttonMakeLinkEdit', function() {
+    $(this).closest('div').hide();
+    $(this).closest('div').next().show();
+  });
+
+  // modal button listener (delete link)
+  $('#modalEdit .modal-body').on('click', '#deleteLinkEdit', function() {
+    $(this).closest('.makeLinkEnabledEdit').hide();
+    $(this).closest('.makeLinkEnabledEdit').prev().show();
   });
 
   // modify configuration name on change
@@ -270,11 +379,16 @@
               name: $(this).val(),
               options: [],
             };
+            // add options
             $(this).closest('.form-group').find('.inputOptionEdit').each(function() {
               if ($(this).val().trim() !== '') {
                 config.options.push($(this).val());
               }
             });
+            // add base URL
+            if ($(this).siblings('.makeLinkEnabledEdit').is(':visible') && $(this).siblings('.makeLinkEnabledEdit').find('.inputUrlBaseEdit').val().trim() !== '') {
+              config.baseUrl = $(this).siblings('.makeLinkEnabledEdit').find('.inputUrlBaseEdit').val().trim();
+            }
             editedSubject.configuration.push(config);
           }
         });

@@ -115,11 +115,36 @@
                 <h5>Configuration</h5>
                 <div id="formConfig">
                   <div class="form-group">
-                    <div class="row config">
+                    <div class="row config border-bottom border-top">
                       <div class="col">
                         <label id="labelConfigName">Configuration name</label>
                         <input type="text" class="form-control inputConfigName" placeholder="Enter the configuration name" required>
                         <small class="form-text text-muted">Example: Robot type</small>
+                        <div class="makeLinkDisabled">
+                          <button type="button" class="btn btn-outline-primary" id="buttonMakeLink"><i class="fa fa-link"></i> Link</button>
+                          <small class="form-text text-muted infoLink">Make this configuration a link to Testrail, Redmine, etc. <i class="fa fa-question-circle infoLinkIcon" aria-hidden="true"></i>
+                            <span class="infobulle">You can turn this configuration into a link.<br>
+                              Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>
+                              <strong>Example</strong><br>
+                              Configuration name: <i>Issue ID</i><br>
+                              Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>
+                              Configuration value: <i>42305</i><br>
+                              Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>
+                              <i class="fa fa-warning" aria-hidden="true"></i> Don't forget the "/" at the end of the base URL.
+                            </span>
+                          </small>
+                        </div>
+                        <div class="makeLinkEnabled" style="display: none;">
+                          <div class="row makeLink">
+                            <div class="col">
+                              <input class="form-control inputUrlBase" type="text" placeholder="Enter the base URL">
+                            </div>
+                            <div class="col-2">
+                              <button type="button" class="btn btn-warning deleteLink" id="deleteLink"><i class="fa fa-times" aria-hidden="true"></i></button>
+                            </div>
+                          </div>
+                          <small class="form-text text-muted">Example: https://redmine.aldebaran.lan/issues/</small>
+                        </div>
                       </div>
                       <div class="col">
                         <label>Options</label>

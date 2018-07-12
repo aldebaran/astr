@@ -12,6 +12,7 @@ var TestSubjectSchema = new Schema({
   configuration: [{
     name: {type: String, lowercase: true, trim: true},
     options: [{type: String, uppercase: true, trim: true}],
+    baseUrl: {type: String, lowercase: true, trim: true, required: false},
   }],
   author: {
     type: String,

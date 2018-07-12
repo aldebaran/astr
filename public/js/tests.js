@@ -209,9 +209,16 @@
             '</div>' +
           '</div></div>');
 
-          test.configuration.forEach(function(config) {
-            $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+          $.get('api/test-subjects/links/' + test.type, function(links) {
+            test.configuration.forEach(function(config) {
+              if (links[config.name]) {
+                $('#body'+test['_id']).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
+              } else {
+                $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+              }
+            });
           });
+
           if (test.comments) {
             $('#body'+test['_id']+' .comments').show();
           }
@@ -235,9 +242,16 @@
             '</div>' +
           '</div></div>');
 
-          test.configuration.forEach(function(config) {
-            $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+          $.get('api/test-subjects/links/' + test.type, function(links) {
+            test.configuration.forEach(function(config) {
+              if (links[config.name]) {
+                $('#body'+test['_id']).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
+              } else {
+                $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+              }
+            });
           });
+
           if (test.comments) {
             $('#body'+test['_id']+' .comments').show();
           }
@@ -267,9 +281,16 @@
             '</div>' +
           '</div></div>');
 
-          test.configuration.forEach(function(config) {
-            $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+          $.get('api/test-subjects/links/' + test.type, function(links) {
+            test.configuration.forEach(function(config) {
+              if (links[config.name]) {
+                $('#body'+test['_id']).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
+              } else {
+                $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+              }
+            });
           });
+
           if (test.comments) {
             $('#body'+test['_id']+' .comments').show();
           }

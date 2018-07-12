@@ -21,4 +21,7 @@ module.exports = function(app) {
 
   app.route('/api/test-subjects/options/:subject/:configName')
   .get(testSubject.getOptionsOfConfig); // GET: Returns the options of a configuration
+
+  app.route('/api/test-subjects/links/:subject')
+  .get(testSubject.getLinksOfTestSubject); // GET: Returns the links of a test subject
 };

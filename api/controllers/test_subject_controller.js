@@ -162,3 +162,28 @@ exports.getOptionsOfConfig = (req, res) => {
     }
   });
 };
+
+// GET: Returns the links of a test subject
+exports.getLinksOfTestSubject = (req, res) => {
+  const subjectName = req.params.subject;
+  TestSubject.findOne({'name': subjectName}, (err, testSubject) => {
+    if (err) {
+      res.send(err);
+    } else {
+      if (testSubject === null) {
+        res.status(404).json({
+          name: 'Failed',
+          message: 'This test subject id doesn\'t exist',
+        });
+      } else {
+        var links = {};
+        testSubject.configuration.forEach((config) => {
+          if (config.baseUrl) {
+            links[config.name] = config.baseUrl;
+          }
+        });
+        res.json(links);
+      }
+    }
+  });
+};
