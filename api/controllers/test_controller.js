@@ -6,12 +6,13 @@ var User = require('../models/user_model');
 var Test = mongoose.model('Test');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
 
-// GET: Returns the list of all tests
+// GET: Returns the list of all tests (sorted by creation date in descending order)
 exports.getAllTests = (req, res) => {
   checkIfTestsHaveAnArchive()
   .then(() => {
     Test.find({})
     .where('archive').equals(true)
+    .sort({'created': -1})
     .exec((err, data) => {
       if (err) {
         res.send(err);
@@ -38,7 +39,7 @@ exports.getAllTestsWithoutArchive = (req, res) => {
   });
 };
 
-// POST: Returns the list of tests that match with the parameters given in the body request
+// POST: Returns the list of tests that match with the parameters given in the body request (sorted by creation date in descending order)
 exports.getTestsByQuery = (req, res) => {
   checkIfTestsHaveAnArchive()
   .then(() => {
@@ -52,6 +53,7 @@ exports.getTestsByQuery = (req, res) => {
       };
       Test.find(req.body)
       .where('archive').equals(true)
+      .sort({'created': -1})
       .exec((err, data) => {
         if (err) {
           res.send(err);
@@ -62,6 +64,7 @@ exports.getTestsByQuery = (req, res) => {
     } else {
       Test.find(req.body)
       .where('archive').equals(true)
+      .sort({'created': -1})
       .exec((err, data) => {
         if (err) {
           res.send(err);
@@ -73,7 +76,7 @@ exports.getTestsByQuery = (req, res) => {
   });
 };
 
-// POST: Returns the list of tests that match with the parameters given in the body request, with pagination
+// POST: Returns the list of tests that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
 exports.getTestsByQueryAndPage = (req, res) => {
   checkIfTestsHaveAnArchive()
   .then(() => {
@@ -89,6 +92,7 @@ exports.getTestsByQueryAndPage = (req, res) => {
       };
       Test.find(req.body)
       .where('archive').equals(true)
+      .sort({'created': -1})
       .limit(resultPerPage)
       .skip((page-1)*resultPerPage)
       .exec((err, data) => {
@@ -101,6 +105,7 @@ exports.getTestsByQueryAndPage = (req, res) => {
     } else {
       Test.find(req.body)
       .where('archive').equals(true)
+      .sort({'created': -1})
       .limit(resultPerPage)
       .skip((page-1)*resultPerPage)
       .exec((err, data) => {

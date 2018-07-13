@@ -289,10 +289,10 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
 #### Tests
 
 1. [/api/tests](http://10.0.160.147:8000/api/tests)
-    - GET: Returns the list of all tests
-    - POST: Returns the list of tests that match with the parameters given in the body request
+    - GET: Returns the list of all tests (sorted by creation date in descending order)
+    - POST: Returns the list of tests that match with the parameters given in the body request (sorted by creation date in descending order)
 2. [/api/tests/page/:page/:resultPerPage](http://10.0.160.147:8000/api/tests/page/2/30)
-    - POST: Returns the list of tests that match with the parameters given in the body request, with pagination
+    - POST: Returns the list of tests that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
 3. [/api/tests/add](http://10.0.160.147:8000/api/tests/add)
     - POST: Add a new test in the DB in function of the parameters given in the body request **(user must have write permission)**
 4. [/api/tests/id/:id](http://10.0.160.147:8000/api/tests/id/5adf356dda64c157e53c6b18)

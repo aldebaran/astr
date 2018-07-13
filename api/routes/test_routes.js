@@ -8,11 +8,11 @@ module.exports = function(app) {
   });
 
   app.route('/api/tests')
-  .get(test.getAllTests) // GET: Returns the list of all tests
-  .post(test.getTestsByQuery); // POST: Returns the list of tests that match with the parameters given in the body request
+  .get(test.getAllTests) // GET: Returns the list of all tests (sorted by creation date in descending order)
+  .post(test.getTestsByQuery); // POST: Returns the list of tests that match with the parameters given in the body request (sorted by creation date in descending order)
 
   app.route('/api/tests/page/:page/:resultPerPage')
-  .post(test.getTestsByQueryAndPage); // POST: Returns the list of tests that match with the parameters given in the body request, with pagination
+  .post(test.getTestsByQueryAndPage); // POST: Returns the list of tests that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
 
   app.route('/api/tests/add')
   .post(test.addTest); // POST: Add a new test in the DB in function of the parameters given in the body request
