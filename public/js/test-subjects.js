@@ -17,16 +17,16 @@
             '<input type="text" class="form-control inputConfigName" placeholder="Enter the configuration name">' +
             '<div class="makeLinkDisabled">' +
               '<button type="button" class="btn btn-outline-primary" id="buttonMakeLink"><i class="fa fa-link"></i> Link</button>' +
-              '<small class="form-text text-muted infoLink"><i class="fa fa-question-circle infoLinkIcon" aria-hidden="true"></i>' +
-                '<span class="infobulle">You can turn this configuration into a link.<br>' +
-                  'Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>' +
-                  '<strong>Example</strong><br>' +
-                  'Configuration name: <i>Issue ID</i><br>' +
-                  'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
-                  'Configuration value: <i>42305</i><br>' +
-                  'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
-                  '<i class="fa fa-warning" aria-hidden="true"></i> Don\'t forget the "/" at the end of the base URL.' +
-                '</span>' +
+              '<small class="form-text text-muted infoLink">' +
+                '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this configuration into a link.<br>' +
+                'Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>' +
+                '<strong>Example</strong><br>' +
+                'Configuration name: <i>Issue ID</i><br>' +
+                'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
+                'Configuration value: <i>42305</i><br>' +
+                'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
+                '<i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don\'t forget the &quot;/&quot; at the end of the base URL.">' +
+                '</i>' +
               '</small>' +
             '</div>' +
             '<div class="makeLinkEnabled" style="display: none;">' +
@@ -48,6 +48,7 @@
           '</div>' +
         '</div>' +
       '</div>');
+      $('[data-toggle="tooltip"]').tooltip();
     } else {
       showModal('Warning', 'Fulfill the actual configuration input to add another.');
     }
@@ -224,16 +225,16 @@
               '<input type="text" class="form-control inputConfigNameEdit" value="' + config.name + '" previousname="' + config.name + '" required>' +
               '<div class="makeLinkDisabledEdit">' +
                 '<button type="button" class="btn btn-outline-primary" id="buttonMakeLinkEdit"><i class="fa fa-link"></i> Link</button>' +
-                '<small class="form-text text-muted infoLink"><i class="fa fa-question-circle infoLinkIcon" aria-hidden="true"></i>' +
-                  '<span class="infobulle">You can turn this configuration into a link.<br>' +
-                    'Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>' +
-                    '<strong>Example</strong><br>' +
-                    'Configuration name: <i>Issue ID</i><br>' +
-                    'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
-                    'Configuration value: <i>42305</i><br>' +
-                    'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
-                    '<i class="fa fa-warning" aria-hidden="true"></i> Don\'t forget the "/" at the end of the base URL.' +
-                  '</span>' +
+                '<small class="form-text text-muted infoLink">' +
+                  '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this configuration into a link.<br>' +
+                  'Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>' +
+                  '<strong>Example</strong><br>' +
+                  'Configuration name: <i>Issue ID</i><br>' +
+                  'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
+                  'Configuration value: <i>42305</i><br>' +
+                  'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
+                  '<i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don\'t forget the &quot;/&quot; at the end of the base URL.">' +
+                  '</i>' +
                 '</small>' +
               '</div>' +
               '<div class="makeLinkEnabledEdit" style="display: none;">' +
@@ -260,6 +261,8 @@
             '</div>' +
           '</div>' +
         '</div>');
+
+        $('[data-toggle="tooltip"]').tooltip();
 
         // exisiting options
         if (config.options.length > 0) {

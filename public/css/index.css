@@ -641,6 +641,10 @@ a.download-button {
   margin-top: 0.5em;
 }
 
+#header-result .card-header {
+  border-bottom: 0px;
+}
+
 #buttonMoreOption {
   float: right;
   margin-top: 1em;
@@ -729,23 +733,8 @@ span.text-muted {
 
 }
 
-.infobulle {
-	display: none;
-	color: #fff;
-	background: rgba(51,51,51,0.9);
-	padding: 20px;
-	border-radius: 4px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	width: 150%;
-	text-align: center;
-	position: absolute;
-	z-index: 10;
-  word-wrap: break-word
-}
-.infoLink {
-  display: inline-block;
-}
-.infoLink:hover .infobulle {
-	display:block;
+.tooltip-inner {
+    width: 400px;
+    max-width: 100%;
+    padding: 10px;
 }
