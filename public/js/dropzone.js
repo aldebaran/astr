@@ -3579,9 +3579,9 @@
               backdrop: 'static',
               keyboard: false,
           });
-          showModal('Success', 'Your test is now saved !<br><br>Note that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped :) <div class="loader"></div>');
+          showModal('Uploading', '<div class="loader"></div>');
           setTimeout(function() {
-            location.reload();
+            location.href = 'test-add.html?result=success';
           }, 3000);
         }
       });

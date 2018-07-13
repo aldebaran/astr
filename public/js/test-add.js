@@ -110,6 +110,14 @@
   });
 
 
+  // confirmation panel after reload of the page
+  if (getUrlParameter('result') && getUrlParameter('result') === 'success') {
+    $('<div class="alert alert-success" role="alert">' +
+      'Your test is now saved !<br>Note that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped.' +
+      '</div>').insertBefore('.row:first');
+  }
+
+
   // -------------------------- Functions -------------------------- //
 
   function isConnected() {
@@ -189,5 +197,20 @@
     $('#myModal .modal-header').html('<h4 class="modal-title">' + title + '</h4>');
     $('#myModal .modal-body').html('<p>' + message + '<p>');
     $('#myModal').modal('show');
+  }
+
+  function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1));
+    var sURLVariables = sPageURL.split('&');
+    var sParameterName;
+    var i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+      sParameterName = sURLVariables[i].split('=');
+
+      if (sParameterName[0] === sParam) {
+          return sParameterName[1] === undefined ? true : sParameterName[1];
+      }
+    }
   }
 })(jQuery);
