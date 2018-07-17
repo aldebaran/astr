@@ -130,10 +130,7 @@ exports.deleteUser = (req, res) => {
 exports.AddUserAndLogin = (req, res, next) => {
   // confirm that user typed same password twice
   if (req.body.password !== req.body.passwordConf) {
-    var err = new Error('Passwords do not match.');
-    err.status = 400;
-    res.send('Passwords do not match.');
-    return next(err);
+    return res.redirect('/register.html?error=password');
   }
 
   if (req.body.email && req.body.firstname && req.body.lastname && req.body.password && req.body.passwordConf) {
@@ -173,9 +170,7 @@ exports.AddUserAndLogin = (req, res, next) => {
     // Login
     User.authenticate(req.body.logemail, req.body.logpassword, function(error, user) {
       if (error || !user) {
-        var err = new Error('Wrong email or password.');
-        err.status = 401;
-        return next(err);
+        return res.redirect('/login.html?error=not_found');
       } else {
         req.session.userId = user._id;
 
