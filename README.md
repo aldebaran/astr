@@ -371,7 +371,6 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
 
 1. [/api/upload](http://10.0.160.147:8000/api/upload)
     - POST: Upload files to the server in a ZIP. The name of the archive is the ID of the test **(user must have write permission)**
-
 2. [/api/upload/newfiles](http://10.0.160.147:8000/api/upload/newfiles)
     - POST: Upload files to the server (not zipped), to put them in an existing archive **(user must have write permission)**
 
@@ -379,7 +378,6 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
 
 1. [/api/download/id/:id](http://10.0.160.147:8000/api/download/id/5ae9bba1b87b22360cc2e70f)
     - GET: Download the archive of the test with the associated ID
-
 2. [/api/download/multiple](http://10.0.160.147:8000/api/download/multiple)
     - POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.
 
@@ -388,3 +386,10 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
 1. [/api/archive/id/:id](http://10.0.160.147:8000/api/archive/id/:id)
     - GET: Returns the list of files in the archive with the associated ID
     - POST: Update the content of the archive with the associated ID. It is possible to delete files and add new ones. (two arrays can be in the body request: *"add"* and *"delete"*) **(user must be master or owner of the test)**
+
+#### Stats
+
+1. [/api/stats/tests-frequency](http://10.0.160.147:8000/api/stats/tests-frequency)
+    - GET: Returns a dictionnary with the number of tests archived per month
+2. [/api/stats/disk-usage](http://10.0.160.147:8000/api/stats/disk-usage)
+    - GET: Returns a dictionnary with the disk usage information

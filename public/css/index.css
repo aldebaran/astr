@@ -738,3 +738,7 @@ span.text-muted {
     max-width: 100%;
     padding: 10px;
 }
+
+.graphs {
+  margin-top: 3em;
+}

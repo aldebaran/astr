@@ -47,7 +47,7 @@
   // create a new token
   $('#myModal').on('submit', '#formNewToken', function(e) {
     e.preventDefault();
-    $.get('http://localhost:8000/api/user/newtoken/persistent/' + $('#inputTokenName').val().trim(), function(data) {
+    $.get('api/user/newtoken/persistent/' + $('#inputTokenName').val().trim(), function(data) {
       if (data.key) {
         const date = new Date(data.expires);
         showModal('Success', 'Your new token is <strong id="token">' + data.key + '</strong><br>' +

@@ -219,7 +219,7 @@
       subject.configuration.forEach(function(config) {
         $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
-          '<div class="row config border-bottom">' +
+          '<div class="row config border-top">' +
             '<div class="col">' +
               '<label id="labelConfigNameEdit">Configuration name</label>' +
               '<input type="text" class="form-control inputConfigNameEdit" value="' + config.name + '" previousname="' + config.name + '" required>' +
