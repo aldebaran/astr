@@ -37,7 +37,7 @@
     - [Upload](#upload)
     - [Download](#download)
     - [Archive](#archive)
-
+    - [Stats](#stats)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
