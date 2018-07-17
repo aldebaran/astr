@@ -38,6 +38,7 @@
     - [Download](#download)
     - [Archive](#archive)
 
+
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Description of the tool
@@ -70,7 +71,9 @@ Here are the main features:
     - [uuid](https://www.npmjs.com/package/uuid) *(to generate Universally Unique Identifier)*
     - [multer](https://www.npmjs.com/package/multer) *(to upload files on the server)*
     - [archiver](https://www.npmjs.com/package/archiver) *(to zip the files)*
-    - [adm-zip](https://www.npmjs.com/package/adm-zip) *(to add/update/delete files in a zip without having to unzip it)
+    - [adm-zip](https://www.npmjs.com/package/adm-zip) *(to add/update/delete files in a zip without having to unzip it)*
+    - [diskspace](https://www.npmjs.com/package/diskspace) *(to have information about the disk usage of the server)*
+    - [get-folder-size](https://www.npmjs.com/package/get-folder-size) *(to know the size of a folder)*
     - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
 
 ### Useful tools
