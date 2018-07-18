@@ -75,6 +75,7 @@ Here are the main features:
     - [diskspace](https://www.npmjs.com/package/diskspace) *(to have information about the disk usage of the server)*
     - [get-folder-size](https://www.npmjs.com/package/get-folder-size) *(to know the size of a folder)*
     - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
+    - [pm2](https://www.npmjs.com/package/pm2) *(for production, to restart automatically the application if it crashes)*
 
 ### Useful tools
 
@@ -95,7 +96,6 @@ On the server:
 ### 2. Launch MongoDB
 
 - Open a terminal and run
-
 ```
 sudo service mongod start
 ```
@@ -104,25 +104,21 @@ sudo service mongod start
 ### 3. Create the database
 
 - Open a Mongo Client in the terminal
-
 ```
 mongo
 ```
 
 - Create the database
-
 ```
 use ASTR
 ```
 
 - We need to insert a document to complete the creation of the database. Let's insert an empty document in the collection "uselesscollection"
-
 ```
 db.uselesscollection.insert({})
 ```
 
 - Now, check that the database is in the list of existing dbs
-
 ```
 show dbs
 ```
@@ -143,30 +139,34 @@ git clone git@gitlab.aldebaran.lan:hardware-test/astr.git
 
 - In your terminal, move to the folder of the repository
 - At the root of the folder run
-
 ```
 npm install
 ```
 
 - It will install all the Node.js modules used in the application (listed in [package.json](https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/package.json))
 
+- Install [pm2](https://www.npmjs.com/package/pm2) module
+```
+npm install pm2 -g
+```
+
 ### 7. Launch the application
 
 - At the root of the folder run
-
 ```
-npm start
+npm run prod
 ```
+*:arrow_right_hook: This command starts the application with [pm2](https://www.npmjs.com/package/pm2).*
 
-- Or (for development)
-
+- Or (for development only)
 ```
 npm run dev
 ```
+*:arrow_right_hook:	This command starts the application with [nodemon](https://www.npmjs.com/package/nodemon).*
 
 ### 8. Create the first Admin
 
-**From your personal computer, open the website**
+**From your personal computer, open the website** (serverIP:8000)
 - Click on *Login*
 - Click on *Register an Account*
 - Fulfill the form to create your account (it will create a simple user without any permission)
@@ -188,6 +188,14 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 ```
 
 - That's it! You are now a "Master", that means you can modify directly users permissions on the website
+
+### 9. Monitor the application (optional)
+
+- If you started the application with `npm run prod`, you can monitor it by running
+```
+pm2 monit
+```
+- You will be able to see some informations like the application logs, the CPU utilization, the number of restarts, etc.
 
 ## Authentification
 
