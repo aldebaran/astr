@@ -101,7 +101,6 @@ On the server:
 sudo service mongod start
 ```
 
-
 ### 3. Create the database
 
 - Open a Mongo Client in the terminal
@@ -196,6 +195,7 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 ```
 pm2 monit
 ```
+
 - You will be able to see some informations like the application logs, the CPU utilization, the number of restarts, etc.
 
 ## Authentification
