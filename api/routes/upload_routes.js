@@ -39,7 +39,7 @@ module.exports = function(app) {
         // create a file to stream archive data to.
         var output = fs.createWriteStream('archives/' + req.body.testId + '.zip');
         var archive = archiver('zip', {
-          zlib: {level: 9}, // Sets the compression level.
+          zlib: {level: 0}, // Sets the compression level.
         });
 
         // listen for all archive data to be written
@@ -125,7 +125,7 @@ module.exports = function(app) {
                 if (err) {
                   console.log(err);
                 } else {
-                  console.log(test);
+                  // console.log(test);
                   return res.status(200).send({
                     status: 'Success',
                     testId: req.body.testId,

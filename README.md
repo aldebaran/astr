@@ -166,7 +166,7 @@ npm run dev
 
 ### 8. Create the first Admin
 
-**From your personnal computer, open the website**
+**From your personal computer, open the website**
 - Click on *Login*
 - Click on *Register an Account*
 - Fulfill the form to create your account (it will create a simple user without any permission)

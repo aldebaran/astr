@@ -109,11 +109,14 @@
     }
   });
 
-
   // confirmation panel after reload of the page
   if (getUrlParameter('result') && getUrlParameter('result') === 'success') {
-    $('<div class="alert alert-success" role="alert">' +
-      'Your test is now saved !<br>Note that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped.' +
+    $('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+        '<h5 class="alert-heading">Your test is now saved <i class="fa fa-check" aria-hidden="true"></i></h5>' +
+        '<p>Note that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped.</p>' +
+        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+          '<span aria-hidden="true">&times;</span>' +
+        '</button>' +
       '</div>').insertBefore('.row:first');
   }
 
