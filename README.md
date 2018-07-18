@@ -19,6 +19,7 @@
   - [6. Install the modules](#6-install-the-modules)
   - [7. Launch the application](#7-launch-the-application)
   - [8. Create the first Admin](#8-create-the-first-admin)
+  - [9. Monitor the application (optional)](#9-monitor-the-application-optional)
 - [Authentification](#authentification)
   - [Request Header](#request-header)
   - [Tokens](#tokens)
