@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-***
 ## [Unreleased] - XXXXX-XX-XX
 ### Enhanced
 - None
@@ -30,7 +29,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - None
 
-***
 ## [2.1] - 2018-07-19
 
 ### Added
@@ -51,8 +49,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - [#111](https://gitlab.aldebaran.lan/hardware-test/astr/issues/111) Delete tests without archive
 - [#112](https://gitlab.aldebaran.lan/hardware-test/astr/issues/112) Logout if the session token exprires in the cookies
 
-
-***
 ## [2.0] - 2018-06-26
 
 ### Added
@@ -61,7 +57,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Security
 - Authentification token to interact with the API
 
-***
 ## [1.0] - 2018-05-23
 
 *First official release.*
+
+[Unreleased]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...HEAD
+[2.1]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.0...v2.1
+[2.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v1.0...v2.0
