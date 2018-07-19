@@ -5,7 +5,7 @@
   //                                               //
   //                 /!\ INFO /!\                  //
   //  Scroll to the bottom to change the options!  //
-  //                 (Line 3540)                   //
+  //                 (Line 3549)                   //
   //          Don't touch anything else            //
   //                                               //
   // ----------------------------------------------//
@@ -429,7 +429,7 @@
           /**
            * The text used before any files are dropped.
            */
-          dictDefaultMessage: "Drop files (or click here) to upload on the server",
+          dictDefaultMessage: "Drop files (or click here) to add files in the archive",
 
           /**
            * The text that replaces the default message text it the browser is not supported.
@@ -501,6 +501,7 @@
            * You can add event listeners here
            */
           init: function init() {},
+
 
           /**
            * Can be an **object** of additional parameters to transfer to the server, **or** a `Function`
@@ -3545,19 +3546,19 @@
   //                                               //
   // ----------------------------------------------//
 
-  Dropzone.options.myDropzone = {
+  Dropzone.options.dropzone = {
     method: 'POST',
-    url: '/api/upload',
+    url: '/api/upload/newfiles',
     headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
     maxFilesize: 10240, // 10Go
     maxFiles: 50,
-    parallelUploads: 50,
     autoProcessQueue: false,
     uploadMultiple: true,
     paramName: paramNameForSend,
-    timeout: 3600000, // 1 hour
+    parallelUploads: 50,
     init: function() {
       var myDropzone = this;
+      var filenames = [];
 
       myDropzone.on('addedfile', function(file) {
         if (file.upload.total < this.options.maxFilesize * 1024 * 1024) {
@@ -3569,67 +3570,45 @@
       });
 
       myDropzone.on('sending', function(file, xhr, formData) {
-        // put the test ID in the body request to modify to filename later with the API
-        formData.set('testId', $('#testId').html());
         formData.append('files', file.name);
-        $('.scroll-to-top').trigger('click');
-        setTimeout(function() {
-          $('#myModal').modal({
-              backdrop: 'static',
-              keyboard: false,
-          });
-          showModal('Uploading',
-          '<div class="progress">' +
-            '<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>' +
-          '</div>' +
-          '<div class="small text-muted">The server will timeout if the upload lasts longer than 1 hour.</div>'
-          );
-        }, 100);
-
-        xhr.ontimeout = (() => {
-          // Execute on case of timeout only
-          showModal('Error: Server Timeout', '<strong>Timeout exceeded. The upload has failed.</strong>');
-        });
-
-        // alert if user tries to reload/quit/change page
-        window.onbeforeunload = function() {
-          return true;
-        };
-      });
-
-      myDropzone.on('totaluploadprogress', function(progress) {
-        $('.progress-bar').html(Math.round(progress) + '%');
-        $('.progress-bar').width(progress + '%');
-        if (progress === 100 && $('#isFileUploaded').val() === 'true') {
-          showModal('Uploading', '<div class="loader"></div><div class="small text-muted text-center">You will be redirected...</div>');
-          setTimeout(function() {
-            window.onbeforeunload = null;
-            location.href = 'test-add.html?result=success';
-          }, 1000);
-        }
+        filenames.push(file.name);
       });
 
       myDropzone.on('complete', function(file) {
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0 && file.status !== 'error') {
-          setTimeout(function() {
-            window.onbeforeunload = null;
-            location.href = 'test-add.html?result=success';
-          }, 500);
+          $('#myModal').modal({
+              backdrop: 'static',
+              keyboard: false,
+          });
+          showModal('Uploading', 'Please wait...<br>Your files are being added in the archive<div class="loader"></div>');
+          $.ajax({
+            method: 'POST',
+            url: 'api/archive/id/' + $('.form-edit').attr('id'),
+            headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
+            data: {
+              add: filenames,
+            },
+            success: function() {
+              location.reload();
+            },
+          });
         }
       });
 
-      $('form').submit(function(e) {
+      $('.form-edit').submit(function(e) {
         e.preventDefault();
-        // wait 200ms to make sure the test is pushed in the DB
-        setTimeout(function() {
-          if ($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
-            $('#cardAddNewTest form').children().wrapAll('<fieldset disabled></fieldset>');
-            myDropzone.processQueue(); // Tell Dropzone to process all queued files.
-          }
-        }, 200);
+        $('#modalEdit').data('bs.modal', null);
+        $('#modalEdit').modal({backdrop: 'static', keyboard: false});
+        $('.form-edit').children().wrapAll('<fieldset disabled></fieldset>');
+        myDropzone.processQueue(); // Tell Dropzone to process all queued files.
       });
     },
   };
+
+  $('#modalEdit').on('shown.bs.modal', function(e) {
+    // Initialize Dropzone
+    $('div#dropzone').dropzone();
+  });
 
   $(document).bind('dragover', function(e) {
     var dropZone = $('#dropzone');

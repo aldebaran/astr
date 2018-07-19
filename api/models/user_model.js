@@ -8,19 +8,19 @@ var UserSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
-    trim: true
+    trim: true,
   },
   firstname: {
     type: String,
     unique: false,
     required: true,
-    trim: true
+    trim: true,
   },
   lastname: {
     type: String,
     unique: false,
     required: true,
-    trim: true
+    trim: true,
   },
   password: {
     type: String,
@@ -41,51 +41,51 @@ var UserSchema = new mongoose.Schema({
   tokens: [{
     key: {type: String},
     name: {type: String},
-    expires: {type: Date}
-  }]
+    expires: {type: Date},
+  }],
 });
 
 // authenticate input against database
-UserSchema.statics.authenticate = function (email, password, callback) {
-  User.findOne({ email: email })
-    .exec(function (err, user) {
+UserSchema.statics.authenticate = function(email, password, callback) {
+  User.findOne({email: email})
+    .exec(function(err, user) {
       if (err) {
-        return callback(err)
+        return callback(err);
       } else if (!user) {
         var err = new Error('User not found.');
         err.status = 401;
         return callback(err);
       }
-      bcrypt.compare(password, user.password, function (err, result) {
+      bcrypt.compare(password, user.password, function(err, result) {
         if (result === true) {
           return callback(null, user);
         } else {
           return callback();
         }
-      })
+      });
     });
-}
+};
 
 // hashing a password before saving it to the database
-UserSchema.pre('save', function (next) {
+UserSchema.pre('save', function(next) {
   var user = this;
-  bcrypt.hash(user.password, 10, function (err, hash) {
+  bcrypt.hash(user.password, 10, function(err, hash) {
     if (err) {
       return next(err);
     }
     user.password = hash;
     next();
-  })
+  });
 });
 
-UserSchema.statics.hasAuthorization = function (req, permissions) {
+UserSchema.statics.hasAuthorization = function(req, permissions) {
   // permissions -> Array ['master', 'write_permission', 'owner']
   return new Promise((resolve) => {
     if (req.headers.authorization) {
       var tmp = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString();
       var auth = {
         email: tmp.split(':')[0],
-        token: tmp.split(':')[1]
+        token: tmp.split(':')[1],
       };
       User.findOne({email: auth.email}, (err, user) => {
         if (err) {
@@ -102,7 +102,7 @@ UserSchema.statics.hasAuthorization = function (req, permissions) {
                 } else if (permissions.includes('write_permission') && user.write_permission === true) {
                   // require to have write_permission
                   resolve(true);
-                } else if (permissions.includes('owner') && req.url.includes('tests')) {
+                } else if (permissions.includes('owner') && (req.url.includes('tests') || req.url.includes('archive'))) {
                   // require to have be owner of the test
                   request('http://' + req.get('host') + '/api/tests/id/' + req.params.id, {json: true}, (err2, res2, test) => {
                     if (test.author === user.firstname + ' ' + user.lastname) {
@@ -130,7 +130,7 @@ UserSchema.statics.hasAuthorization = function (req, permissions) {
             } else {
               resolve(false);
             }
-          })
+          });
         } else {
           resolve(false);
         }
@@ -139,7 +139,7 @@ UserSchema.statics.hasAuthorization = function (req, permissions) {
       resolve(false);
     }
   });
-}
+};
 // User.hasAuthorization(req, ['master', 'write_permission', 'owner'])
 // .then((hasAuthorization) => {
 //   if (hasAuthorization) {
@@ -149,6 +149,12 @@ UserSchema.statics.hasAuthorization = function (req, permissions) {
 //   }
 // });
 
+/**
+ * Compare a given token to all the user tokens
+ * @param {String} givenToken
+ * @param {Array.<String>} tokens
+ * @return {Promise.<Boolean>}
+ */
 function tokenIsInTheList(givenToken, tokens) {
   return new Promise((resolve) => {
     // hash the given token to compare it with the others

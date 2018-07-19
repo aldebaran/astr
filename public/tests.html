@@ -7,13 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>ASTR - Archiving System of Test Results</title>
+  <title>A.S.T.R. - Archiving System of Test Results</title>
   <!-- Bootstrap core CSS-->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom fonts -->
   <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <!-- Custom style -->
   <link href="css/index.css" rel="stylesheet">
+  <link href="css/dropzone.css" rel="stylesheet">
   <!-- Favicon -->
   <link rel="shortcut icon" href="favicon.ico" />
 </head>
@@ -21,7 +22,7 @@
 <body class="fixed-nav sticky-footer bg-dark">
   <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <a class="navbar-brand" href="index.html">ASTR - Archiving System of Test Results</a>
+    <a class="navbar-brand" href="index.html">A.S.T.R. - Archiving System of Test Results</a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -92,6 +93,13 @@
                   <label for="inputDate">Date</label>
                   <input type="date" id="inputDate" max="2100-12-31" min="2010-01-01" class="form-control">
                 </div>
+                <div class="form-group" id="dateFromTo" style="display: none;">
+                  <input type="date" id="inputDate2" max="2100-12-31" min="2010-01-01" class="form-control" disabled>
+                </div>
+                <div class="form-group">
+                  <input type="checkbox" id="checkboxDateRange">
+                  <label class="text-secondary" for="checkboxDateRange">Date interval</label>
+                </div>
                 <div class="form-group">
                   <label for="selectSubject">Test subject</label>
                   <select class="form-control" id="selectSubject">
@@ -105,6 +113,11 @@
                   </select>
                 </div>
                 <div class="form-group">
+                  <label for="selectAuthor">IDs</label>
+                  <input class="form-control" type="text" id="inputIds" aria-describedby="idHelp">
+                  <small id="idHelp" class="form-text text-muted">Separate the IDs with a comma (",").</small>
+                </div>
+                <div class="form-group">
                   <label for="selectConfig">Specific filters</label>
                   <select class="form-control" id="selectConfig" aria-describedby="configHelp">
                     <option value="default">Click here to add filters</option>
@@ -116,7 +129,7 @@
             <div class="card-footer small text-muted">
               <button class="btn btn-outline-primary" id="buttonSaveSearch">Save this search</button>
               <a class="btn btn-outline-info" id="buttonMySearches" href="search.html">My Searches</a>
-              <medium class="form-text">You can store these filters to reuse them later or to share this search.</medium>
+              <p class="form-text">You can store these filters to reuse them later or to share this search.</p>
             </div>
           </div>
         </div>
@@ -126,10 +139,10 @@
           <div id="tests-grid" class="row">
           </div>
 
-            <nav id="pagination">
-              <ul class="pagination flex-wrap">
-              </ul>
-            </nav>
+          <nav id="pagination">
+            <ul class="pagination flex-wrap">
+            </ul>
+          </nav>
 
         </div>
       </div>
@@ -175,6 +188,8 @@
         </div>
       </div>
 
+      <input id="isFileUploaded" type="text" style="display: none;" value="false">
+
     </div>
 
     <!-- Footer -->
@@ -200,6 +215,8 @@
     <script src="js/index.js"></script>
     <!-- Specific script for tests-->
     <script src="js/tests.js"></script>
+    <!-- Specific script to upload file by drag and drop-->
+    <script src="js/dropzone_edit.js"></script>
   </div>
 </body>
 

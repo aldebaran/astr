@@ -19,6 +19,7 @@
   - [6. Install the modules](#6-install-the-modules)
   - [7. Launch the application](#7-launch-the-application)
   - [8. Create the first Admin](#8-create-the-first-admin)
+  - [9. Monitor the application (optional)](#9-monitor-the-application-optional)
 - [Authentification](#authentification)
   - [Request Header](#request-header)
   - [Tokens](#tokens)
@@ -36,6 +37,8 @@
     - [Users](#users)
     - [Upload](#upload)
     - [Download](#download)
+    - [Archive](#archive)
+    - [Stats](#stats)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -69,7 +72,11 @@ Here are the main features:
     - [uuid](https://www.npmjs.com/package/uuid) *(to generate Universally Unique Identifier)*
     - [multer](https://www.npmjs.com/package/multer) *(to upload files on the server)*
     - [archiver](https://www.npmjs.com/package/archiver) *(to zip the files)*
+    - [adm-zip](https://www.npmjs.com/package/adm-zip) *(to add/update/delete files in a zip without having to unzip it)*
+    - [diskspace](https://www.npmjs.com/package/diskspace) *(to have information about the disk usage of the server)*
+    - [get-folder-size](https://www.npmjs.com/package/get-folder-size) *(to know the size of a folder)*
     - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
+    - [pm2](https://www.npmjs.com/package/pm2) *(for production, to restart automatically the application if it crashes)*
 
 ### Useful tools
 
@@ -84,47 +91,34 @@ On the server:
 
 ### 1. Install MongoDB
 
-:warning: The installation process will differ depending of the Linux distribution. Follow the tutorial corresponding to yours:
-- [Ubuntu](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
-- [Debian 7 or 8](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
-- [Debian 9](https://www.globo.tech/learning-center/install-mongodb-debian-9/)
+- [Ubuntu 14.04 / 16.04](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
+- [Debian 7 / 8 / 9](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
 
 ### 2. Launch MongoDB
 
 - Open a terminal and run
-
 ```
 sudo service mongod start
-```
-
-- Or (on Debian 9)
-
-```
-systemctl start mongodb
 ```
 
 ### 3. Create the database
 
 - Open a Mongo Client in the terminal
-
 ```
 mongo
 ```
 
 - Create the database
-
 ```
 use ASTR
 ```
 
 - We need to insert a document to complete the creation of the database. Let's insert an empty document in the collection "uselesscollection"
-
 ```
 db.uselesscollection.insert({})
 ```
 
 - Now, check that the database is in the list of existing dbs
-
 ```
 show dbs
 ```
@@ -145,30 +139,34 @@ git clone git@gitlab.aldebaran.lan:hardware-test/astr.git
 
 - In your terminal, move to the folder of the repository
 - At the root of the folder run
-
 ```
 npm install
 ```
 
 - It will install all the Node.js modules used in the application (listed in [package.json](https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/package.json))
 
+- Install [pm2](https://www.npmjs.com/package/pm2) module
+```
+npm install pm2 -g
+```
+
 ### 7. Launch the application
 
 - At the root of the folder run
-
 ```
-npm start
+npm run prod
 ```
+*:arrow_right_hook: This command starts the application with [pm2](https://www.npmjs.com/package/pm2).*
 
-- Or (for development)
-
+- Or (for development only)
 ```
 npm run dev
 ```
+*:arrow_right_hook:	This command starts the application with [nodemon](https://www.npmjs.com/package/nodemon).*
 
 ### 8. Create the first Admin
 
-**From your personnal computer, open the website**
+**From your personal computer, open the website** (serverIP:8000)
 - Click on *Login*
 - Click on *Register an Account*
 - Fulfill the form to create your account (it will create a simple user without any permission)
@@ -190,6 +188,15 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 ```
 
 - That's it! You are now a "Master", that means you can modify directly users permissions on the website
+
+### 9. Monitor the application (optional)
+
+- If you started the application with `npm run prod`, you can monitor it by running
+```
+pm2 monit
+```
+
+- You will be able to see some informations like the application logs, the CPU utilization, the number of restarts, etc.
 
 ## Authentification
 
@@ -294,15 +301,15 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
 #### Tests
 
 1. [/api/tests](http://10.0.160.147:8000/api/tests)
-    - GET: Returns the list of all tests
-    - POST: Returns the list of tests that match with the parameters given in the body request
+    - GET: Returns the list of all tests (sorted by creation date in descending order)
+    - POST: Returns the list of tests that match with the parameters given in the body request (sorted by creation date in descending order)
 2. [/api/tests/page/:page/:resultPerPage](http://10.0.160.147:8000/api/tests/page/2/30)
-    - POST: Returns the list of tests that match with the parameters given in the body request, with pagination
+    - POST: Returns the list of tests that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
 3. [/api/tests/add](http://10.0.160.147:8000/api/tests/add)
     - POST: Add a new test in the DB in function of the parameters given in the body request **(user must have write permission)**
 4. [/api/tests/id/:id](http://10.0.160.147:8000/api/tests/id/5adf356dda64c157e53c6b18)
     - GET: Returns the test with the associated ID
-    - POST: Update the test with the associated ID in function of the parameters given in the body request (only the date and the configuration values can be updated) **(user must be master or owner of the test)**
+    - POST: Update the test with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated) **(user must be master or owner of the test)**
     - DELETE: Delete the test with the associated ID **(user must be master or owner of the test)**
 5. [/api/tests/authors](http://10.0.160.147:8000/api/tests/authors)
     - GET: Returns the list of test authors (that wrote at least one test)
@@ -322,6 +329,8 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
     - POST: Change the name of the matched configuration in all tests matched by the test type/subject (body contains *subject*, *previousName* and *newName*) **(user must be master)**
 13. [/api/tests/withoutArchive](http://10.0.160.147:8000/api/tests/withoutArchive)
     - GET: Returns the list of all tests without any archive (to delete them)
+14. [/api/tests/YAMLformat/id/:id]((http://10.0.160.147:8000/api/tests/YAMLformat/id/:id)
+    - GET: Returns the test with the associated ID in a YAML format, to store it in the archive
 
 #### Test subjects
 
@@ -336,6 +345,8 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
     - GET: Returns the test subject with the associated name
 4. [/api/test-subjects/options/:subject/:configName](http://10.0.160.147:8000/api/test-subjects/options/WIFI/robot_type)
     - GET: Returns the options of a configuration
+4. [/api/test-subjects/links/:subject](http://10.0.160.147:8000/api/test-subjects/links/:subject)
+    - GET: Returns the links of a test subject
 
 #### Search
 
@@ -372,11 +383,25 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
 
 1. [/api/upload](http://10.0.160.147:8000/api/upload)
     - POST: Upload files to the server in a ZIP. The name of the archive is the ID of the test **(user must have write permission)**
+2. [/api/upload/newfiles](http://10.0.160.147:8000/api/upload/newfiles)
+    - POST: Upload files to the server (not zipped), to put them in an existing archive **(user must have write permission)**
 
 #### Download
 
 1. [/api/download/id/:id](http://10.0.160.147:8000/api/download/id/5ae9bba1b87b22360cc2e70f)
     - GET: Download the archive of the test with the associated ID
-
 2. [/api/download/multiple](http://10.0.160.147:8000/api/download/multiple)
     - POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.
+
+#### Archive
+
+1. [/api/archive/id/:id](http://10.0.160.147:8000/api/archive/id/:id)
+    - GET: Returns the list of files in the archive with the associated ID
+    - POST: Update the content of the archive with the associated ID. It is possible to delete files and add new ones. (two arrays can be in the body request: *"add"* and *"delete"*) **(user must be master or owner of the test)**
+
+#### Stats
+
+1. [/api/stats/tests-frequency](http://10.0.160.147:8000/api/stats/tests-frequency)
+    - GET: Returns a dictionnary with the number of tests archived per month
+2. [/api/stats/disk-usage](http://10.0.160.147:8000/api/stats/disk-usage)
+    - GET: Returns a dictionnary with the disk usage information

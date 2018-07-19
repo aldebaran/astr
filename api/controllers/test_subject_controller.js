@@ -8,8 +8,7 @@ exports.getAllTestSubjects = (req, res) => {
   TestSubject.find({}, (err, data) => {
     if (err) {
       res.send(err);
-    }
-    else {
+    } else {
       res.json(data);
     }
   });
@@ -25,16 +24,19 @@ exports.addTestSubject = (req, res) => {
       newTestSubject.save((err, data) => {
         if (err) {
           res.send(err);
-        }
-        else {
-          res.json({name: 'Success', message: 'Test subject successfully added', test: data});
+        } else {
+          res.json({
+            name: 'Success',
+            message: 'Test subject successfully added',
+            test: data,
+          });
         }
       });
     } else {
       res.status(401).send(error401);
     }
   });
-}
+};
 
 // GET: Returns the test subject with the associated ID
 exports.getTestSubject = (req, res) => {
@@ -42,17 +44,18 @@ exports.getTestSubject = (req, res) => {
   TestSubject.findById(id, (err, data) => {
     if (err) {
       res.send(err);
-    }
-    else {
-      if(data === null){
-        res.status(404).json({name: 'Failed', message: 'This test subject id doesn\'t exist'});
-      }
-      else {
+    } else {
+      if (data === null) {
+        res.status(404).json({
+          name: 'Failed',
+          message: 'This test subject id doesn\'t exist',
+        });
+      } else {
         res.json(data);
       }
     }
   });
-}
+};
 
 // GET: Returns the test subject with the associated name
 exports.getTestSubjectByName = (req, res) => {
@@ -60,17 +63,18 @@ exports.getTestSubjectByName = (req, res) => {
   TestSubject.findOne({name: name}, (err, data) => {
     if (err) {
       res.send(err);
-    }
-    else {
-      if(data === null){
-        res.status(404).json({name: 'Failed', message: 'This test subject name doesn\'t exist'});
-      }
-      else {
+    } else {
+      if (data === null) {
+        res.status(404).json({
+          name: 'Failed',
+          message: 'This test subject name doesn\'t exist',
+        });
+      } else {
         res.json(data);
       }
     }
   });
-}
+};
 
 // POST:  Update the test subject with the associated ID in function of the parameters given in the body request
 exports.updateTestSubject = (req, res) => {
@@ -85,13 +89,19 @@ exports.updateTestSubject = (req, res) => {
       TestSubject.findByIdAndUpdate(id, body, (err, data) => {
         if (err) {
           res.send(err);
-        }
-        else {
-          if(data === null){
-            res.status(404).json({name: 'Failed', message: 'This test subject id doesn\'t exist'});
-          }
-          else {
-            res.json({name: 'Success', message: 'Test subject successfully modified', modified: body, before: data});
+        } else {
+          if (data === null) {
+            res.status(404).json({
+              name: 'Failed',
+              message: 'This test subject id doesn\'t exist',
+            });
+          } else {
+            res.json({
+              name: 'Success',
+              message: 'Test subject successfully modified',
+              modified: body,
+              before: data,
+            });
           }
         }
       });
@@ -99,7 +109,7 @@ exports.updateTestSubject = (req, res) => {
       res.status(401).send(error401);
     }
   });
-}
+};
 
 // DELETE: Delete the test subject with the associated ID
 exports.deleteTestSubject = (req, res) => {
@@ -110,13 +120,18 @@ exports.deleteTestSubject = (req, res) => {
       TestSubject.findByIdAndRemove(id, (err, data) => {
         if (err) {
           res.send(err);
-        }
-        else {
-          if(data === null){
-            res.status(404).json({name: 'Failed', message: 'This test subject id doesn\'t exist'});
-          }
-          else {
-            res.json({name: 'Success', message: 'Test subject successfully deleted', test: data});
+        } else {
+          if (data === null) {
+            res.status(404).json({
+              name: 'Failed',
+              message: 'This test subject id doesn\'t exist',
+            });
+          } else {
+            res.json({
+              name: 'Success',
+              message: 'Test subject successfully deleted',
+              test: data,
+            });
           }
         }
       });
@@ -124,27 +139,51 @@ exports.deleteTestSubject = (req, res) => {
       res.status(401).send(error401);
     }
   });
-}
+};
 
 // GET: Returns the test subject with the associated ID
 exports.getOptionsOfConfig = (req, res) => {
   const subjectName = req.params.subject;
   const configName = req.params.configName;
   TestSubject.aggregate([
-    {"$unwind": "$configuration"},
-    {"$match": {"configuration.name": configName, "name": subjectName}},
-    {"$group": {"_id": "$configuration.options"}}
+    {'$unwind': '$configuration'},
+    {'$match': {'configuration.name': configName, 'name': subjectName}},
+    {'$group': {'_id': '$configuration.options'}},
   ])
   .exec((err, data) => {
     if (err) {
       res.send(err);
-    }
-    else {
-      if(data.length === 1) {
+    } else {
+      if (data.length === 1) {
         res.json(data[0]['_id']);
       } else {
         res.status(404).json({'error': 'Nothing found'});
       }
     }
   });
-}
+};
+
+// GET: Returns the links of a test subject
+exports.getLinksOfTestSubject = (req, res) => {
+  const subjectName = req.params.subject;
+  TestSubject.findOne({'name': subjectName}, (err, testSubject) => {
+    if (err) {
+      res.send(err);
+    } else {
+      if (testSubject === null) {
+        res.status(404).json({
+          name: 'Failed',
+          message: 'This test subject id doesn\'t exist',
+        });
+      } else {
+        var links = {};
+        testSubject.configuration.forEach((config) => {
+          if (config.baseUrl) {
+            links[config.name] = config.baseUrl;
+          }
+        });
+        res.json(links);
+      }
+    }
+  });
+};

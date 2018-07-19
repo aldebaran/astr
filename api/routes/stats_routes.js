@@ -1,5 +1,5 @@
 module.exports = function(app) {
-  var search = require('../controllers/search_controller');
+  var stats = require('../controllers/stats_controller');
 
   app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -7,11 +7,9 @@ module.exports = function(app) {
     next();
   });
 
-  app.route('/api/search')
-  .get(search.getAllSearch)
-  .post(search.addSearch);
+  app.route('/api/stats/tests-frequency')
+  .get(stats.getTestFrequency);
 
-  app.route('/api/search/id/:id')
-  .get(search.getSearch)
-  .delete(search.deleteSearch);
+  app.route('/api/stats/disk-usage')
+  .get(stats.getDiskUsage);
 };

@@ -39,11 +39,12 @@ class Astr(object):
 class Test(object):
 
     def __init__(self, date, test_subject, configuration,
-                 author=None, id=None):
+                 author=None, comments=None, id=None):
         self.id = id
         self.date = date
         self.test_subject = test_subject
         self.author = author
+        self.comments = comments
         self.configuration = configuration
 
     def __repr__(self):
@@ -62,11 +63,19 @@ class Test(object):
         configuration = {}
         for config in json["configuration"]:
             configuration[config["name"]] = config["value"]
-        return Test(id=json["_id"],
-                    author=json["author"],
-                    date=json["date"],
-                    test_subject=json["type"],
-                    configuration=configuration)
+        if "comments" in json:
+            return Test(id=json["_id"],
+                        author=json["author"],
+                        date=json["date"],
+                        test_subject=json["type"],
+                        comments=json["comments"],
+                        configuration=configuration)
+        else:
+            return Test(id=json["_id"],
+                        author=json["author"],
+                        date=json["date"],
+                        test_subject=json["type"],
+                        configuration=configuration)
 
     @staticmethod
     def json_to_list_of_objects(json):
@@ -140,7 +149,8 @@ class Test(object):
 
         Args:
             author: (optional) test author (e.g. John DOE)
-            date: (optional) test date (e.g. 2018-05-30)
+            date: (optional) test date or range of dates
+                  (e.g. "2018-05-30" or ["2018-05-30", "2018-06-15"])
             test_subject: (optional) type of test (e.g. MOTOR CONTROL)
             configuration: (optional) dictionary of configuration
                            (e.g. {"robot_type": "NAO", "robot_version": "V6"})
@@ -182,12 +192,13 @@ class Test(object):
         return AstrClient().send_delete("tests/id/" + id)
 
     @staticmethod
-    def update_by_id(id, date=None, configuration=None):
+    def update_by_id(id, date=None, comments=None, configuration=None):
         """Update the test with the associated id.
 
         Args:
             id: test id (e.g. 5b29162874f5a43fc26f1f34)
             date: (optional) test date (e.g. 2018-05-30)
+            comments: (optional) comments about the test
             configuration: (optional) dictionary of configuration
                            (e.g. {"robot_type": "NAO", "robot_version": "V6"})
                            only the values of existing configuration can be modified
@@ -198,6 +209,8 @@ class Test(object):
         body_request = {}
         if date is not None:
             body_request["date"] = date
+        if comments is not None:
+            body_request["comments"] = comments
         if configuration is not None:
             config_list = []
             for key, value in configuration.items():
@@ -227,7 +240,7 @@ class Test(object):
         return AstrClient().send_get("tests/configurations/" + test_subject)
 
     @staticmethod
-    def archive(date, test_subject, configuration, paths):
+    def archive(date, test_subject, configuration, paths, comments=None):
         """Archive a new test in ASTR.
 
         Args:
@@ -239,6 +252,7 @@ class Test(object):
             paths: list of all the files to upload
                    (e.g. ["/home/john.doe/Desktop/measurement.csv",
                           "/home/john.doe/Desktop/analysis.png"])
+            comments: (optional) comments about the test
 
         Returns:
             (str) confirmation
@@ -251,8 +265,12 @@ class Test(object):
         for path in paths:
             if not os.path.isfile(path):
                 raise PathError("{} is not a file".format(path))
-        test = Test(date=date, test_subject=test_subject,
-                    configuration=configuration)
+        if comments is not None:
+            test = Test(date=date, test_subject=test_subject,
+                        configuration=configuration, comments=comments)
+        else:
+            test = Test(date=date, test_subject=test_subject,
+                        configuration=configuration)
         test = Test.object_to_json(test)
         test.author = AstrClient().get_username()
         res = AstrClient().send_post("tests/add", params=test.__dict__)

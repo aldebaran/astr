@@ -2,8 +2,8 @@ module.exports = function(app) {
   var testSubject = require('../controllers/test_subject_controller');
 
   app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
 
@@ -21,4 +21,7 @@ module.exports = function(app) {
 
   app.route('/api/test-subjects/options/:subject/:configName')
   .get(testSubject.getOptionsOfConfig); // GET: Returns the options of a configuration
+
+  app.route('/api/test-subjects/links/:subject')
+  .get(testSubject.getLinksOfTestSubject); // GET: Returns the links of a test subject
 };

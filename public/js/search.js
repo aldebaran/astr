@@ -1,45 +1,57 @@
 (function($) {
-  "use strict";
+  'use strict';
 
-  if(isConnected()) {
+  if (isConnected()) {
     $.get('api/search', function(searches) {
       var count = 0;
       var user = getUserName();
       searches.forEach(function(search) {
-        if(search.user === user) {
+        if (search.user === user) {
           count++;
-          var link = window.location.origin + '/tests.html?search=' + search['_id'];
-          if(!search.testSubjectName) {
+          var link = 'tests.html?search=' + search['_id'];
+          if (!search.testSubjectName) {
             search.testSubjectName = '<span class="null">ALL</span>';
           } else {
             search.testSubjectName = '<span class="key">' + search.testSubjectName + '</span>';
           }
-          if(!search.testAuthor) {
+          if (!search.testAuthor) {
             search.testAuthor = '<span class="null">ALL</span>';
           } else {
             search.testAuthor = '<span class="key">' + search.testAuthor + '</span>';
           }
-          if(!search.date) {
+          if (!search.date) {
             search.date = '<span class="null">ALL</span>';
           } else {
             search.date = '<span class="key">' + search.date + '</span>';
           }
           $('tbody').append('' +
-          '<tr id="' + search['_id'] + '">' +
+          '<tr id="' + search['_id'] + '" class="clickableRow" data-href="' + link + '">' +
             '<th scope="row">' + count + '</th>' +
             '<td>' + search.testSubjectName + '</td>' +
             '<td>' + search.testAuthor + '</td>' +
             '<td>' + search.date + '</td>' +
             '<td class="config"></td>' +
-            '<td><a href="' + link + '">' + link + '</a> <button class="btn btn-outline-success" id="copyToClipboard" style="float: right;  ">Copy to clipboard</button></td>' +
+            '<td class="ids"></td>' +
+            '<td><a href="' + window.location.origin + '/' + link + '"><i class="fa fa-link" aria-hidden="true"></i> ' + link + '</a> <button class="btn btn-outline-success" id="copyToClipboard" style="float: right;  ">Copy to clipboard</button></td>' +
             '<td><button type="button" class="btn btn-danger admin-user" id="deleteSearch"><i class="fa fa-trash" aria-hidden="true"></i></button></td>' +
           '</tr>');
-          if(search.configuration.length > 0) {
+          if (search.configuration.length > 0) {
             search.configuration.forEach(function(config) {
-              $('.config:last').append('<div><span class="key">' + config.name + ': </span><span class=value>' + config.value + '</span></div>')
+              $('.config:last').append('<div><span class="key">' + config.name + ': </span><span class=value>' + config.value + '</span></div>');
             });
           } else {
             $('.config:last').html('<span class="null">ALL</span>');
+          }
+          if (search.ids.length > 0) {
+            search.ids.forEach(function(id, index) {
+              if (index !== search.ids.length - 1) {
+                $('.ids:last').append('<div><span class="key">' + id + ',</span></div>');
+              } else {
+                $('.ids:last').append('<div><span class="key">' + id + '</span></div>');
+              }
+            });
+          } else {
+            $('.ids:last').html('<span class="null">ALL</span>');
           }
         }
       });
@@ -49,29 +61,34 @@
     $('#mySearches').html('<p>Log in to see your saved searches.</p>');
   }
 
-  $('table').on('click', '#deleteSearch', function() {
+  $('table').on('click', '.clickableRow', function() {
+    window.location.href = $(this).data('href');
+  });
+
+  $('table').on('click', '#deleteSearch', function(e) {
+    e.stopPropagation();
     var r = confirm('Please confirm that you want to delete this search.');
-    if(r === true) {
+    if (r === true) {
       $.ajax({
         type: 'DELETE',
         url: 'api/search/id/' + $(this).closest('tr').attr('id'),
-        headers: {"Authorization": "Basic " + btoa(getAuthentification())},
+        headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
         success: function() {
           location.reload();
-        }
+        },
       });
     }
   });
 
-  $('table').on('click', '#copyToClipboard', function() {
-    var $temp = $("<input>");
-    $("body").append($temp);
+  $('table').on('click', '#copyToClipboard', function(e) {
+    e.stopPropagation();
+    var $temp = $('<input>');
+    $('body').append($temp);
     $temp.val($(this).prev().attr('href')).select();
-    document.execCommand("copy");
+    document.execCommand('copy');
     $temp.remove();
     $('#myModal').modal('show');
   });
-
 
 
   // -------------------------- Functions -------------------------- //
@@ -84,33 +101,7 @@
       async: false,
       success: function(user) {
         res = !user.error;
-      }
-    });
-    return res;
-  }
-
-  function hasWritePermission() {
-    var res = false;
-    $.ajax({
-      type: 'GET',
-      url: 'api/user/profile',
-      async: false,
-      success: function(user) {
-        res = user['write_permission'];
-      }
-    });
-    return res;
-  }
-
-  function isMaster() {
-    var res = false;
-    $.ajax({
-      type: 'GET',
-      url: 'api/user/profile',
-      async: false,
-      success: function(user) {
-        res = user.master;
-      }
+      },
     });
     return res;
   }
@@ -123,22 +114,7 @@
       async: false,
       success: function(user) {
         res = user.name;
-      }
-    });
-    return res;
-  }
-
-  function getMasterList() {
-    var res = "";
-    $.ajax({
-      type: 'GET',
-      url: 'api/user/master',
-      async: false,
-      success: function(masters) {
-        masters.forEach(function(master) {
-          res += master.firstname + ' ' + master.lastname + ': ' + master.email + '\n';
-        });
-      }
+      },
     });
     return res;
   }
@@ -151,15 +127,14 @@
       async: false,
       success: function(user) {
         res = user.email + ':' + getCookie('session-token');
-      }
+      },
     });
     return res;
   }
 
   function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
+    var value = '; ' + document.cookie;
+    var parts = value.split('; ' + name + '=');
+    if (parts.length == 2) return parts.pop().split(';').shift();
   }
-
 })(jQuery);

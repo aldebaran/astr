@@ -2,25 +2,28 @@ module.exports = function(app) {
   var test = require('../controllers/test_controller');
 
   app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
 
   app.route('/api/tests')
-  .get(test.getAllTests) // GET: Returns the list of all tests
-  .post(test.getTestsByQuery); // POST: Returns the list of tests that match with the parameters given in the body request
+  .get(test.getAllTests) // GET: Returns the list of all tests (sorted by creation date in descending order)
+  .post(test.getTestsByQuery); // POST: Returns the list of tests that match with the parameters given in the body request (sorted by creation date in descending order)
 
   app.route('/api/tests/page/:page/:resultPerPage')
-  .post(test.getTestsByQueryAndPage); // POST: Returns the list of tests that match with the parameters given in the body request, with pagination
+  .post(test.getTestsByQueryAndPage); // POST: Returns the list of tests that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
 
   app.route('/api/tests/add')
   .post(test.addTest); // POST: Add a new test in the DB in function of the parameters given in the body request
 
   app.route('/api/tests/id/:id')
   .get(test.getTest) // GET: Returns the test with the associated ID
-  .post(test.updateTest) // POST: Update the test with the associated ID in function of the parameters given in the body request (only the date and the configuration values can be updated)
+  .post(test.updateTest) // POST: Update the test with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated)
   .delete(test.deleteTest); // DELETE: Delete the test with the associated ID
+
+  app.route('/api/tests/YAMLformat/id/:id')
+  .get(test.getTestInYAMLFormat); // GET: Returns the test with the associated ID in a YAML format, to store it in the archive
 
   app.route('/api/tests/authors')
   .get(test.getDistinctAuthors); // GET: Returns the list of test authors (that wrote at least one test)
@@ -48,5 +51,4 @@ module.exports = function(app) {
 
   app.route('/api/tests/withoutArchive')
   .get(test.getAllTestsWithoutArchive); // GET: Returns the list of all tests without any archive (to delete them)
-
 };

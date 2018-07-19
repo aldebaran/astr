@@ -6,44 +6,54 @@ var TestSchema = new Schema({
     type: String,
     unique: false,
     required: true,
-    trim: true
+    trim: true,
   },
   date: {
-    type: String,
+    type: Date,
     unique: false,
     required: true,
-    trim: true
+    trim: true,
   },
   author: {
     type: String,
     unique: false,
     required: true,
-    trim: true
+    trim: true,
   },
   configuration: [{
-    name: { type: String, lowercase: true, trim: true },
-    value: { type: String, uppercase: true, trim: true }
+    name: {type: String, lowercase: true, trim: true},
+    value: {type: String, uppercase: true, trim: true},
   }],
+  comments: {
+    type: String,
+    unique: false,
+    required: false,
+    trim: true,
+  },
   created: {
     type: Date,
     default: Date.Now,
-    required: true
+    required: true,
   },
   lastModification: {
     type: Date,
     default: Date.Now,
-    required: true
+    required: true,
   },
   archive: {
     type: Boolean,
-    required: false
+    required: false,
+  },
+  archiveContent: {
+    type: [String],
+    require: false,
+    default: ['Please wait, the archive is being zipped...'],
   },
   testSubjectId: {
     type: String,
     unique: false,
-    required: true
-  }
-
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('Test', TestSchema);

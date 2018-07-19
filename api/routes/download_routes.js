@@ -2,21 +2,20 @@ var fs = require('fs');
 var archiver = require('archiver');
 
 module.exports = function(app) {
-
   app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
 
   app.get('/api/download/files', function(req, res, next) {
     fs.readdir('archives/', (err, files) => {
-      res.json(files.map(file => file.split('.')[0]));
+      res.json(files.map((file) => file.split('.')[0]));
     });
   });
 
   // Route to download one archive
-  app.get('/api/download/id/:id', function (req, res, next) {
+  app.get('/api/download/id/:id', function(req, res, next) {
     var filePath = 'archives/';
     var fileName = req.params.id + '.zip';
     res.download(filePath + fileName);
@@ -60,16 +59,15 @@ module.exports = function(app) {
       throw err;
     });
 
-    testsToDownload.forEach(function(id){
+    testsToDownload.forEach(function(id) {
       var file = 'archives/' + id + '.zip';
-      archive.append(fs.createReadStream(file), { name: (id+'.zip') });
-    })
+      archive.append(fs.createReadStream(file), {name: (id + '.zip')});
+    });
 
     // zip the files
     archive.finalize()
-    .then(function(){
+    .then(function() {
       return res.status( 200 ).send( req.file );
-    })
-  })
-
+    });
+  });
 };
