@@ -47,7 +47,41 @@ module.exports = function(app) {
         output.on('close', function() {
           console.log(archive.pointer() + ' total bytes');
           console.log('archiver has been finalized and the output file descriptor has closed.');
-        });
+          // then, delete the raw files (not in the zip)
+          if (typeof req.body.files === 'string') {
+            // only one file uploaded
+            var file = 'archives/' + req.body.files;
+            fs.unlink(file, (err) => {});
+          } else {
+            // multiple files uploaded
+            req.body.files.forEach(function(filename) {
+              var file = 'archives/' + filename;
+              fs.unlink(file, (err) => {});
+            });
+          }
+          fs.unlink('archives/info.txt', (err) => {});
+
+          setTimeout(() => {
+            // update the test with the content of the archive
+            request.get({
+              url: 'http://localhost:8000/api/archive/id/' + req.body.testId,
+              json: true,
+            }, (err2, res2, files) => {
+              Test.findByIdAndUpdate(req.body.testId, {'$set': {'archiveContent': files}}, {new: true}, (err, test) => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  // console.log(test);
+                  return res.status(200).send({
+                    status: 'Success',
+                    testId: req.body.testId,
+                    uploadedFiles: req.body.files,
+                  });
+                }
+              });
+            });
+          });
+          }, 2000);
 
         // This event is fired when the data source is drained no matter what was the data source.
         // It is not part of this library but rather from the NodeJS Stream API.
@@ -102,39 +136,8 @@ module.exports = function(app) {
           // zip the files
           archive.finalize()
           .then(function() {
-            // then, delete the raw files (not in the zip)
-            if (typeof req.body.files === 'string') {
-              // only one file uploaded
-              var file = 'archives/' + req.body.files;
-              fs.unlink(file, (err) => {});
-            } else {
-              // multiple files uploaded
-              req.body.files.forEach(function(filename) {
-                var file = 'archives/' + filename;
-                fs.unlink(file, (err) => {});
-              });
-            }
-            fs.unlink('archives/info.txt', (err) => {});
-
-            // update the test with the content of the archive
-            request.get({
-              url: 'http://localhost:8000/api/archive/id/' + req.body.testId,
-              json: true,
-            }, (err2, res2, files) => {
-              Test.findByIdAndUpdate(req.body.testId, {'$set': {'archiveContent': files}}, {new: true}, (err, test) => {
-                if (err) {
-                  console.log(err);
-                } else {
-                  // console.log(test);
-                  return res.status(200).send({
-                    status: 'Success',
-                    testId: req.body.testId,
-                    uploadedFiles: req.body.files,
-                  });
-                }
-              });
-            });
-          });
+            console.log('The files are being zipped...');
+          })
         });
       } else {
         res.status(401).send(error401);

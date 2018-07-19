@@ -47,6 +47,7 @@ var TestSchema = new Schema({
   archiveContent: {
     type: [String],
     require: false,
+    default: ['Please wait, the archive is being zipped...'],
   },
   testSubjectId: {
     type: String,
