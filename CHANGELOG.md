@@ -62,6 +62,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Authentification token to interact with the API
 
 ***
-## [1.0] - 2017-05-23
+## [1.0] - 2018-05-23
 
 *First official release.*
