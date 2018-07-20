@@ -10,7 +10,11 @@ module.exports = function(app) {
 
   app.get('/api/download/files', function(req, res, next) {
     fs.readdir('archives/', (err, files) => {
-      res.json(files.map((file) => file.split('.')[0]));
+      if (files.length > 0) {
+        res.json(files.map((file) => file.split('.')[0]));
+      } else {
+        res.json([]);
+      }
     });
   });
 

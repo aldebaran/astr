@@ -1,7 +1,8 @@
-var fs = require('fs');
+var fs = require('fs-extra');
 var request = require('request');
+var StreamZip = require('node-stream-zip');
+var archiver = require('archiver');
 var mongoose = require('mongoose');
-var AdmZip = require('adm-zip');
 var User = require('../models/user_model');
 var Test = mongoose.model('Test');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
@@ -283,12 +284,55 @@ exports.updateTest = (req, res) => {
                   if (err) {
                     console.log(err);
                   } else {
-                    var zip = new AdmZip('archives/' + test._id + '.zip');
-                    zip.updateFile('info.txt', testInfo);
-                    zip.writeZip('archives/' + test._id + '.zip');
+                    // create temporary folder to store info.txt and files from the archive
+                    var folderName = id + '_temp';
+                    var path = 'archives/' + folderName;
+                    fs.mkdir(path, (err) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        // unzip the content of the archive
+                        const zip = new StreamZip({
+                            file: 'archives/' + id + '.zip',
+                            storeEntries: true,
+                        });
+                        zip.on('error', (err) => {
+                          console.log(err);
+                        });
+                        zip.on('ready', () => {
+                          zip.extract(null, './' + path, (err, count) => {
+                            zip.close();
+
+                            // create new info.txt
+                            fs.writeFile(path + '/info.txt', testInfo, (err) => {
+                              if (err) {
+                                console.log(err);
+                              }
+                            });
+
+                            // zip the files with info.txt
+                            var output = fs.createWriteStream('archives/' + id + '.zip');
+                            var archive = archiver('zip', {
+                              zlib: {level: 0},
+                            });
+                            output.on('close', function() {
+                              fs.removeSync(path);
+                            });
+                            archive.on('warning', function(err) {
+                              console.log(err);
+                            });
+                            archive.on('error', function(err) {
+                              console.log(err);
+                            });
+                            archive.pipe(output);
+                            archive.directory(path, false);
+                            archive.finalize();
+                          });
+                        });
+                      }
+                    });
                   }
                 });
-
                 res.json({
                   name: 'Success',
                   message: 'Test successfully modified',

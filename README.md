@@ -37,7 +37,6 @@
     - [Users](#users)
     - [Upload](#upload)
     - [Download](#download)
-    - [Archive](#archive)
     - [Stats](#stats)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -72,7 +71,6 @@ Here are the main features:
     - [uuid](https://www.npmjs.com/package/uuid) *(to generate Universally Unique Identifier)*
     - [multer](https://www.npmjs.com/package/multer) *(to upload files on the server)*
     - [archiver](https://www.npmjs.com/package/archiver) *(to zip the files)*
-    - [adm-zip](https://www.npmjs.com/package/adm-zip) *(to add/update/delete files in a zip without having to unzip it)*
     - [diskspace](https://www.npmjs.com/package/diskspace) *(to have information about the disk usage of the server)*
     - [get-folder-size](https://www.npmjs.com/package/get-folder-size) *(to know the size of a folder)*
     - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
@@ -383,8 +381,8 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
 
 1. [/api/upload](http://10.0.160.147:8000/api/upload)
     - POST: Upload files to the server in a ZIP. The name of the archive is the ID of the test **(user must have write permission)**
-2. [/api/upload/newfiles](http://10.0.160.147:8000/api/upload/newfiles)
-    - POST: Upload files to the server (not zipped), to put them in an existing archive **(user must have write permission)**
+2. [/api/upload/replace-archive](http://10.0.160.147:8000/api/upload/replace-archive)
+    - POST: Replace archive with a new one **(user must have write permission)**
 
 #### Download
 
@@ -392,12 +390,6 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
     - GET: Download the archive of the test with the associated ID
 2. [/api/download/multiple](http://10.0.160.147:8000/api/download/multiple)
     - POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.
-
-#### Archive
-
-1. [/api/archive/id/:id](http://10.0.160.147:8000/api/archive/id/:id)
-    - GET: Returns the list of files in the archive with the associated ID
-    - POST: Update the content of the archive with the associated ID. It is possible to delete files and add new ones. (two arrays can be in the body request: *"add"* and *"delete"*) **(user must be master or owner of the test)**
 
 #### Stats
 

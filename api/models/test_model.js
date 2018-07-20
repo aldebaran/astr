@@ -44,11 +44,6 @@ var TestSchema = new Schema({
     type: Boolean,
     required: false,
   },
-  archiveContent: {
-    type: [String],
-    require: false,
-    default: ['Please wait, the archive is being zipped...'],
-  },
   testSubjectId: {
     type: String,
     unique: false,
