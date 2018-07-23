@@ -152,7 +152,7 @@ exports.AddUserAndLogin = (req, res, next) => {
         req.session.userId = user._id;
         // create a new session-token
         request.get({
-            url: 'http://localhost:8000/api/user/newToken/session',
+            url: 'http://localhost:' + req.connection.localPort + '/api/user/newToken/session',
             json: true,
             body: {
               userId: user._id,
@@ -179,7 +179,7 @@ exports.AddUserAndLogin = (req, res, next) => {
 
         // create a new session-token
         request.get({
-            url: 'http://localhost:8000/api/user/newToken/session/session',
+            url: 'http://localhost:' + req.connection.localPort + '/api/user/newToken/session/session',
             json: true,
             body: {
               userId: user._id,

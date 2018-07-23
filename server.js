@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var port = process.env.PORT || 8000;
+var port = process.env.PORT || 8000; // default port: env variable PORT or 8000
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
@@ -13,6 +13,11 @@ var TestSubject = require('./api/models/test_subject_model');
 TestSubject = mongoose.model('TestSubject');
 var Search = require('./api/models/search_model');
 Search = mongoose.model('Search');
+
+// use port passed in command line argument if exists
+if (process.argv.length > 2 && !isNaN(process.argv[2])) {
+  port = process.argv[2];
+}
 
 // connection to mongoDB
 mongoose.Promise = global.Promise;

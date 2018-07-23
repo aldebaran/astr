@@ -89,7 +89,7 @@ module.exports = function(app) {
         new Promise(function(resolve) {
           // get the test to include a txt file with its configuration in the archive
           request.get({
-            url: 'http://localhost:8000/api/tests/YAMLformat/id/' + req.body.testId,
+            url: 'http://localhost:' + req.connection.localPort + '/api/tests/YAMLformat/id/' + req.body.testId,
             json: true,
           }, (err, res, test) => {
             fs.writeFile('archives/info.txt', test, (error) => {
@@ -197,7 +197,7 @@ module.exports = function(app) {
         new Promise(function(resolve) {
           // get the test to include a txt file with its configuration in the archive
           request.get({
-            url: 'http://localhost:8000/api/tests/YAMLformat/id/' + req.body.testId,
+            url: 'http://localhost:' + req.connection.localPort + '/api/tests/YAMLformat/id/' + req.body.testId,
             json: true,
           }, (err, res, test) => {
             fs.writeFile('archives/info.txt', test, (error) => {

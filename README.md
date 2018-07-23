@@ -155,13 +155,28 @@ npm install pm2 -g
 ```
 npm run prod
 ```
-*:arrow_right_hook: This command starts the application with [pm2](https://www.npmjs.com/package/pm2).*
+*:arrow_right_hook: This command starts the application with [pm2](https://www.npmjs.com/package/pm2) at port 8000.*
 
 - Or (for development only)
 ```
 npm run dev
 ```
-*:arrow_right_hook:	This command starts the application with [nodemon](https://www.npmjs.com/package/nodemon).*
+*:arrow_right_hook:	This command starts the application with [nodemon](https://www.npmjs.com/package/nodemon) at port 8000.*
+
+- To use a different port, launch the application as follow
+```
+# for production
+npm run prod -- -- 3000
+# for development
+npm run dev 3000
+```
+
+- To stop the server in production mode
+```
+npm stop
+# OR
+pm2 delete {pm2_processs_id}
+```
 
 ### 8. Create the first Admin
 

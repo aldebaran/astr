@@ -9,7 +9,7 @@ var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and yo
 
 // GET: Returns the list of all tests (sorted by creation date in descending order)
 exports.getAllTests = (req, res) => {
-  checkIfTestsHaveAnArchive()
+  checkIfTestsHaveAnArchive(req)
   .then(() => {
     Test.find({})
     .where('archive').equals(true)
@@ -26,7 +26,7 @@ exports.getAllTests = (req, res) => {
 
 // GET: Returns the list of all tests without any archive (to delete them)
 exports.getAllTestsWithoutArchive = (req, res) => {
-  checkIfTestsHaveAnArchive()
+  checkIfTestsHaveAnArchive(req)
   .then(() => {
     Test.find({})
     .where('archive').equals(false)
@@ -42,7 +42,7 @@ exports.getAllTestsWithoutArchive = (req, res) => {
 
 // POST: Returns the list of tests that match with the parameters given in the body request (sorted by creation date in descending order)
 exports.getTestsByQuery = (req, res) => {
-  checkIfTestsHaveAnArchive()
+  checkIfTestsHaveAnArchive(req)
   .then(() => {
     if (req.body.date && typeof req.body.date !== 'string') {
       // search test between two dates
@@ -79,7 +79,7 @@ exports.getTestsByQuery = (req, res) => {
 
 // POST: Returns the list of tests that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
 exports.getTestsByQueryAndPage = (req, res) => {
-  checkIfTestsHaveAnArchive()
+  checkIfTestsHaveAnArchive(req)
   .then(() => {
     var page = Number(req.params.page);
     var resultPerPage = Number(req.params.resultPerPage);
@@ -131,7 +131,7 @@ exports.addTest = (req, res) => {
       newTest.date = new Date(newTest.date);
       // check if the test subject exists and if all configuration are given
       request.get({
-        url: 'http://localhost:8000/api/test-subjects/name/' + newTest.type,
+        url: 'http://localhost:' + req.connection.localPort + '/api/test-subjects/name/' + newTest.type,
         json: true,
       }, (err1, res1, testSubject) => {
         if (err1) {
@@ -279,7 +279,7 @@ exports.updateTest = (req, res) => {
               } else {
                 // update txt file inside the archive (info)
                 request.get({
-                  url: 'http://localhost:8000/api/tests/YAMLformat/id/' + test._id,
+                  url: 'http://localhost:' + req.connection.localPort + '/api/tests/YAMLformat/id/' + test._id,
                 }, (err, res, testInfo) => {
                   if (err) {
                     console.log(err);
@@ -518,15 +518,16 @@ exports.changeConfigName = (req, res) => {
  * If "archive" is false and the test was not created today, then the test
  * is deleted.
  * @return {Promise}
+ * @param {Object} req
  */
-function checkIfTestsHaveAnArchive() {
+function checkIfTestsHaveAnArchive(req) {
   return new Promise((resolve, reject) => {
     Test.find({}, (err, data) => {
       if (err) {
         console.log(err);
       } else {
         request.get({
-          url: 'http://localhost:8000/api/download/files',
+          url: 'http://localhost:' + req.connection.localPort + '/api/download/files',
           json: true,
         }, (err2, res, archives) => {
           if (err2) {

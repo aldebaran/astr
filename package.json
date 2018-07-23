@@ -4,8 +4,9 @@
   "description": "archiving system of test results",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js --ignore 'archives/'",
-    "prod": "pm2 start server.js"
+    "dev": "nodemon server.js --ignore 'archives/' $*",
+    "prod": "pm2 start server.js",
+    "stop": "pm2 delete 0"
   },
   "repository": {
     "type": "git",
