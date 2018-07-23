@@ -343,7 +343,7 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
     - POST: Change the name of the matched configuration in all tests matched by the test type/subject (body contains *subject*, *previousName* and *newName*) **(user must be master)**
 13. [/api/tests/withoutArchive](http://10.0.160.147:8000/api/tests/withoutArchive)
     - GET: Returns the list of all tests without any archive (to delete them)
-14. [/api/tests/YAMLformat/id/:id]((http://10.0.160.147:8000/api/tests/YAMLformat/id/:id)
+14. [/api/tests/YAMLformat/id/:id](http://10.0.160.147:8000/api/tests/YAMLformat/id/:id)
     - GET: Returns the test with the associated ID in a YAML format, to store it in the archive
 
 #### Test subjects
@@ -406,6 +406,8 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
     - GET: Download the archive of the test with the associated ID
 2. [/api/download/multiple](http://10.0.160.147:8000/api/download/multiple)
     - POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.
+3. [/api/download/files](http://10.0.160.147:8000/api/download/files)
+    - GET: Returns the list of files in archives folder
 
 #### Stats
 
