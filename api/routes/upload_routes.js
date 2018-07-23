@@ -1,5 +1,5 @@
 var multer = require('multer');
-var fs = require('fs');
+var fs = require('fs-extra');
 var archiver = require('archiver');
 var request = require('request');
 var mongoose = require('mongoose');
@@ -10,7 +10,9 @@ var maxFileNumber = 50;
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, 'archives/');
+    fs.mkdirp('archives/' + req.body.testId + '_temp', () => {
+      cb(null, 'archives/' + req.body.testId + '_temp');
+    });
   },
   filename: function(req, file, cb) {
     cb(null, file.originalname);
@@ -37,6 +39,7 @@ module.exports = function(app) {
         }
 
         // create a file to stream archive data to.
+        var pathTempFolder = 'archives/' + req.body.testId + '_temp/';
         var output = fs.createWriteStream('archives/' + req.body.testId + '.zip');
         var archive = archiver('zip', {
           zlib: {level: 0}, // Sets the compression level.
@@ -47,19 +50,12 @@ module.exports = function(app) {
         output.on('close', function() {
           console.log(archive.pointer() + ' total bytes');
           console.log('archiver has been finalized and the output file descriptor has closed.');
-          // then, delete the raw files (not in the zip)
-          if (typeof req.body.files === 'string') {
-            // only one file uploaded
-            var file = 'archives/' + req.body.files;
-            fs.unlink(file, (err) => {});
-          } else {
-            // multiple files uploaded
-            req.body.files.forEach(function(filename) {
-              var file = 'archives/' + filename;
-              fs.unlink(file, (err) => {});
-            });
-          }
-          fs.unlink('archives/info.txt', (err) => {});
+          // then, delete the raw files (in temporary folder)
+          fs.remove(pathTempFolder, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
 
           // update test: isDownloadable = true
           Test.findByIdAndUpdate(req.body.testId, {'$set': {'isDownloadable': true}}, (err) => {
@@ -101,23 +97,23 @@ module.exports = function(app) {
             url: 'http://localhost:' + req.connection.localPort + '/api/tests/YAMLformat/id/' + req.body.testId,
             json: true,
           }, (err, res, test) => {
-            fs.writeFile('archives/info.txt', test, (error) => {
+            fs.writeFile(pathTempFolder + 'info.txt', test, (error) => {
               if (error) {
                 console.log(error);
               }
-              archive.append(fs.createReadStream('archives/info.txt'), {name: 'info.txt'});
+              archive.append(fs.createReadStream(pathTempFolder + 'info.txt'), {name: 'info.txt'});
               resolve();
             });
           });
         }).then(function() {
           if (typeof req.body.files === 'string') {
             // only one file uploaded
-            var file = 'archives/' + req.body.files;
+            var file = pathTempFolder + req.body.files;
             archive.append(fs.createReadStream(file), {name: req.body.files});
           } else {
             // multiple files uploaded
             req.body.files.forEach(function(filename) {
-              var file = 'archives/' + filename;
+              var file = pathTempFolder + filename;
               archive.append(fs.createReadStream(file), {name: filename});
             });
           }
@@ -151,6 +147,7 @@ module.exports = function(app) {
         }
 
         // create a file to stream archive data to.
+        var pathTempFolder = 'archives/' + req.body.testId + '_temp/';
         var output = fs.createWriteStream('archives/' + req.body.testId + '.zip');
         var archive = archiver('zip', {
           zlib: {level: 0}, // Sets the compression level.
@@ -162,19 +159,12 @@ module.exports = function(app) {
           console.log(archive.pointer() + ' total bytes');
           console.log('archiver has been finalized and the output file descriptor has closed.');
           console.log(req.body.testId + '.zip has been replaced');
-          // then, delete the raw files (not in the zip)
-          if (typeof req.body.files === 'string') {
-            // only one file uploaded
-            var file = 'archives/' + req.body.files;
-            fs.unlink(file, (err) => {});
-          } else {
-            // multiple files uploaded
-            req.body.files.forEach(function(filename) {
-              var file = 'archives/' + filename;
-              fs.unlink(file, (err) => {});
-            });
-          }
-          fs.unlink('archives/info.txt', (err) => {});
+          // then, delete the raw files (in temporary folder)
+          fs.remove(pathTempFolder, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
 
           // update test: isDownloadable = true
           Test.findByIdAndUpdate(req.body.testId, {'$set': {'isDownloadable': true}}, (err) => {
@@ -216,23 +206,23 @@ module.exports = function(app) {
             url: 'http://localhost:' + req.connection.localPort + '/api/tests/YAMLformat/id/' + req.body.testId,
             json: true,
           }, (err, res, test) => {
-            fs.writeFile('archives/info.txt', test, (error) => {
+            fs.writeFile(pathTempFolder + 'info.txt', test, (error) => {
               if (error) {
                 console.log(error);
               }
-              archive.append(fs.createReadStream('archives/info.txt'), {name: 'info.txt'});
+              archive.append(fs.createReadStream(pathTempFolder + 'info.txt'), {name: 'info.txt'});
               resolve();
             });
           });
         }).then(function() {
           if (typeof req.body.files === 'string') {
             // only one file uploaded
-            var file = 'archives/' + req.body.files;
+            var file = pathTempFolder + req.body.files;
             archive.append(fs.createReadStream(file), {name: req.body.files});
           } else {
             // multiple files uploaded
             req.body.files.forEach(function(filename) {
-              var file = 'archives/' + filename;
+              var file = pathTempFolder + filename;
               archive.append(fs.createReadStream(file), {name: filename});
             });
           }
