@@ -205,9 +205,16 @@
                 '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
                 '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#modalEdit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
                 '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
+                '<a class="btn btn-secondary download-button-lock" style="display: none;" data-toggle="tooltip" data-html="true" title="The archive is being zipped, and it may take some time.<br>Try to refresh the page later."><i class="fa fa-download" aria-hidden="true"></i></a>' +
               '</div>' +
             '</div>' +
           '</div></div>');
+
+          if (test.isDownloadable === false) {
+            $('#' + test._id).find('.download-button').hide();
+            $('#' + test._id).find('.download-button-lock').show();
+            $('#' + test._id).find('.download-button-lock').tooltip();
+          }
 
           $.get('api/test-subjects/links/' + test.type, function(links) {
             test.configuration.forEach(function(config) {
@@ -238,9 +245,16 @@
             '<div class="card-footer small text-muted"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
                 '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
+                '<a class="btn btn-secondary download-button-lock" style="display: none;" data-toggle="tooltip" data-html="true" title="The archive is being zipped, and it may take some time.<br>Try to refresh the page later."><i class="fa fa-download" aria-hidden="true"></i></a>' +
               '</div>' +
             '</div>' +
           '</div></div>');
+
+          if (test.isDownloadable === false) {
+            $('#' + test._id).find('.download-button').hide();
+            $('#' + test._id).find('.download-button-lock').show();
+            $('#' + test._id).find('.download-button-lock').tooltip();
+          }
 
           $.get('api/test-subjects/links/' + test.type, function(links) {
             test.configuration.forEach(function(config) {
@@ -277,9 +291,16 @@
             '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
               '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
                 '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
+                '<a class="btn btn-secondary download-button-lock" style="display: none;" data-toggle="tooltip" data-html="true" title="The archive is being zipped, and it may take some time.<br>Try to refresh the page later."><i class="fa fa-download" aria-hidden="true"></i></a>' +
               '</div>' +
             '</div>' +
           '</div></div>');
+
+          if (test.isDownloadable === false) {
+            $('#' + test._id).find('.download-button').hide();
+            $('#' + test._id).find('.download-button-lock').show();
+            $('#' + test._id).find('.download-button-lock').tooltip();
+          }
 
           $.get('api/test-subjects/links/' + test.type, function(links) {
             test.configuration.forEach(function(config) {
@@ -543,6 +564,7 @@
       var test = {
         date: $('#inputDateEdit').val(),
         configuration: [],
+        newArchive: $('#isFileUploaded').val(),
       };
       if ($('#inputCommentsEdit').val().trim() !== '') {
         test.comments = $('#inputCommentsEdit').val().trim();

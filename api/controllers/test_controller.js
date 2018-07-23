@@ -246,6 +246,7 @@ exports.updateTest = (req, res) => {
     if (hasAuthorization) {
       var id = req.params.id;
       var body = req.body;
+      body.newArchive = (body.newArchive === 'true');
 
       Test.findById(id, (err, test) => {
         if (err) {
@@ -258,6 +259,7 @@ exports.updateTest = (req, res) => {
             });
           } else {
             test.lastModification = Date.now();
+            test.isDownloadable = false;
             if (body.date) {
               test.date = new Date(body.date);
             }
@@ -276,11 +278,11 @@ exports.updateTest = (req, res) => {
             Test.findByIdAndUpdate(id, test, {new: true}, (err2, data) => {
               if (err2) {
                 res.send(err2);
-              } else {
+              } else if (req.body.newArchive === false) {
                 // update txt file inside the archive (info)
                 request.get({
                   url: 'http://localhost:' + req.connection.localPort + '/api/tests/YAMLformat/id/' + test._id,
-                }, (err, res, testInfo) => {
+                }, (err, response, testInfo) => {
                   if (err) {
                     console.log(err);
                   } else {
@@ -300,7 +302,9 @@ exports.updateTest = (req, res) => {
                           console.log(err);
                         });
                         zip.on('ready', () => {
+                          console.log('extracting ' + path);
                           zip.extract(null, './' + path, (err, count) => {
+                            console.log('extracted');
                             zip.close();
 
                             // create new info.txt
@@ -311,12 +315,20 @@ exports.updateTest = (req, res) => {
                             });
 
                             // zip the files with info.txt
+                            console.log('zipping ' + path);
                             var output = fs.createWriteStream('archives/' + id + '.zip');
                             var archive = archiver('zip', {
                               zlib: {level: 0},
                             });
                             output.on('close', function() {
+                              console.log('zipped');
                               fs.removeSync(path);
+                              // update test: isDownloadable = true
+                              Test.findByIdAndUpdate(id, {'$set': {'isDownloadable': true}}, (err) => {
+                                if (err) {
+                                  console.log(err);
+                                }
+                              });
                             });
                             archive.on('warning', function(err) {
                               console.log(err);
@@ -326,13 +338,21 @@ exports.updateTest = (req, res) => {
                             });
                             archive.pipe(output);
                             archive.directory(path, false);
-                            archive.finalize();
+                            archive.finalize()
+                            .then(() => {
+                              res.json({
+                                name: 'Success',
+                                message: 'Test successfully modified',
+                                test: data,
+                              });
+                            });
                           });
                         });
                       }
                     });
                   }
                 });
+              } else {
                 res.json({
                   name: 'Success',
                   message: 'Test successfully modified',

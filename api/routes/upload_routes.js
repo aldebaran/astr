@@ -2,7 +2,9 @@ var multer = require('multer');
 var fs = require('fs');
 var archiver = require('archiver');
 var request = require('request');
+var mongoose = require('mongoose');
 var User = require('../models/user_model');
+var Test = mongoose.model('Test');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
 var maxFileNumber = 50;
 
@@ -58,6 +60,13 @@ module.exports = function(app) {
             });
           }
           fs.unlink('archives/info.txt', (err) => {});
+
+          // update test: isDownloadable = true
+          Test.findByIdAndUpdate(req.body.testId, {'$set': {'isDownloadable': true}}, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
 
           setTimeout(() => {
             return res.status(200).send({
@@ -166,6 +175,13 @@ module.exports = function(app) {
             });
           }
           fs.unlink('archives/info.txt', (err) => {});
+
+          // update test: isDownloadable = true
+          Test.findByIdAndUpdate(req.body.testId, {'$set': {'isDownloadable': true}}, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
 
           setTimeout(() => {
             return res.status(200).send({

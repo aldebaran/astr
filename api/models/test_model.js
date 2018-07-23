@@ -44,6 +44,11 @@ var TestSchema = new Schema({
     type: Boolean,
     required: false,
   },
+  isDownloadable: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   testSubjectId: {
     type: String,
     unique: false,

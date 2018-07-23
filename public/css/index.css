@@ -570,6 +570,11 @@ a.download-button {
   margin-right: 5px;
 }
 
+a.download-button-lock {
+  float: right;
+  margin-right: 5px;
+}
+
 .fa-download {
   color: white;
 }
