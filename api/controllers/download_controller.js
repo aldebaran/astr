@@ -1,5 +1,7 @@
 var fs = require('fs');
 var archiver = require('archiver');
+var mongoose = require('mongoose');
+var Test = mongoose.model('Test');
 
 // GET: Returns the list of files in archives folder
 exports.getFiles = (req, res, next) => {
@@ -14,9 +16,28 @@ exports.getFiles = (req, res, next) => {
 
 // GET: Download the archive of the test with the associated ID
 exports.downloadById = (req, res, next) => {
-  var filePath = 'archives/';
-  var fileName = req.params.id + '.zip';
-  res.download(filePath + fileName);
+  var id = req.params.id;
+  Test.findById(id, (err, test) => {
+    if (err) {
+      res.send(err);
+    } else {
+      if (test === null) {
+        res.status(404).json({
+          name: 'Failed',
+          message: 'This test id doesn\'t exist',
+        });
+      } else if (test.isDownloadable === true) {
+        var filePath = 'archives/';
+        var fileName = req.params.id + '.zip';
+        res.download(filePath + fileName);
+      } else {
+        res.status(500).json({
+          name: 'Failed',
+          message: 'The archive is not downloadable. Probably because it is being zipped.',
+        });
+      }
+    }
+  });
 };
 
 // POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.
