@@ -29,6 +29,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - None
 
+## [3.0] - XXXXX-XX-XX
+
+### Added
+- [#130](https://gitlab.aldebaran.lan/hardware-test/astr/issues/130) Update archives with the Python library
+- [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) State when the archive is being zipped (to avoid downloading a corrupted zip)
+- [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) Can configure a different port for the application in one command line
+
+
+### Changed
+- [#128](https://gitlab.aldebaran.lan/hardware-test/astr/issues/128) User doesn't add or delete files in the archive anymore but replace the entire archive with a new one
+
+### Fixed
+- [#128](https://gitlab.aldebaran.lan/hardware-test/astr/issues/128) Cannot read/update the content of a zip when size > 2GB
+- Crash when 0 test archived
+
+
 ## [2.1] - 2018-07-19
 
 ### Added
@@ -61,6 +77,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 *First official release.*
 
-[Unreleased]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...HEAD
+[Unreleased]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v3.0...HEAD
+[3.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...v3.0
 [2.1]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.0...v2.1
 [2.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v1.0...v2.0
