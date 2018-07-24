@@ -240,6 +240,7 @@ exports.getTestInYAMLFormat = (req, res) => {
 };
 
 // POST: Update the test with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated)
+// "newArchive" in body request is "true" if the archive is being replaced with "api/upload/replace-archive"
 exports.updateTest = (req, res) => {
   User.hasAuthorization(req, ['master', 'owner'])
   .then((hasAuthorization) => {

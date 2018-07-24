@@ -249,7 +249,7 @@ class Test(object):
             configuration: dictionary of configuration
                            (e.g. {"robot_type": "NAO", "robot_version": "V6"})
                            all the configurations of the test subject must be given
-            paths: list of all the files to upload
+            paths: list of all the files to upload in the archive
                    (e.g. ["/home/john.doe/Desktop/measurement.csv",
                           "/home/john.doe/Desktop/analysis.png"])
             comments: (optional) comments about the test
@@ -280,6 +280,32 @@ class Test(object):
             test_id = res['test']['_id']
             return AstrClient().upload(uri="upload", paths=paths,
                                        archive_name=test_id)
+
+    @staticmethod
+    def replace_archive(id, paths):
+        """Replace the archive of a test with a new one.
+
+        Args: id: test id (e.g. 5b29162874f5a43fc26f1f34)
+        paths: list of all the files to upload in the archive
+               (e.g. ["/home/john.doe/Desktop/measurement.csv",
+                      "/home/john.doe/Desktop/analysis.png"])
+
+        Returns:
+            (str) confirmation
+        """
+        if len(paths) == 0:
+            raise PathError("Empty list of paths.")
+        elif len(paths) > MAX_FILE_NUMBER:
+            raise PathError("Too many files to upload ({}). The limit is {}."
+                            .format(len(paths), MAX_FILE_NUMBER))
+        for path in paths:
+            if not os.path.isfile(path):
+                raise PathError("{} is not a file".format(path))
+        # update test (last modification date)
+        AstrClient().send_post("tests/id/" + id, params={"newArchive": "true"})
+        # upload new files
+        return AstrClient().upload(uri="upload/replace-archive", paths=paths,
+                                   archive_name=id)
 
     @staticmethod
     def download_by_id(id, path):
