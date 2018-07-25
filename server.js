@@ -1,3 +1,4 @@
+var fs = require('fs-extra');
 var express = require('express');
 var app = express();
 var port = process.env.PORT || 8000;
@@ -13,6 +14,13 @@ var TestSubject = require('./api/models/test_subject_model');
 TestSubject = mongoose.model('TestSubject');
 var Search = require('./api/models/search_model');
 Search = mongoose.model('Search');
+
+// create the folder to store archives
+fs.mkdirp('archives/', (err) => {
+  if (err) {
+    console.log(err);
+  }
+});
 
 // connection to mongoDB
 mongoose.Promise = global.Promise;

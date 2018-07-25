@@ -27,7 +27,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - None
 
 ### Known Issues
-- None
+- Cannot read or update the content of an archive when size > 2GB
+
+## [2.2] - 2018-07-25
+
+### Fixed
+- Crash when 0 test in DB
+- Does not create the folder containing the archives automatically
 
 ## [2.1] - 2018-07-19
 
@@ -62,5 +68,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 *First official release.*
 
 [Unreleased]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...HEAD
+[2.2]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...v2.2
 [2.1]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.0...v2.1
 [2.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v1.0...v2.0

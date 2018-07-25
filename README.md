@@ -97,6 +97,7 @@ On the server:
 ### 2. Launch MongoDB
 
 - Open a terminal and run
+
 ```
 sudo service mongod start
 ```

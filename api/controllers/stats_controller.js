@@ -3,6 +3,7 @@ var Test = mongoose.model('Test');
 var diskspace = require('diskspace');
 var getFolderSize = require('get-folder-size');
 var path = require('path');
+var fs = require('fs-extra');
 
 exports.getTestFrequency = (req, res) => {
   Test.aggregate([
