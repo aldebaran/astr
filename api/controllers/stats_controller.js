@@ -70,25 +70,23 @@ exports.getDiskUsage = (req, res) => {
     if (err1) {
       res.send(err1);
     } else {
-      fs.mkdirp('archives/', () => {
-        getFolderSize(path.join(__dirname, '../../archives'), (err2, size) => {
-          if (err2) {
-            res.send(err2);
-          } else {
-            res.json({
-              total: formatBytes(result.total),
-              used: formatBytes(result.used),
-              free: formatBytes(result.free),
-              astr: formatBytes(size),
-              used_without_astr: formatBytes(result.used - size),
-              total_bytes: result.total,
-              used_bytes: result.used,
-              free_bytes: result.free,
-              astr_bytes: size,
-              used_without_astr_bytes: result.used - size,
-            });
-          }
-        });
+      getFolderSize(path.join(__dirname, '../../archives'), (err2, size) => {
+        if (err2) {
+          res.send(err2);
+        } else {
+          res.json({
+            total: formatBytes(result.total),
+            used: formatBytes(result.used),
+            free: formatBytes(result.free),
+            astr: formatBytes(size),
+            used_without_astr: formatBytes(result.used - size),
+            total_bytes: result.total,
+            used_bytes: result.used,
+            free_bytes: result.free,
+            astr_bytes: size,
+            used_without_astr_bytes: result.used - size,
+          });
+        }
       });
     }
   });
