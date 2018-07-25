@@ -1,3 +1,4 @@
+var fs = require('fs-extra');
 var express = require('express');
 var app = express();
 var port = process.env.PORT || 8000; // default port: env variable PORT or 8000
@@ -18,6 +19,13 @@ Search = mongoose.model('Search');
 if (process.argv.length > 2 && !isNaN(process.argv[2])) {
   port = process.argv[2];
 }
+
+// create the folder to store archives
+fs.mkdirp('archives/', (err) => {
+  if (err) {
+    console.log(err);
+  }
+});
 
 // connection to mongoDB
 mongoose.Promise = global.Promise;
