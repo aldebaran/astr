@@ -411,7 +411,9 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
 
 #### Stats
 
-1. [/api/stats/tests-frequency](http://10.0.160.147:8000/api/stats/tests-frequency)
+1. [/api](http://10.0.160.147:8000/api)
+    - GET: Returns the version of A.S.T.R.
+2. [/api/stats/tests-frequency](http://10.0.160.147:8000/api/stats/tests-frequency)
     - GET: Returns a dictionnary with the number of tests archived per month
-2. [/api/stats/disk-usage](http://10.0.160.147:8000/api/stats/disk-usage)
+3. [/api/stats/disk-usage](http://10.0.160.147:8000/api/stats/disk-usage)
     - GET: Returns a dictionnary with the disk usage information

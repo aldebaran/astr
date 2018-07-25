@@ -1,9 +1,23 @@
+var path = require('path');
+var fs = require('fs');
 var mongoose = require('mongoose');
 var Test = mongoose.model('Test');
 var diskspace = require('diskspace');
 var getFolderSize = require('get-folder-size');
-var path = require('path');
-var fs = require('fs-extra');
+
+exports.getAppInfo = (req, res) => {
+  fs.readFile('package.json', 'utf8', (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      json = JSON.parse(data);
+      res.json({
+        name: json.name,
+        version: json.version,
+      });
+    }
+  });
+};
 
 exports.getTestFrequency = (req, res) => {
   Test.aggregate([

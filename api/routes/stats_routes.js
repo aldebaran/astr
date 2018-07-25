@@ -7,6 +7,9 @@ module.exports = function(app) {
     next();
   });
 
+  app.route('/api')
+  .get(stats.getAppInfo);
+
   app.route('/api/stats/tests-frequency')
   .get(stats.getTestFrequency);
 

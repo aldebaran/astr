@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - [#130](https://gitlab.aldebaran.lan/hardware-test/astr/issues/130) Update archives with the Python library
 - [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) State when the archive is being zipped (to avoid downloading a corrupted zip)
 - [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) Can configure a different port for the application in one command line
+- [#137](https://gitlab.aldebaran.lan/hardware-test/astr/issues/137) API endpoint that returns the application version
 
 ### Changed
 - [#128](https://gitlab.aldebaran.lan/hardware-test/astr/issues/128) User doesn't add or delete files in the archive anymore but replace the entire archive with a new one

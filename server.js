@@ -15,14 +15,11 @@ TestSubject = mongoose.model('TestSubject');
 var Search = require('./api/models/search_model');
 Search = mongoose.model('Search');
 
-<<<<<<< HEAD
 // use port passed in command line argument if exists
 if (process.argv.length > 2 && !isNaN(process.argv[2])) {
   port = process.argv[2];
 }
 
-=======
->>>>>>> hotfix
 // create the folder to store archives
 fs.mkdirp('archives/', (err) => {
   if (err) {
