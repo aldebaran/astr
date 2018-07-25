@@ -17,27 +17,32 @@ exports.getFiles = (req, res, next) => {
 // GET: Download the archive of the test with the associated ID
 exports.downloadById = (req, res, next) => {
   var id = req.params.id;
-  Test.findById(id, (err, test) => {
-    if (err) {
-      res.send(err);
-    } else {
-      if (test === null) {
-        res.status(404).json({
-          name: 'Failed',
-          message: 'This test id doesn\'t exist',
-        });
-      } else if (test.isDownloadable === true) {
-        var filePath = 'archives/';
-        var fileName = req.params.id + '.zip';
-        res.download(filePath + fileName);
+  var filePath = 'archives/';
+  if (id === 'multiple') {
+    var fileName = 'multiple.zip';
+    res.download(filePath + fileName);
+  } else {
+    Test.findById(id, (err, test) => {
+      if (err) {
+        res.send(err);
       } else {
-        res.status(500).json({
-          name: 'Failed',
-          message: 'The archive is not downloadable. Probably because it is being zipped.',
-        });
+        if (test === null) {
+          res.status(404).json({
+            name: 'Failed',
+            message: 'This test id doesn\'t exist',
+          });
+        } else if (test.isDownloadable === true) {
+          var fileName = req.params.id + '.zip';
+          res.download(filePath + fileName);
+        } else {
+          res.status(500).json({
+            name: 'Failed',
+            message: 'The archive is not downloadable. Probably because it is being zipped.',
+          });
+        }
       }
-    }
-  });
+    });
+  }
 };
 
 // POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.
