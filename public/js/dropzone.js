@@ -3561,9 +3561,22 @@
 
       myDropzone.on('addedfile', function(file) {
         if (file.upload.total < this.options.maxFilesize * 1024 * 1024) {
-          $('#isFileUploaded').val('true');
+          // check if filename already exists
+          if (this.files.length > 1) {
+            for (var i = 0; i < this.files.length - 1; i++) { // -1 to exclude current file
+              if (this.files[i].name == file.name) {
+                showModal('Error', 'You are trying to upload files with the same name: <strong>' + file.name + '</strong><br><br>Please rename your files before uploading them. Otherwise, the archive will have name conflicts.');
+                $('#isFileUploaded').val('false');
+                this.removeAllFiles(true);
+              } else if (i === this.files.length - 2) {
+                $('#isFileUploaded').val('true');
+              }
+            }
+          } else {
+            $('#isFileUploaded').val('true');
+          }
         } else {
-          showModal('Error', 'This file is too big.<br>Max size: ' + this.options.maxFilesize + 'MB');
+          showModal('Error', '<strong>' + file.name + '</strong> is too big (' + formatBytes(file.size) + ').<br>Max size: ' + this.options.maxFilesize + ' MB');
           this.removeFile(file);
         }
       });
@@ -3671,4 +3684,6 @@
     $('#myModal .modal-body').html('<p>' + message + '<p>');
     $('#myModal').modal('show');
   }
+
+  function formatBytes(a,b){if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]}
 })(jQuery);
