@@ -102,17 +102,17 @@ UserSchema.statics.hasAuthorization = function(req, permissions) {
                 } else if (permissions.includes('write_permission') && user.write_permission === true) {
                   // require to have write_permission
                   resolve(true);
-                } else if (permissions.includes('owner') && (req.url.includes('tests') || req.url.includes('archive'))) {
-                  // require to have be owner of the test
-                  request('http://' + req.get('host') + '/api/tests/id/' + req.params.id, {json: true}, (err2, res2, test) => {
-                    if (test.author === user.firstname + ' ' + user.lastname) {
+                } else if (permissions.includes('owner') && (req.url.includes('archives'))) {
+                  // require to be owner of the archive
+                  request('http://' + req.get('host') + '/api/archives/id/' + req.params.id, {json: true}, (err2, res2, archive) => {
+                    if (archive.author === user.firstname + ' ' + user.lastname) {
                       resolve(true);
                     } else {
                       resolve(false);
                     }
                   });
                 } else if (permissions.includes('owner') && req.url.includes('search')) {
-                  // require to have be owner of the search
+                  // require to be owner of the search
                   request('http://' + req.get('host') + '/api/search/id/' + req.params.id, {json: true}, (err2, res2, search) => {
                     if (search.user === user.firstname + ' ' + user.lastname) {
                       resolve(true);

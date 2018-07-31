@@ -32,50 +32,52 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [3.0] - XXXXX-XX-XX
 
 ### Added
-- [#130](https://gitlab.aldebaran.lan/hardware-test/astr/issues/130) Update archives with the Python library
-- [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) State when the archive is being zipped (to avoid downloading a corrupted zip)
-- [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) Can configure a different port for the application in one command line
-- [#137](https://gitlab.aldebaran.lan/hardware-test/astr/issues/137) API endpoint that returns the application version
+- [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) State when the archive is being zipped (to avoid downloading a corrupted zip).
+- [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) Can launch the application on a different port with one command line.
+- [#137](https://gitlab.aldebaran.lan/hardware-test/astr/issues/137) API endpoint that returns the application information (name, version, last reboot).
+- [#132](https://gitlab.aldebaran.lan/hardware-test/astr/issues/132) Admins can change the name of the application to use a custom one.
 
 ### Changed
-- [#128](https://gitlab.aldebaran.lan/hardware-test/astr/issues/128) User doesn't add or delete files in the archive anymore but replace the entire archive with a new one
+- [#128](https://gitlab.aldebaran.lan/hardware-test/astr/issues/128) User doesn't add or delete files in the archive anymore but replace the entire archive with a new one.
+- [#132](https://gitlab.aldebaran.lan/hardware-test/astr/issues/132) A.S.T.R. is no longer dedicated to store data about tests. It can be use for any kind of data.
+- [#132](https://gitlab.aldebaran.lan/hardware-test/astr/issues/132) A.S.T.R. stands for Archiving System Truly Restful.
 
 ### Fixed
-- [#128](https://gitlab.aldebaran.lan/hardware-test/astr/issues/128) Cannot read/update the content of a zip when size > 2GB
+- [#128](https://gitlab.aldebaran.lan/hardware-test/astr/issues/128) Cannot read/update the content of a zip when size > 2GB.
 
 ## [2.2] - 2018-07-25
 
 ### Fixed
-- Crash when 0 test in DB
-- Does not create the folder containing the archives automatically
+- Crash when 0 test in DB.
+- Does not create the folder containing the archives automatically.
 
 ## [2.1] - 2018-07-19
 
 ### Added
-- [#81](https://gitlab.aldebaran.lan/hardware-test/astr/issues/81) [#83](https://gitlab.aldebaran.lan/hardware-test/astr/issues/83) Search and share tests by ID
-- [#80](https://gitlab.aldebaran.lan/hardware-test/astr/issues/80) Search between range of dates
-- [#82](https://gitlab.aldebaran.lan/hardware-test/astr/issues/82)Tests can have comments
-- [#74](https://gitlab.aldebaran.lan/hardware-test/astr/issues/74) [#116](https://gitlab.aldebaran.lan/hardware-test/astr/issues/116) Tests configuration are stored in a file inside the archive (in YAML)
-- [#74](https://gitlab.aldebaran.lan/hardware-test/astr/issues/74) Update the content of an archive on the website (add new files, delete exisiting ones)
-- [#120](https://gitlab.aldebaran.lan/hardware-test/astr/issues/120) Configurations can be links to other website
-- [#126](https://gitlab.aldebaran.lan/hardware-test/astr/issues/126) Statistics on dashboard
-- Documentation to launch the application in production mode
+- [#81](https://gitlab.aldebaran.lan/hardware-test/astr/issues/81) [#83](https://gitlab.aldebaran.lan/hardware-test/astr/issues/83) Search and share tests by ID.
+- [#80](https://gitlab.aldebaran.lan/hardware-test/astr/issues/80) Search between range of dates.
+- [#82](https://gitlab.aldebaran.lan/hardware-test/astr/issues/82)Tests can have comments.
+- [#74](https://gitlab.aldebaran.lan/hardware-test/astr/issues/74) [#116](https://gitlab.aldebaran.lan/hardware-test/astr/issues/116) Tests configuration are stored in a file inside the archive (in YAML).
+- [#74](https://gitlab.aldebaran.lan/hardware-test/astr/issues/74) Update the content of an archive on the website (add new files, delete exisiting ones).
+- [#120](https://gitlab.aldebaran.lan/hardware-test/astr/issues/120) Configurations can be links to other website.
+- [#126](https://gitlab.aldebaran.lan/hardware-test/astr/issues/126) Statistics on dashboard.
+- Documentation to launch the application in production mode.
 
 ### Changed
-- Upload rules for the website: 50 files max, 10GB per file, 1 hour timeout
-- [#120](https://gitlab.aldebaran.lan/hardware-test/astr/issues/120) Order of display of the tests: new tests appear first
+- Upload rules for the website: 50 files max, 10GB per file, 1 hour timeout.
+- [#120](https://gitlab.aldebaran.lan/hardware-test/astr/issues/120) Order of display of the tests: new tests appear first.
 
 ### Fixed
-- [#111](https://gitlab.aldebaran.lan/hardware-test/astr/issues/111) Delete tests without archive
-- [#112](https://gitlab.aldebaran.lan/hardware-test/astr/issues/112) Logout if the session token exprires in the cookies
+- [#111](https://gitlab.aldebaran.lan/hardware-test/astr/issues/111) Delete tests without archive.
+- [#112](https://gitlab.aldebaran.lan/hardware-test/astr/issues/112) Logout if the session token exprires in the cookies.
 
 ## [2.0] - 2018-06-26
 
 ### Added
-- Python library
+- Python library.
 
 ### Security
-- Authentification token to interact with the API
+- Authentification token to interact with the API.
 
 ## [1.0] - 2018-05-23
 

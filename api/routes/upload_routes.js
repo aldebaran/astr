@@ -5,8 +5,8 @@ var maxFileNumber = 50;
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    fs.mkdirp('archives/' + req.body.testId + '_temp', () => {
-      cb(null, 'archives/' + req.body.testId + '_temp');
+    fs.mkdirp('archives/' + req.body.archiveId + '_temp', () => {
+      cb(null, 'archives/' + req.body.archiveId + '_temp');
     });
   },
   filename: function(req, file, cb) {
@@ -17,11 +17,11 @@ var storage = multer.diskStorage({
 var upload = multer({storage: storage});
 
 module.exports = function(app) {
-  // POST: Upload files to the server in a ZIP. The name of the archive is the ID of the test
+  // POST: Upload files to the server in a ZIP. The name of the zip is the ID of the archive
   // user must have write permission
   app.post('/api/upload', upload.array('files', maxFileNumber), uploadController.newArchive);
 
-  // POST: Replace archive with a new one
+  // POST: Replace zip with a new one
   // user must have write permission
-  app.post('/api/upload/replace-archive', upload.array('files', maxFileNumber), uploadController.replaceArchive);
+  app.post('/api/upload/replace-zip', upload.array('files', maxFileNumber), uploadController.replaceArchive);
 };

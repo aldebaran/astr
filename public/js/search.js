@@ -8,16 +8,16 @@
       searches.forEach(function(search) {
         if (search.user === user) {
           count++;
-          var link = 'tests.html?search=' + search['_id'];
-          if (!search.testSubjectName) {
-            search.testSubjectName = '<span class="null">ALL</span>';
+          var link = 'explore.html?search=' + search._id;
+          if (!search.archiveCategory) {
+            search.archiveCategory = '<span class="null">ALL</span>';
           } else {
-            search.testSubjectName = '<span class="key">' + search.testSubjectName + '</span>';
+            search.archiveCategory = '<span class="key">' + search.archiveCategory + '</span>';
           }
-          if (!search.testAuthor) {
-            search.testAuthor = '<span class="null">ALL</span>';
+          if (!search.archiveAuthor) {
+            search.archiveAuthor = '<span class="null">ALL</span>';
           } else {
-            search.testAuthor = '<span class="key">' + search.testAuthor + '</span>';
+            search.archiveAuthor = '<span class="key">' + search.archiveAuthor + '</span>';
           }
           if (!search.date) {
             search.date = '<span class="null">ALL</span>';
@@ -25,10 +25,10 @@
             search.date = '<span class="key">' + search.date + '</span>';
           }
           $('tbody').append('' +
-          '<tr id="' + search['_id'] + '" class="clickableRow" data-href="' + link + '">' +
+          '<tr id="' + search._id + '" class="clickableRow" data-href="' + link + '">' +
             '<th scope="row">' + count + '</th>' +
-            '<td>' + search.testSubjectName + '</td>' +
-            '<td>' + search.testAuthor + '</td>' +
+            '<td>' + search.archiveCategory + '</td>' +
+            '<td>' + search.archiveAuthor + '</td>' +
             '<td>' + search.date + '</td>' +
             '<td class="config"></td>' +
             '<td class="ids"></td>' +

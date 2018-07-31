@@ -4,14 +4,14 @@
   Chart.defaults.global.defaultFontColor = '#292b2c';
 
   // -- Bar Chart (archiving frequency)
-  $.get('api/stats/tests-frequency', function(data) {
+  $.get('api/stats/archiving-frequency', function(data) {
     var ctx = $('#myBarChart');
     var myLineChart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: Object.keys(data),
         datasets: [{
-          label: 'Tests archived',
+          label: 'Archives uploaded',
           backgroundColor: 'rgba(2,117,216,1)',
           borderColor: 'rgba(2,117,216,1)',
           data: Object.values(data),

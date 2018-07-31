@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var TestSubjectSchema = new Schema({
+var ArchiveCategorySchema = new Schema({
   name: {
     type: String,
     unique: true,
@@ -27,5 +27,5 @@ var TestSubjectSchema = new Schema({
   },
 });
 
-var TestSubject = mongoose.model('TestSubject', TestSubjectSchema);
-module.exports = TestSubject;
+var ArchiveCategory = mongoose.model('ArchiveCategory', ArchiveCategorySchema);
+module.exports = ArchiveCategory;

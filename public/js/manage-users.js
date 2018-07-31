@@ -9,35 +9,35 @@
       users.forEach(function(user) {
         if (user.master === true) {
           $('tbody').append('' +
-          '<tr value="' + user['_id'] + '">' +
+          '<tr value="' + user._id + '">' +
             '<td>' + user.firstname + '</td>'+
             '<td>' + user.lastname + '</td>' +
             '<td>' + user.email + '</td>' +
-            '<td id="write_permission'+user['_id']+'">' + user.write_permission.toString().replace('true', 'YES').replace('false', 'NO') + '</td>' +
-            '<td id="master'+user['_id']+'">' + user.master.toString().replace('true', 'YES').replace('false', 'NO') + '<button type="button" class="btn btn-outline-info admin-user" id="modifyMaster">Modify master status</button></td>' +
+            '<td id="write_permission'+user._id+'">' + user.write_permission.toString().replace('true', 'YES').replace('false', 'NO') + '</td>' +
+            '<td id="master'+user._id+'">' + user.master.toString().replace('true', 'YES').replace('false', 'NO') + '<button type="button" class="btn btn-outline-info admin-user" id="modifyMaster">Modify master status</button></td>' +
             '<td><button type="button" class="btn btn-danger admin-user" id="deleteUser"><i class="fa fa-trash" aria-hidden="true"></i></button></td>' +
           '</tr>');
         } else {
           $('tbody').append('' +
-          '<tr value="' + user['_id'] + '">' +
+          '<tr value="' + user._id + '">' +
             '<td>' + user.firstname + '</td>'+
             '<td>' + user.lastname + '</td>' +
             '<td>' + user.email + '</td>' +
-            '<td id="write_permission'+user['_id']+'">' + user.write_permission.toString().replace('true', 'YES').replace('false', 'NO') + '<button type="button" class="btn btn-outline-info admin-user" id="modifyWritePermission">Modify write permission</button></td>' +
-            '<td id="master'+user['_id']+'">' + user.master.toString().replace('true', 'YES').replace('false', 'NO') + '<button type="button" class="btn btn-outline-info admin-user" id="modifyMaster">Modify master status</button></td>' +
+            '<td id="write_permission'+user._id+'">' + user.write_permission.toString().replace('true', 'YES').replace('false', 'NO') + '<button type="button" class="btn btn-outline-info admin-user" id="modifyWritePermission">Modify write permission</button></td>' +
+            '<td id="master'+user._id+'">' + user.master.toString().replace('true', 'YES').replace('false', 'NO') + '<button type="button" class="btn btn-outline-info admin-user" id="modifyMaster">Modify master status</button></td>' +
             '<td><button type="button" class="btn btn-danger admin-user" id="deleteUser"><i class="fa fa-trash" aria-hidden="true"></i></button></td>' +
           '</tr>');
         }
 
         if (user.write_permission === true) {
-          $('#write_permission'+user['_id']).css('color', 'green');
+          $('#write_permission'+user._id).css('color', 'green');
         } else {
-          $('#write_permission'+user['_id']).css('color', 'red');
+          $('#write_permission'+user._id).css('color', 'red');
         }
         if (user.master === true) {
-          $('#master'+user['_id']).css('color', 'green');
+          $('#master'+user._id).css('color', 'green');
         } else {
-          $('#master'+user['_id']).css('color', 'red');
+          $('#master'+user._id).css('color', 'red');
         }
       });
     });

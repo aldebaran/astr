@@ -8,10 +8,10 @@ module.exports = function(app) {
   });
 
   app.route('/api/search')
-  .get(search.getAllSearch)
-  .post(search.addSearch);
+  .get(search.getAllSearch) // GET: Returns the list of all saved searches
+  .post(search.addSearch); // POST:  Add a new search in the DB in function of the parameters given in the body request **(user must use authentification)**
 
   app.route('/api/search/id/:id')
-  .get(search.getSearch)
-  .delete(search.deleteSearch);
+  .get(search.getSearch) // GET: Returns the search with the associated ID
+  .delete(search.deleteSearch); // DELETE: Delete the search with the associated ID **(user must be the owner of the search)**
 };

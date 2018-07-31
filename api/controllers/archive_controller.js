@@ -4,15 +4,15 @@ var StreamZip = require('node-stream-zip');
 var archiver = require('archiver');
 var mongoose = require('mongoose');
 var User = require('../models/user_model');
-var Test = mongoose.model('Test');
+var Archive = mongoose.model('Archive');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
 
-// GET: Returns the list of all tests (sorted by creation date in descending order)
-exports.getAllTests = (req, res) => {
-  checkIfTestsHaveAnArchive(req)
+// GET: Returns the list of all archives (sorted by creation date in descending order)
+exports.getAllArchives = (req, res) => {
+  checkIfZipPresent(req)
   .then(() => {
-    Test.find({})
-    .where('archive').equals(true)
+    Archive.find({})
+    .where('isZipPresent').equals(true)
     .sort({'created': -1})
     .exec((err, data) => {
       if (err) {
@@ -24,12 +24,12 @@ exports.getAllTests = (req, res) => {
   });
 };
 
-// GET: Returns the list of all tests without any archive (to delete them)
-exports.getAllTestsWithoutArchive = (req, res) => {
-  checkIfTestsHaveAnArchive(req)
+// GET: Returns the list of all archives that are missing in the folder "archives" (to delete them)
+exports.getAllMissingArchives = (req, res) => {
+  checkIfZipPresent(req)
   .then(() => {
-    Test.find({})
-    .where('archive').equals(false)
+    Archive.find({})
+    .where('isZipPresent').equals(false)
     .exec((err, data) => {
       if (err) {
         res.send(err);
@@ -40,20 +40,20 @@ exports.getAllTestsWithoutArchive = (req, res) => {
   });
 };
 
-// POST: Returns the list of tests that match with the parameters given in the body request (sorted by creation date in descending order)
-exports.getTestsByQuery = (req, res) => {
-  checkIfTestsHaveAnArchive(req)
+// POST: Returns the list of archives that match with the parameters given in the body request (sorted by creation date in descending order)
+exports.getArchivesByQuery = (req, res) => {
+  checkIfZipPresent(req)
   .then(() => {
     if (req.body.date && typeof req.body.date !== 'string') {
-      // search test between two dates
+      // search archives between two dates
       var from = new Date(req.body.date[0]);
       var to = new Date(req.body.date[1]);
       req.body.date = {
         '$gte': from,
         '$lte': to,
       };
-      Test.find(req.body)
-      .where('archive').equals(true)
+      Archive.find(req.body)
+      .where('isZipPresent').equals(true)
       .sort({'created': -1})
       .exec((err, data) => {
         if (err) {
@@ -63,8 +63,8 @@ exports.getTestsByQuery = (req, res) => {
         }
       });
     } else {
-      Test.find(req.body)
-      .where('archive').equals(true)
+      Archive.find(req.body)
+      .where('isZipPresent').equals(true)
       .sort({'created': -1})
       .exec((err, data) => {
         if (err) {
@@ -77,22 +77,22 @@ exports.getTestsByQuery = (req, res) => {
   });
 };
 
-// POST: Returns the list of tests that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
-exports.getTestsByQueryAndPage = (req, res) => {
-  checkIfTestsHaveAnArchive(req)
+// POST: Returns the list of archives that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
+exports.getArchivesByQueryAndPage = (req, res) => {
+  checkIfZipPresent(req)
   .then(() => {
     var page = Number(req.params.page);
     var resultPerPage = Number(req.params.resultPerPage);
     if (req.body.date && typeof req.body.date !== 'string') {
-      // search test between two dates
+      // search archives between two dates
       var from = new Date(req.body.date[0]);
       var to = new Date(req.body.date[1]);
       req.body.date = {
         '$gte': from,
         '$lte': to,
       };
-      Test.find(req.body)
-      .where('archive').equals(true)
+      Archive.find(req.body)
+      .where('isZipPresent').equals(true)
       .sort({'created': -1})
       .limit(resultPerPage)
       .skip((page-1)*resultPerPage)
@@ -104,8 +104,8 @@ exports.getTestsByQueryAndPage = (req, res) => {
         }
       });
     } else {
-      Test.find(req.body)
-      .where('archive').equals(true)
+      Archive.find(req.body)
+      .where('isZipPresent').equals(true)
       .sort({'created': -1})
       .limit(resultPerPage)
       .skip((page-1)*resultPerPage)
@@ -120,61 +120,61 @@ exports.getTestsByQueryAndPage = (req, res) => {
   });
 };
 
-// POST: Add a new test in the DB in function of the parameters given in the body request
-exports.addTest = (req, res) => {
+// POST: Add a new archive in the DB in function of the parameters given in the body request
+exports.addArchive = (req, res) => {
   User.hasAuthorization(req, ['write_permission'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
-      var newTest = new Test(req.body);
-      newTest.created = Date.now();
-      newTest.lastModification = Date.now();
-      newTest.date = new Date(newTest.date);
-      // check if the test subject exists and if all configuration are given
+      var newArchive = new Archive(req.body);
+      newArchive.created = Date.now();
+      newArchive.lastModification = Date.now();
+      newArchive.date = new Date(newArchive.date);
+      // check if the archive category exists and if all configuration are given
       request.get({
-        url: 'http://localhost:' + req.connection.localPort + '/api/test-subjects/name/' + newTest.type,
+        url: 'http://localhost:' + req.connection.localPort + '/api/categories/name/' + newArchive.category,
         json: true,
-      }, (err1, res1, testSubject) => {
+      }, (err1, res1, archiveCategory) => {
         if (err1) {
           res.send(err1);
-        } else if (testSubject.name === 'Failed') {
-          res.send(testSubject);
+        } else if (archiveCategory.name === 'Failed') {
+          res.send(archiveCategory);
         } else {
-          allSubjectConfigurationsAreInTest(newTest, testSubject)
-          .then((allSubjectConfigurationsAreInTest) => {
-            if (allSubjectConfigurationsAreInTest) {
-              newTest.testSubjectId = testSubject._id;
-              // delete configs that are not in the test subject
-              var subjectConfigNames = [];
-              testSubject.configuration.forEach(function(subjectConfig, idx) {
-                subjectConfigNames.push(subjectConfig.name);
-                if (idx === testSubject.configuration.length - 1) {
-                  newTest.configuration = newTest.configuration.filter(
-                    (config) => subjectConfigNames.includes(config.name)
+          allCategoryConfigurationsAreInArchive(newArchive, archiveCategory)
+          .then((allCategoryConfigurationsAreInArchive) => {
+            if (allCategoryConfigurationsAreInArchive) {
+              newArchive.archiveCategoryId = archiveCategory._id;
+              // delete configs that are not in the archive category
+              var categoryConfigNames = [];
+              archiveCategory.configuration.forEach(function(categoryConfig, idx) {
+                categoryConfigNames.push(categoryConfig.name);
+                if (idx === archiveCategory.configuration.length - 1) {
+                  newArchive.configuration = newArchive.configuration.filter(
+                    (config) => categoryConfigNames.includes(config.name)
                   );
                 }
               });
 
               // sort configuration by name
-              newTest.configuration.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );
+              newArchive.configuration.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );
 
-              // save the test in the database
-              newTest.save((err, data) => {
+              // save the archive in the database
+              newArchive.save((err, data) => {
                 if (err) {
                   res.send(err);
                 } else {
                   res.json({
                     name: 'Success',
-                    message: 'Test successfully added',
-                    test: data,
+                    message: 'Archive successfully added',
+                    archive: data,
                   });
                 }
               });
             } else {
-              missingConfigs(newTest, testSubject)
+              missingConfigs(newArchive, archiveCategory)
               .then((missingConfigs) => {
                 res.send({
                   name: 'Failed',
-                  message: 'The test must include all configurations of the test subject',
+                  message: 'The archive must include all configurations of the archive category',
                   missing_configurations: missingConfigs,
                 });
               });
@@ -188,17 +188,17 @@ exports.addTest = (req, res) => {
   });
 };
 
-// GET: Returns the test with the associated ID
-exports.getTest = (req, res) => {
+// GET: Returns the archive with the associated ID
+exports.getArchive = (req, res) => {
   var id = req.params.id;
-  Test.findById(id, (err, data) => {
+  Archive.findById(id, (err, data) => {
     if (err) {
       res.send(err);
     } else {
       if (data === null) {
         res.status(404).json({
           name: 'Failed',
-          message: 'This test id doesn\'t exist',
+          message: 'This archive id doesn\'t exist',
         });
       } else {
         res.json(data);
@@ -207,24 +207,24 @@ exports.getTest = (req, res) => {
   });
 };
 
-// GET: Returns the test with the associated ID in a YAML format, to store it in the archive
-exports.getTestInYAMLFormat = (req, res) => {
+// GET: Returns the archive with the associated ID in a YAML format, to store it in the zip
+exports.getArchiveInYAMLFormat = (req, res) => {
   var id = req.params.id;
-  Test.findById(id, (err, data) => {
+  Archive.findById(id, (err, data) => {
     if (err) {
       res.send(err);
     } else {
       if (data === null) {
         res.status(404).json({
           name: 'Failed',
-          message: 'This test id doesn\'t exist',
+          message: 'This archive id doesn\'t exist',
         });
       } else {
         var txt = ('---\n' +
                  'id: ' + data._id + '\n' +
                  'date: ' + data.date.toISOString().substr(0, 10) + '\n' +
                  'author: ' + data.author + '\n' +
-                 'test_subject: ' + data.type + '\n'
+                 'archive_category: ' + data.category + '\n'
         );
         if (data.comments) {
           txt += 'comments: ' + data.comments + '\n';
@@ -239,51 +239,51 @@ exports.getTestInYAMLFormat = (req, res) => {
   });
 };
 
-// POST: Update the test with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated)
-// "newArchive" in body request is "true" if the archive is being replaced with "api/upload/replace-archive"
-exports.updateTest = (req, res) => {
+// POST: Update the archive with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated)
+// "newZip" in body request is "true" if the zip is being replaced with "api/upload/replace-zip"
+exports.updateArchive = (req, res) => {
   User.hasAuthorization(req, ['master', 'owner'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
       var id = req.params.id;
       var body = req.body;
-      body.newArchive = (body.newArchive === 'true');
+      body.newZip = (body.newZip === 'true');
 
-      Test.findById(id, (err, test) => {
+      Archive.findById(id, (err, archive) => {
         if (err) {
           res.send(err);
         } else {
-          if (test === null) {
+          if (archive === null) {
             res.status(404).json({
               name: 'Failed',
-              message: 'This test id doesn\'t exist',
+              message: 'This archive id doesn\'t exist',
             });
           } else {
-            test.lastModification = Date.now();
-            test.isDownloadable = false;
+            archive.lastModification = Date.now();
+            archive.isDownloadable = false;
             if (body.date) {
-              test.date = new Date(body.date);
+              archive.date = new Date(body.date);
             }
             if (body.comments) {
-              test.comments = body.comments;
+              archive.comments = body.comments;
             }
             if (body.configuration && body.configuration.length > 0) {
               body.configuration.forEach(function(newConfig) {
-                test.configuration.forEach(function(currentConfig) {
+                archive.configuration.forEach(function(currentConfig) {
                   if (newConfig.name === currentConfig.name) {
                     currentConfig.value = newConfig.value;
                   }
                 });
               });
             }
-            Test.findByIdAndUpdate(id, test, {new: true}, (err2, data) => {
+            Archive.findByIdAndUpdate(id, archive, {new: true}, (err2, data) => {
               if (err2) {
                 res.send(err2);
-              } else if (req.body.newArchive === false) {
+              } else if (req.body.newZip === false) {
                 // update txt file inside the archive (info)
                 request.get({
-                  url: 'http://localhost:' + req.connection.localPort + '/api/tests/YAMLformat/id/' + test._id,
-                }, (err, response, testInfo) => {
+                  url: 'http://localhost:' + req.connection.localPort + '/api/archives/YAMLformat/id/' + archive._id,
+                }, (err, response, archiveInfo) => {
                   if (err) {
                     console.log(err);
                   } else {
@@ -309,7 +309,7 @@ exports.updateTest = (req, res) => {
                             zip.close();
 
                             // create new info.txt
-                            fs.writeFile(path + '/info.txt', testInfo, (err) => {
+                            fs.writeFile(path + '/info.txt', archiveInfo, (err) => {
                               if (err) {
                                 console.log(err);
                               }
@@ -324,8 +324,8 @@ exports.updateTest = (req, res) => {
                             output.on('close', function() {
                               console.log('zipped');
                               fs.removeSync(path);
-                              // update test: isDownloadable = true
-                              Test.findByIdAndUpdate(id, {'$set': {'isDownloadable': true}}, (err) => {
+                              // update archive: isDownloadable = true
+                              Archive.findByIdAndUpdate(id, {'$set': {'isDownloadable': true}}, (err) => {
                                 if (err) {
                                   console.log(err);
                                 }
@@ -343,8 +343,8 @@ exports.updateTest = (req, res) => {
                             .then(() => {
                               res.json({
                                 name: 'Success',
-                                message: 'Test successfully modified',
-                                test: data,
+                                message: 'Archive successfully modified',
+                                archive: data,
                               });
                             });
                           });
@@ -356,8 +356,8 @@ exports.updateTest = (req, res) => {
               } else {
                 res.json({
                   name: 'Success',
-                  message: 'Test successfully modified',
-                  test: data,
+                  message: 'Archive successfully modified',
+                  archive: data,
                 });
               }
             });
@@ -370,31 +370,31 @@ exports.updateTest = (req, res) => {
   });
 };
 
-// DELETE: Delete the test with the associated ID
-exports.deleteTest = (req, res) => {
+// DELETE: Delete the archive with the associated ID
+exports.deleteArchive = (req, res) => {
   User.hasAuthorization(req, ['master', 'owner'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
       var id = req.params.id;
-      // delete the archive (file)
+      // delete the zip
       fs.unlink('archives/' + id + '.zip', (err) => {
         if (err) console.log(err);
         else console.log('successfully deleted ' + id + '.zip');
       });
-      Test.findByIdAndRemove(id, (err, data) => {
+      Archive.findByIdAndRemove(id, (err, data) => {
         if (err) {
           res.send(err);
         } else {
           if (data === null) {
             res.status(404).json({
               name: 'Failed',
-              message: 'This test id doesn\'t exist',
+              message: 'This archive id doesn\'t exist',
             });
           } else {
             res.json({
               name: 'Success',
-              message: 'Test successfully deleted',
-              test: data,
+              message: 'Archive successfully deleted',
+              archive: data,
             });
           }
         }
@@ -405,9 +405,9 @@ exports.deleteTest = (req, res) => {
   });
 };
 
-// GET: Returns the list of test authors (that wrote at least one test)
+// GET: Returns the list of archive authors (that added at least one archive)
 exports.getDistinctAuthors = (req, res) => {
-  Test.distinct('author', {}, (err, data) => {
+  Archive.distinct('author', {}, (err, data) => {
     if (err) {
       res.send(err);
     } else {
@@ -416,9 +416,9 @@ exports.getDistinctAuthors = (req, res) => {
   });
 };
 
-// GET: Returns the list of test subjects (used at least by one test)
-exports.getDistinctSubjects = (req, res) => {
-  Test.distinct('type', {}, (err, data) => {
+// GET: Returns the list of archive categories (used at least by one archive)
+exports.getDistinctCategories = (req, res) => {
+  Archive.distinct('category', {}, (err, data) => {
     if (err) {
       res.send(err);
     } else {
@@ -427,9 +427,9 @@ exports.getDistinctSubjects = (req, res) => {
   });
 };
 
-// GET: Returns the list of configurations (used at least by one test)
+// GET: Returns the list of configurations (used at least by one archive)
 exports.getDistinctConfigurations = (req, res) => {
-  Test.distinct('configuration.name', {}, (err, data) => {
+  Archive.distinct('configuration.name', {}, (err, data) => {
     if (err) {
       res.send(err);
     } else {
@@ -438,10 +438,10 @@ exports.getDistinctConfigurations = (req, res) => {
   });
 };
 
-// GET: Returns the list of configurations of the associated subject (used at least by one test)
-exports.getConfigurationsOfSubject = (req, res) => {
-  var subject = req.params.subject;
-  Test.distinct('configuration.name', {type: subject}, (err, data) => {
+// GET: Returns the list of configurations of the associated archive category (used at least by one archive)
+exports.getConfigurationsOfArchiveCategory = (req, res) => {
+  var category = req.params.category;
+  Archive.distinct('configuration.name', {category: category}, (err, data) => {
     if (err) {
       res.send(err);
     } else {
@@ -453,7 +453,7 @@ exports.getConfigurationsOfSubject = (req, res) => {
 // GET: Returns the  options of the associated configuration (used at least one time)
 exports.getOptionsOfConfig = (req, res) => {
   var configName = req.params.configname;
-  Test.aggregate([
+  Archive.aggregate([
     {'$unwind': '$configuration'},
     {'$match': {'configuration.name': configName}},
     {'$group': {'_id': null, 'values': {'$addToSet': '$configuration.value'}}},
@@ -472,14 +472,14 @@ exports.getOptionsOfConfig = (req, res) => {
   });
 };
 
-// POST: Change the test type of all the tests matched by {type: previousName} (body contains previousName and newName)
-exports.changeTestSubjectName = (req, res) => {
+// POST: Change the category name of all the archives matched by {category: previousName} (body contains previousName and newName)
+exports.changeArchiveCategoryName = (req, res) => {
   User.hasAuthorization(req, ['master'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
       var previousName = req.body.previousName;
       var newName = req.body.newName;
-      Test.update({'type': previousName}, {'type': newName}, {multi: true}, (err, data) => {
+      Archive.update({'category': previousName}, {'category': newName}, {multi: true}, (err, data) => {
         if (err) {
           res.send(err);
         } else {
@@ -492,14 +492,14 @@ exports.changeTestSubjectName = (req, res) => {
   });
 };
 
-// POST: Push a new configuration in all tests matched by the test type/subject (body contains subject and config: {name, value})
+// POST: Push a new configuration in all archives matched by the archive category (body contains category and config: {name, value})
 exports.addConfig = (req, res) => {
   User.hasAuthorization(req, ['master'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
       var config = req.body.config;
-      var subject = req.body.subject;
-      Test.update({'type': subject}, {'$push': {'configuration': config}}, {multi: true}, (err, data) => {
+      var category = req.body.category;
+      Archive.update({'category': category}, {'$push': {'configuration': config}}, {multi: true}, (err, data) => {
         if (err) {
           res.send(err);
         } else {
@@ -512,15 +512,15 @@ exports.addConfig = (req, res) => {
   });
 };
 
-// POST: Change the name of the matched configuration in all tests matched by the test type/subject (body contains subject, previousName and newName)
+// POST: Change the name of the matched configuration in all archives matched by the archive category (body contains category, previousName and newName)
 exports.changeConfigName = (req, res) => {
   User.hasAuthorization(req, ['master'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
       var previousName = req.body.previousName;
       var newName = req.body.newName;
-      var subject = req.body.subject;
-      Test.update({'type': subject, 'configuration.name': previousName}, {'$set': {'configuration.$.name': newName}}, {multi: true}, (err, data) => {
+      var category = req.body.category;
+      Archive.update({'category': category, 'configuration.name': previousName}, {'$set': {'configuration.$.name': newName}}, {multi: true}, (err, data) => {
         if (err) {
           res.send(err);
         } else {
@@ -534,42 +534,42 @@ exports.changeConfigName = (req, res) => {
 };
 
 /**
- * Verify that all the test have an archive.
- * If not, the test is updated with "archive": false.
- * If "archive" is false and the test was not created today, then the test
+ * Verify that all the archives have a zip.
+ * If not, the archive is updated with "isZipPresent": false.
+ * If "isZipPresent" is false and the archive was not created today, then the archive
  * is deleted.
  * @return {Promise}
  * @param {Object} req
  */
-function checkIfTestsHaveAnArchive(req) {
+function checkIfZipPresent(req) {
   return new Promise((resolve, reject) => {
-    Test.find({}, (err, data) => {
+    Archive.find({}, (err, data) => {
       if (err) {
         console.log(err);
       } else {
         request.get({
           url: 'http://localhost:' + req.connection.localPort + '/api/download/files',
           json: true,
-        }, (err2, res, archives) => {
+        }, (err2, res, files) => {
           if (err2) {
             console.log('Error:', err2);
             reject(err2);
           } else {
-            data.forEach(function(test, idx, array) {
-              if ('archive' in test) {
-                if (test.archive !== archives.includes(test._id.toString())) {
-                  Test.findByIdAndUpdate(test._id, {archive: archives.includes(test._id.toString())}, (err3, data) => {
+            data.forEach(function(archive, idx, array) {
+              if ('isZipPresent' in archive) {
+                if (archive.isZipPresent !== files.includes(archive._id.toString())) {
+                  Archive.findByIdAndUpdate(archive._id, {isZipPresent: files.includes(archive._id.toString())}, (err3, data) => {
                     if (err3) {
                       console.log(err3);
                       reject(err3);
                     }
                   });
                 }
-                if (test.archive === false) {
-                  // delete the test if not created today
+                if (archive.isZipPresent === false) {
+                  // delete the archive if not created today
                   var today = new Date().setHours(0, 0, 0, 0);
-                  if (today !== test.created.setHours(0, 0, 0, 0)) {
-                    Test.findByIdAndRemove(test._id, (err3, data) => {
+                  if (today !== archive.created.setHours(0, 0, 0, 0)) {
+                    Archive.findByIdAndRemove(archive._id, (err3, data) => {
                       if (err3) {
                         console.log(err3);
                         reject(err3);
@@ -578,7 +578,7 @@ function checkIfTestsHaveAnArchive(req) {
                   }
                 }
               } else {
-                Test.findByIdAndUpdate(test._id, {archive: archives.includes(test._id.toString())}, (err3, data) => {
+                Archive.findByIdAndUpdate(archive._id, {isZipPresent: files.includes(archive._id.toString())}, (err3, data) => {
                   if (err3) {
                     console.log(err3);
                     reject(err3);
@@ -595,21 +595,21 @@ function checkIfTestsHaveAnArchive(req) {
 }
 
 /**
- * Verify that all the configurations of a test subject are in the new test
- * @param {object} newTest
- * @param {object} testSubject
+ * Verify that all the configurations of an archive category are in the new archive
+ * @param {object} newArchive
+ * @param {object} archiveCategory
  * @return {Promise.<Boolean>}
  */
-function allSubjectConfigurationsAreInTest(newTest, testSubject) {
+function allCategoryConfigurationsAreInArchive(newArchive, archiveCategory) {
   return new Promise((resolve) => {
-    var testConfigNames = [];
-    newTest.configuration.forEach(function(testConfig, idx) {
-      testConfigNames.push(testConfig.name);
-      if (idx === newTest.configuration.length - 1) {
-        testSubject.configuration.forEach(function(subjectConfig, index) {
-          if (!testConfigNames.includes(subjectConfig.name)) {
+    var archiveConfigNames = [];
+    newArchive.configuration.forEach(function(archiveConfig, idx) {
+      archiveConfigNames.push(archiveConfig.name);
+      if (idx === newArchive.configuration.length - 1) {
+        archiveCategory.configuration.forEach(function(categoryConfig, index) {
+          if (!archiveConfigNames.includes(categoryConfig.name)) {
             resolve(false);
-          } else if (index === testSubject.configuration.length - 1) {
+          } else if (index === archiveCategory.configuration.length - 1) {
             resolve(true);
           }
         });
@@ -619,23 +619,23 @@ function allSubjectConfigurationsAreInTest(newTest, testSubject) {
 }
 
 /**
- * Get all the missing configuration of a test
- * @param {object} newTest
- * @param {object} testSubject
+ * Get all the missing configuration of an archive
+ * @param {object} newArchive
+ * @param {object} archiveCategory
  * @return {Promise.<Array.<String>>}
  */
-function missingConfigs(newTest, testSubject) {
+function missingConfigs(newArchive, archiveCategory) {
   return new Promise((resolve) => {
     var res = [];
-    var testConfigNames = [];
-    newTest.configuration.forEach(function(testConfig, idx) {
-      testConfigNames.push(testConfig.name);
-      if (idx === newTest.configuration.length - 1) {
-        testSubject.configuration.forEach(function(subjectConfig, index) {
-          if (!testConfigNames.includes(subjectConfig.name)) {
-            res.push(subjectConfig.name);
+    var archiveConfigNames = [];
+    newArchive.configuration.forEach(function(archiveConfig, idx) {
+      archiveConfigNames.push(archiveConfig.name);
+      if (idx === newArchive.configuration.length - 1) {
+        archiveCategory.configuration.forEach(function(categoryConfig, index) {
+          if (!archiveConfigNames.includes(categoryConfig.name)) {
+            res.push(categoryConfig.name);
           }
-          if (index === testSubject.configuration.length - 1) {
+          if (index === archiveCategory.configuration.length - 1) {
             resolve(res);
           }
         });

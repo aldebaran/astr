@@ -8,13 +8,13 @@ var SearchSchema = new Schema({
     required: true,
     trim: true,
   },
-  testAuthor: {
+  archiveAuthor: {
     type: String,
     unique: false,
     required: false,
     trim: true,
   },
-  testSubjectName: {
+  archiveCategory: {
     type: String,
     unique: false,
     required: false,

@@ -3,20 +3,20 @@
 
   // ------------------------------ Search -------------------------------- //
 
-  // get all test authors
-  $.get('api/tests/authors', function(authors) {
+  // get all archive authors
+  $.get('api/archives/authors', function(authors) {
     authors.forEach(function(author) {
       $('#selectAuthor').append('<option>' + author + '</option>');
     });
   });
-  // get all test subjects
-  $.get('api/tests/subjects', function(subjects) {
-    subjects.forEach(function(subject) {
-      $('#selectSubject').append('<option>' + subject + '</option>');
+  // get all archive categories
+  $.get('api/archives/categories', function(categories) {
+    categories.forEach(function(category) {
+      $('#selectCategory').append('<option>' + category + '</option>');
     });
   });
-  // get all test configuration
-  $.get('api/tests/configurations', function(configurations) {
+  // get all archive configuration
+  $.get('api/archives/configurations', function(configurations) {
     configurations.forEach(function(config) {
       $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
     });
@@ -35,9 +35,9 @@
     if ($('#selectAuthor').val() !== 'default') {
       bodyRequest.author = $('#selectAuthor').val();
     }
-    // add the test subject to the body request
-    if ($('#selectSubject').val() !== 'default') {
-      bodyRequest.type = $('#selectSubject').val();
+    // add the archive category to the body request
+    if ($('#selectCategory').val() !== 'default') {
+      bodyRequest.category = $('#selectCategory').val();
     }
     // add the date to the body request
     if ($('#inputDate').val() !== '') {
@@ -89,17 +89,17 @@
     search(bodyRequest, 1);
   });
 
-  $('#selectSubject').change(function() {
-    if ($('#selectSubject').val() !== 'default') {
-      // select only the configuration of the test subject
-      $.get('api/tests/configurations/' + $('#selectSubject').val(), function(configurations) {
+  $('#selectCategory').change(function() {
+    if ($('#selectCategory').val() !== 'default') {
+      // select only the configuration of the archive category
+      $.get('api/archives/configurations/' + $('#selectCategory').val(), function(configurations) {
         $('#selectConfig').html('<option value="default">Click here to add filters</option>');
         configurations.forEach(function(config) {
           $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
         });
       });
     } else {
-      $.get('api/tests/configurations', function(configurations) {
+      $.get('api/archives/configurations', function(configurations) {
         $('#selectConfig').html('<option value="default">Click here to add filters</option>');
         configurations.forEach(function(config) {
           $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
@@ -138,7 +138,7 @@
         '</div>' +
       '</div>'
       );
-      $.get('/api/tests/options/' + $('#selectConfig').val(), function(options) {
+      $.get('/api/archives/options/' + $('#selectConfig').val(), function(options) {
         options.forEach(function(option) {
           $('.inputConfig:last').append('<option>' + option + '</option>');
         });
@@ -180,153 +180,153 @@
   });
 
   /**
-   * Search tests in function of body and page
+   * Search archives in function of body and page
    * @param {object} body
    * @param {string} page
    */
   function search(body, page) {
     var resultPerPage = 30;
-    $.post('api/tests/page/' + page + '/' + resultPerPage, body, function(tests) {
-      var matchedTests = [];
-      $('#tests-grid').html('');
+    $.post('api/archives/page/' + page + '/' + resultPerPage, body, function(archives) {
+      var matchedArchives = [];
+      $('#archives-grid').html('');
       if (isConnected() && isMaster()) {
         // if the user is Master
-        tests.forEach(function(test) {
-          matchedTests.push(test['_id']);
-          $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
-            '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
-            '<div class="card-body tests" id="body' + test['_id'] + '">' +
-              '<div><span class="key">Author: </span><span class="value">' + test.author + '</span></div>' +
-              '<div><span class="key">Date: </span><span class="value">' + test.date.substr(0, 10) + '</span></div>' +
-              '<div class="comments" style="display: none;"><span class="key">Comments: </span><span class="value">' + test.comments + '</span></div>' +
+        archives.forEach(function(archive) {
+          matchedArchives.push(archive._id);
+          $('#archives-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + archive._id + '">' +
+            '<div class="card-header">'+ archive.category + ' <span class="archiveNumber"></span></div>' +
+            '<div class="card-body archives" id="body' + archive._id + '">' +
+              '<div><span class="key">Author: </span><span class="value">' + archive.author + '</span></div>' +
+              '<div><span class="key">Date: </span><span class="value">' + archive.date.substr(0, 10) + '</span></div>' +
+              '<div class="comments" style="display: none;"><span class="key">Comments: </span><span class="value">' + archive.comments + '</span></div>' +
             '</div>' +
-            '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
-              '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
-                '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
-                '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#modalEdit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
-                '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
+            '<div class="card-footer small text-muted" id="footer' + archive._id + '"><div id="info-footer">id: ' + archive._id + '<br> last modification: ' + new Date(archive.lastModification).toLocaleDateString() + '</div>' +
+              '<div class="button-footer" id="button-footer' + archive._id + '">' +
+                '<button type="button" class="btn btn-danger admin-user" id="deleteArchive"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
+                '<button type="button" class="btn btn-info admin-user" id="editArchive" data-toggle="modal" data-target="#modalEdit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
+                '<a class="btn btn-success download-button" href="/api/download/id/' + archive._id + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
                 '<a class="btn btn-secondary download-button-lock" style="display: none;" data-toggle="tooltip" data-html="true" title="The archive is being zipped, and it may take some time.<br>Try to refresh the page later."><i class="fa fa-download" aria-hidden="true"></i></a>' +
               '</div>' +
             '</div>' +
           '</div></div>');
 
-          if (test.isDownloadable === false) {
-            $('#' + test._id).find('.download-button').hide();
-            $('#' + test._id).find('.download-button-lock').show();
-            $('#' + test._id).find('.download-button-lock').tooltip();
+          if (archive.isDownloadable === false) {
+            $('#' + archive._id).find('.download-button').hide();
+            $('#' + archive._id).find('.download-button-lock').show();
+            $('#' + archive._id).find('.download-button-lock').tooltip();
           }
 
-          $.get('api/test-subjects/links/' + test.type, function(links) {
-            test.configuration.forEach(function(config) {
+          $.get('api/categories/links/' + archive.category, function(links) {
+            archive.configuration.forEach(function(config) {
               if (links[config.name]) {
-                $('#body'+test['_id']).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
+                $('#body'+archive._id).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
               } else {
-                $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+                $('#body'+archive._id).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
               }
             });
           });
 
-          if (test.comments) {
-            $('#body'+test['_id']+' .comments').show();
+          if (archive.comments) {
+            $('#body'+archive._id+' .comments').show();
           }
         });
       } else if (isConnected()) {
-        // if the user is connected but not a master --> can only modify his own tests
+        // if the user is connected but not a master --> can only modify his own archives
         const username = getUserName();
-        tests.forEach(function(test) {
-          matchedTests.push(test['_id']);
-          $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
-            '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
-            '<div class="card-body tests" id="body' + test['_id'] + '">' +
-              '<div><span class="key">Author: </span><span class="value">' + test.author + '</span></div>' +
-              '<div><span class="key">Date: </span><span class="value">' + test.date.substr(0, 10) + '</span></div>' +
-              '<div class="comments" style="display: none;"><span class="key">Comments: </span><span class="value">' + test.comments + '</span></div>' +
+        archives.forEach(function(archive) {
+          matchedArchives.push(archive._id);
+          $('#archives-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + archive._id + '">' +
+            '<div class="card-header">'+ archive.category + ' <span class="archiveNumber"></span></div>' +
+            '<div class="card-body archives" id="body' + archive._id + '">' +
+              '<div><span class="key">Author: </span><span class="value">' + archive.author + '</span></div>' +
+              '<div><span class="key">Date: </span><span class="value">' + archive.date.substr(0, 10) + '</span></div>' +
+              '<div class="comments" style="display: none;"><span class="key">Comments: </span><span class="value">' + archive.comments + '</span></div>' +
             '</div>' +
-            '<div class="card-footer small text-muted"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
-              '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
-                '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
+            '<div class="card-footer small text-muted"><div id="info-footer">id: ' + archive._id + '<br> last modification: ' + new Date(archive.lastModification).toLocaleDateString() + '</div>' +
+              '<div class="button-footer" id="button-footer' + archive._id + '">' +
+                '<a class="btn btn-success download-button" href="/api/download/id/' + archive._id + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
                 '<a class="btn btn-secondary download-button-lock" style="display: none;" data-toggle="tooltip" data-html="true" title="The archive is being zipped, and it may take some time.<br>Try to refresh the page later."><i class="fa fa-download" aria-hidden="true"></i></a>' +
               '</div>' +
             '</div>' +
           '</div></div>');
 
-          if (test.isDownloadable === false) {
-            $('#' + test._id).find('.download-button').hide();
-            $('#' + test._id).find('.download-button-lock').show();
-            $('#' + test._id).find('.download-button-lock').tooltip();
+          if (archive.isDownloadable === false) {
+            $('#' + archive._id).find('.download-button').hide();
+            $('#' + archive._id).find('.download-button-lock').show();
+            $('#' + archive._id).find('.download-button-lock').tooltip();
           }
 
-          $.get('api/test-subjects/links/' + test.type, function(links) {
-            test.configuration.forEach(function(config) {
+          $.get('api/categories/links/' + archive.category, function(links) {
+            archive.configuration.forEach(function(config) {
               if (links[config.name]) {
-                $('#body'+test['_id']).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
+                $('#body'+archive._id).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
               } else {
-                $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+                $('#body'+archive._id).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
               }
             });
           });
 
-          if (test.comments) {
-            $('#body'+test['_id']+' .comments').show();
+          if (archive.comments) {
+            $('#body'+archive._id+' .comments').show();
           }
 
-          if (username === test.author) {
-            $('#button-footer'+test['_id']).html('' +
-            '<button type="button" class="btn btn-danger admin-user" id="deleteTest"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
-            '<button type="button" class="btn btn-info admin-user" id="editTest" data-toggle="modal" data-target="#modalEdit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
-            '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>');
+          if (username === archive.author) {
+            $('#button-footer'+archive._id).html('' +
+            '<button type="button" class="btn btn-danger admin-user" id="deleteArchive"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
+            '<button type="button" class="btn btn-info admin-user" id="editArchive" data-toggle="modal" data-target="#modalEdit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
+            '<a class="btn btn-success download-button" href="/api/download/id/' + archive._id + '"><i class="fa fa-download" aria-hidden="true"></i></a>');
           }
         });
       } else {
         // if the user isn't logged
-        tests.forEach(function(test) {
-          matchedTests.push(test['_id']);
-          $('#tests-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + test['_id'] + '">' +
-            '<div class="card-header">'+ test.type + ' <span class="testNumber"></span></div>' +
-            '<div class="card-body tests" id="body' + test['_id'] + '">' +
-              '<div><span class="key">Author: </span><span class="value">' + test.author + '</span></div>' +
-              '<div><span class="key">Date: </span><span class="value">' + test.date.substr(0, 10) + '</span></div>' +
-              '<div class="comments" style="display: none;"><span class="key">Comments: </span><span class="value">' + test.comments + '</span></div>' +
+        archives.forEach(function(archive) {
+          matchedArchives.push(archive._id);
+          $('#archives-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + archive._id + '">' +
+            '<div class="card-header">'+ archive.category + ' <span class="archiveNumber"></span></div>' +
+            '<div class="card-body archives" id="body' + archive._id + '">' +
+              '<div><span class="key">Author: </span><span class="value">' + archive.author + '</span></div>' +
+              '<div><span class="key">Date: </span><span class="value">' + archive.date.substr(0, 10) + '</span></div>' +
+              '<div class="comments" style="display: none;"><span class="key">Comments: </span><span class="value">' + archive.comments + '</span></div>' +
             '</div>' +
-            '<div class="card-footer small text-muted" id="footer' + test['_id'] + '"><div id="info-footer">id: ' + test['_id'] + '<br> last modification: ' + new Date(test.lastModification).toLocaleDateString() + '</div>' +
-              '<div class="button-footer" id="button-footer' + test['_id'] + '">' +
-                '<a class="btn btn-success download-button" href="/api/download/id/' + test['_id'] + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
+            '<div class="card-footer small text-muted" id="footer' + archive._id + '"><div id="info-footer">id: ' + archive._id + '<br> last modification: ' + new Date(archive.lastModification).toLocaleDateString() + '</div>' +
+              '<div class="button-footer" id="button-footer' + archive._id + '">' +
+                '<a class="btn btn-success download-button" href="/api/download/id/' + archive._id + '"><i class="fa fa-download" aria-hidden="true"></i></a>' +
                 '<a class="btn btn-secondary download-button-lock" style="display: none;" data-toggle="tooltip" data-html="true" title="The archive is being zipped, and it may take some time.<br>Try to refresh the page later."><i class="fa fa-download" aria-hidden="true"></i></a>' +
               '</div>' +
             '</div>' +
           '</div></div>');
 
-          if (test.isDownloadable === false) {
-            $('#' + test._id).find('.download-button').hide();
-            $('#' + test._id).find('.download-button-lock').show();
-            $('#' + test._id).find('.download-button-lock').tooltip();
+          if (archive.isDownloadable === false) {
+            $('#' + archive._id).find('.download-button').hide();
+            $('#' + archive._id).find('.download-button-lock').show();
+            $('#' + archive._id).find('.download-button-lock').tooltip();
           }
 
-          $.get('api/test-subjects/links/' + test.type, function(links) {
-            test.configuration.forEach(function(config) {
+          $.get('api/categories/links/' + archive.category, function(links) {
+            archive.configuration.forEach(function(config) {
               if (links[config.name]) {
-                $('#body'+test['_id']).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
+                $('#body'+archive._id).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
               } else {
-                $('#body'+test['_id']).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+                $('#body'+archive._id).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
               }
             });
           });
 
-          if (test.comments) {
-            $('#body'+test['_id']+' .comments').show();
+          if (archive.comments) {
+            $('#body'+archive._id+' .comments').show();
           }
         });
       }
 
       // display number of results
-      $.post('api/tests', body, function(totalTests) {
-        if (totalTests.length > 1) {
+      $.post('api/archives', body, function(totalArchives) {
+        if (totalArchives.length > 1) {
           $('#header-result').html('' +
           '<div class="card mb-3">' +
             '<div class="card-header">' +
               '<div class="row">' +
                 '<div class="col-6">' +
-                  '<h5>' + totalTests.length + ' tests found</h5>' +
+                  '<h5>' + totalArchives.length + ' archives found</h5>' +
                   '<span id="itemOnPage"></span>' +
                 '</div>' +
                 '<div class="col-6">'+
@@ -335,13 +335,13 @@
               '</div>' +
             '</div>' +
           '</div>');
-        } else if (totalTests.length === 1) {
+        } else if (totalArchives.length === 1) {
           $('#header-result').html('' +
           '<div class="card mb-3">' +
             '<div class="card-header">' +
               '<div class="row">' +
                 '<div class="col-6">' +
-                  '<h5>' + totalTests.length + ' test found</h5>' +
+                  '<h5>' + totalArchives.length + ' archive found</h5>' +
                 '</div>' +
                 '<div class="col-6">'+
                   '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
@@ -355,7 +355,7 @@
             '<div class="card-header">' +
               '<div class="row">' +
                 '<div class="col-6">' +
-                  '<h5>No test found</h5>' +
+                  '<h5>No archive found</h5>' +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -369,7 +369,7 @@
             backdrop: 'static',
             keyboard: false,
           });
-          $.post('api/download/multiple', {ids: matchedTests}, function(data) {
+          $.post('api/download/multiple', {ids: matchedArchives}, function(data) {
             window.location.href = 'api/download/id/multiple';
             var timer = window.setInterval(function() {
               clearInterval(timer);
@@ -380,16 +380,16 @@
 
         // ------------------------- Pagination ---------------------------- //
 
-        var numberOfPages = Math.ceil(totalTests.length / resultPerPage);
+        var numberOfPages = Math.ceil(totalArchives.length / resultPerPage);
         var from = resultPerPage * page - resultPerPage + 1;
         var to = resultPerPage * page;
-        if (to < totalTests.length) {
+        if (to < totalArchives.length) {
           $('#itemOnPage').html(from + ' - ' + to + ' (Page ' + page + '/' + numberOfPages + ')');
         } else {
-          $('#itemOnPage').html(from + ' - ' + totalTests.length + ' (Page ' + page + '/' + numberOfPages + ')');
+          $('#itemOnPage').html(from + ' - ' + totalArchives.length + ' (Page ' + page + '/' + numberOfPages + ')');
         }
 
-        $('.testNumber').each(function(idx) {
+        $('.archiveNumber').each(function(idx) {
           $(this).html('#' + (from+idx));
         });
 
@@ -413,8 +413,8 @@
           if ($('#selectAuthor').val() !== 'default') {
             bodyRequest.author = $('#selectAuthor').val();
           }
-          if ($('#selectSubject').val() !== 'default') {
-            bodyRequest.type = $('#selectSubject').val();
+          if ($('#selectCategory').val() !== 'default') {
+            bodyRequest.category = $('#selectCategory').val();
           }
           if ($('#inputDate').val() !== '') {
             if ($('#checkboxDateRange').is(':checked') && $('#inputDate2').val() !== '') {
@@ -459,7 +459,7 @@
           }
 
           // redirect to the page
-          if (bodyRequest['$and'] || bodyRequest.author || bodyRequest.type || bodyRequest.date) {
+          if (bodyRequest['$and'] || bodyRequest.author || bodyRequest.category || bodyRequest.date) {
             window.location.href = '?page=' + $(this).html() + '&query=' + JSON.stringify(bodyRequest);
           } else {
             window.location.href = '?page=' + $(this).html();
@@ -469,14 +469,14 @@
     });
   }
 
-  // ---------------------------- Delete Test ------------------------------ //
+  // ---------------------------- Delete archive ------------------------------ //
 
-  $('#tests-grid').on('click', '#deleteTest', function() {
-    var r = confirm('Please confirm that you want to delete this test.');
+  $('#archives-grid').on('click', '#deleteArchive', function() {
+    var r = confirm('Please confirm that you want to delete this archive.');
     if (r === true) {
       $.ajax({
         method: 'DELETE',
-        url: 'api/tests/id/' + $(this).parent().parent().parent().attr('id'),
+        url: 'api/archives/id/' + $(this).parent().parent().parent().attr('id'),
         headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
         success: function() {
           location.reload();
@@ -485,20 +485,20 @@
     }
   });
 
-  // ------------------------------ Edit Test ------------------------------ //
+  // ------------------------------ Edit archive ------------------------------ //
 
-  $('#tests-grid').on('click', '#editTest', function() {
-    $.get('api/tests/id/' + $(this).parent().parent().parent().attr('id'), function(test) {
+  $('#archives-grid').on('click', '#editArchive', function() {
+    $.get('api/archives/id/' + $(this).parent().parent().parent().attr('id'), function(archive) {
       $('#modalEdit .modal-body').html('' +
       '<div class="form-group">' +
         '<label for="inputDateEdit">Date</label>' +
-        '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + test.date.substr(0, 10) + '" required>' +
+        '<input type="date" id="inputDateEdit" max="2100-12-31" min="2010-01-01" class="form-control" value="' + archive.date.substr(0, 10) + '" required>' +
       '</div>');
-      if (test.comments) {
+      if (archive.comments) {
         $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
           '<label for="inputCommentsEdit">Comments (optional)</label>' +
-          '<textarea id="inputCommentsEdit" class="form-control">' + test.comments + '</textarea>' +
+          '<textarea id="inputCommentsEdit" class="form-control">' + archive.comments + '</textarea>' +
         '</div>');
       } else {
         $('#modalEdit .modal-body').append('' +
@@ -515,7 +515,7 @@
       '</div>' +
       '<button type="button" class="btn btn-outline-info" id="buttonUpdateArchive">Click here to update the archive content (zip)</button>');
 
-      test.configuration.forEach(function(config) {
+      archive.configuration.forEach(function(config) {
         $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
           '<label>' + config.name + '</label>' +
@@ -524,7 +524,7 @@
           '</select>' +
         '</div>'
         );
-        $.get('api/test-subjects/options/' + test.type + '/' + config.name, function(options) {
+        $.get('api/categories/options/' + archive.category + '/' + config.name, function(options) {
           if (options.length > 0) {
             options.forEach(function(option, idx, array) {
               if (option !== $('.selectConfigEdit.' + config.name).val()) {
@@ -543,7 +543,7 @@
         '<input type="submit" value="Apply" class="btn btn-info" id="submit-edit">' +
         '<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>'
       );
-      $('.form-edit').attr('id', test['_id']);
+      $('.form-edit').attr('id', archive._id);
     });
   });
 
@@ -558,20 +558,20 @@
 
   $('.form-edit').submit(function(e) {
     e.preventDefault();
-    var r = confirm('Please confirm that you want to modify this test.');
+    var r = confirm('Please confirm that you want to modify this archive.');
     if (r === true) {
       var okayToPush = true;
-      var test = {
+      var archive = {
         date: $('#inputDateEdit').val(),
         configuration: [],
-        newArchive: $('#isFileUploaded').val(),
+        newZip: $('#isFileUploaded').val(),
       };
       if ($('#inputCommentsEdit').val().trim() !== '') {
-        test.comments = $('#inputCommentsEdit').val().trim();
+        archive.comments = $('#inputCommentsEdit').val().trim();
       }
       $('.selectConfigEdit').each(function() {
         if ($(this).val() !== 'Other') {
-          test.configuration.push({
+          archive.configuration.push({
             name: $(this).prev().html(),
             value: $(this).val().trim(),
           });
@@ -581,7 +581,7 @@
         if ($(this).val().trim() === '') {
           okayToPush = false;
         } else {
-          test.configuration.push({
+          archive.configuration.push({
             name: $(this).prev().prev().html(),
             value: $(this).val().trim().toLowerCase().replace(/\s+/g, ' '),
           });
@@ -591,10 +591,10 @@
       if (okayToPush === true) {
         $.ajax({
           method: 'POST',
-          url: 'api/tests/id/' + $('.form-edit').attr('id'),
+          url: 'api/archives/id/' + $('.form-edit').attr('id'),
           headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
-          data: test,
-          success: function() {
+          data: archive,
+          beforeSend: function() {
             if ($('#isFileUploaded').val() === 'false') {
               $('#myModal').modal({
                   backdrop: 'static',
@@ -606,9 +606,12 @@
               }, 3000);
             }
           },
+          // success: function() {
+          //
+          // },
         });
       } else {
-        showModal('Error', 'Your test was not added because you left an empty field.');
+        showModal('Error', 'Your archive was not added because you left an empty field.');
       }
     }
   });
@@ -648,11 +651,11 @@
         }
       });
     }
-    if ($('#selectSubject').val() !== 'default') {
-      search.testSubjectName = $('#selectSubject').val();
+    if ($('#selectCategory').val() !== 'default') {
+      search.archiveCategory = $('#selectCategory').val();
     }
     if ($('#selectAuthor').val() !== 'default') {
-      search.testAuthor = $('#selectAuthor').val();
+      search.archiveAuthor = $('#selectAuthor').val();
     }
 
     $('.config-group').each(function() {
@@ -665,7 +668,7 @@
     });
 
     if (isConnected()) {
-      if (search.configuration.length > 0 || search.ids.length > 0 || search.date || search.testAuthor || search.testSubjectName) {
+      if (search.configuration.length > 0 || search.ids.length > 0 || search.date || search.archiveAuthor || search.archiveCategory) {
         // check if search already exist
         $.get('api/search', function(savedSearches) {
           return new Promise(function(resolve) {
@@ -676,8 +679,8 @@
                 idsAreTheSame(savedSearch.ids, search.ids)
                 .then(function(idsAreTheSame) {
                   if (
-                    (savedSearch.user === search.user) && (savedSearch.testSubjectName === search.testSubjectName)
-                    && (savedSearch.testAuthor === search.testAuthor) && (JSON.stringify(savedSearch.date) === JSON.stringify(search.date))
+                    (savedSearch.user === search.user) && (savedSearch.archiveCategory === search.archiveCategory)
+                    && (savedSearch.archiveAuthor === search.archiveAuthor) && (JSON.stringify(savedSearch.date) === JSON.stringify(search.date))
                     && configurationsAreTheSame(savedSearch.configuration, search.configuration) && idsAreTheSame
                   ) {
                     resolve(true);
@@ -720,56 +723,56 @@
   // use the saved search if present in URL
   if (getUrlParameter('search')) {
     $.get('api/search/id/' + getUrlParameter('search'), function(search) {
-      if (search['_id']) {
+      if (search._id) {
         return new Promise(function(resolve) {
-          setTimeout(function() {
-            if (search.date) {
-              if (typeof search.date === 'string') {
-                // unique date
-                $('#inputDate').val(search.date);
-              } else {
-                // date range
-                $('#checkboxDateRange').trigger('click');
-                $('#inputDate2').prop('disabled', false);
-                $('#inputDate').val(search.date[0]);
-                $('#inputDate2').val(search.date[1]);
-              }
+          if (search.date) {
+            if (typeof search.date === 'string') {
+              // unique date
+              $('#inputDate').val(search.date);
+            } else {
+              // date range
+              $('#checkboxDateRange').trigger('click');
+              $('#inputDate2').prop('disabled', false);
+              $('#inputDate').val(search.date[0]);
+              $('#inputDate2').val(search.date[1]);
             }
-            if (search.testSubjectName) {
-              $('#selectSubject').val(search.testSubjectName);
-            }
-            if (search.testAuthor) {
-              $('#selectAuthor').val(search.testAuthor);
-            }
-            if (search.configuration.length > 0) {
-              search.configuration.forEach(function(config) {
-                selectedConfig.push(config.name);
-                $('#form-search').append('' +
-                '<div class="form-group config-group">' +
-                  '<label class="labelConfig">' + config.name + '</label>' +
-                  '<div class="row">' +
-                    '<div class="col">' +
-                      '<select class="form-control inputConfig ' + config.name + '">' +
-                        '<option></option>' +
-                      '</select>' +
-                    '</div>' +
-                    '<div class="col-2">' +
-                      '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
-                    '</div>' +
+          }
+          if (search.archiveCategory) {
+            $('#selectCategory').val(search.archiveCategory);
+          }
+          if (search.archiveAuthor) {
+            $('#selectAuthor').val(search.archiveAuthor);
+          }
+          if (search.configuration.length > 0) {
+            search.configuration.forEach(function(config) {
+              selectedConfig.push(config.name);
+              $('#form-search').append('' +
+              '<div class="form-group config-group">' +
+                '<label class="labelConfig">' + config.name + '</label>' +
+                '<div class="row">' +
+                  '<div class="col">' +
+                    '<select class="form-control inputConfig ' + config.name + '">' +
+                      '<option></option>' +
+                    '</select>' +
                   '</div>' +
-                '</div>'
-                );
-                $.get('/api/tests/options/' + config.name, function(options) {
-                  options.forEach(function(option) {
-                    $('.inputConfig.' + config.name).append('<option>' + option + '</option>');
-                  });
-                  $('.inputConfig.' + config.name).val(config.value);
+                  '<div class="col-2">' +
+                    '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+                  '</div>' +
+                '</div>' +
+              '</div>'
+              );
+              $.get('/api/archives/options/' + config.name, function(options) {
+                options.forEach(function(option) {
+                  $('.inputConfig.' + config.name).append('<option>' + option + '</option>');
                 });
+                $('.inputConfig.' + config.name).val(config.value);
               });
-            }
-            if (search.ids.length > 0) {
-              $('#inputIds').val(search.ids.join(', '));
-            }
+            });
+          }
+          if (search.ids.length > 0) {
+            $('#inputIds').val(search.ids.join(', '));
+          }
+          setTimeout(function() {
             resolve();
           }, 100);
         }).then(function() {
@@ -801,8 +804,8 @@
           $('#inputDate2').val(query.date[1]);
         }
       }
-      if (query.type) {
-        $('#selectSubject').val(query.type);
+      if (query.category) {
+        $('#selectCategory').val(query.category);
       }
       if (query['$and']) {
         query['$and'].forEach(function(specificFilter) {
@@ -822,7 +825,7 @@
             '</div>' +
           '</div>'
           );
-          $.get('/api/tests/options/' + specificFilter.configuration['$elemMatch'].name, function(options) {
+          $.get('/api/archives/options/' + specificFilter.configuration['$elemMatch'].name, function(options) {
             options.forEach(function(option) {
               $('#inputConfig' + specificFilter.configuration['$elemMatch'].name).append('<option>' + option + '</option>');
             });

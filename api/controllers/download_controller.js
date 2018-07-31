@@ -1,7 +1,7 @@
 var fs = require('fs');
 var archiver = require('archiver');
 var mongoose = require('mongoose');
-var Test = mongoose.model('Test');
+var Archive = mongoose.model('Archive');
 
 // GET: Returns the list of files in archives folder
 exports.getFiles = (req, res, next) => {
@@ -14,7 +14,7 @@ exports.getFiles = (req, res, next) => {
   });
 };
 
-// GET: Download the archive of the test with the associated ID
+// GET: Download the zip of the archive with the associated ID
 exports.downloadById = (req, res, next) => {
   var id = req.params.id;
   var filePath = 'archives/';
@@ -22,16 +22,16 @@ exports.downloadById = (req, res, next) => {
     var fileName = 'multiple.zip';
     res.download(filePath + fileName);
   } else {
-    Test.findById(id, (err, test) => {
+    Archive.findById(id, (err, archive) => {
       if (err) {
         res.send(err);
       } else {
-        if (test === null) {
+        if (archive === null) {
           res.status(404).json({
             name: 'Failed',
-            message: 'This test id doesn\'t exist',
+            message: 'This archive id doesn\'t exist',
           });
-        } else if (test.isDownloadable === true) {
+        } else if (archive.isDownloadable === true) {
           var fileName = req.params.id + '.zip';
           res.download(filePath + fileName);
         } else {
@@ -45,9 +45,9 @@ exports.downloadById = (req, res, next) => {
   }
 };
 
-// POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.
+// POST: Download a ZIP containing multiple archives. The archive IDs to download are passed in the body request.
 exports.multiple = (req, res, next) => {
-  var testsToDownload = req.body.ids;
+  var archivesToDownload = req.body.ids;
 
   // create a file to stream archive data to.
   var output = fs.createWriteStream('archives/' + 'multiple' + '.zip');
@@ -83,7 +83,7 @@ exports.multiple = (req, res, next) => {
     throw err;
   });
 
-  testsToDownload.forEach(function(id) {
+  archivesToDownload.forEach(function(id) {
     var file = 'archives/' + id + '.zip';
     archive.append(fs.createReadStream(file), {name: (id + '.zip')});
   });

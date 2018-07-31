@@ -3548,7 +3548,7 @@
 
   Dropzone.options.dropzone = {
     method: 'POST',
-    url: '/api/upload/replace-archive',
+    url: '/api/upload/replace-zip',
     headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
     maxFilesize: 10240, // 10Go
     maxFiles: 50,
@@ -3584,7 +3584,7 @@
 
       myDropzone.on('sending', function(file, xhr, formData) {
         // put the test ID in the body request to modify to filename later with the API
-        formData.set('testId', $('#modalEdit').find('.form-edit').attr('id'));
+        formData.set('archiveId', $('#modalEdit').find('.form-edit').attr('id'));
         formData.append('files', file.name);
         setTimeout(function() {
           $('#myModal').modal({

@@ -213,7 +213,7 @@ exports.getProfile = (req, res, next) => {
           });
         } else {
           return res.json({
-            id: user['_id'],
+            id: user._id,
             name: user.firstname + ' ' + user.lastname,
             email: user.email,
             write_permission: user.write_permission,

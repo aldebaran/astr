@@ -11,8 +11,8 @@ module.exports = function(app) {
   .get(download.getFiles); // GET: Returns the list of files in archives folder
 
   app.route('/api/download/id/:id')
-  .get(download.downloadById); // GET: Download the archive of the test with the associated ID
+  .get(download.downloadById); // GET: Download the zip of the archive with the associated ID
 
   app.route('/api/download/multiple')
-  .post(download.multiple); // POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.
+  .post(download.multiple); // POST: Download a ZIP containing multiple archives. The archive IDs to download are passed in the body request.
 };

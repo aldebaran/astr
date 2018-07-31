@@ -1,11 +1,11 @@
 var mongoose = require('mongoose');
 var User = require('../models/user_model');
-var TestSubject = mongoose.model('TestSubject');
+var ArchiveCategory = mongoose.model('ArchiveCategory');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
 
-// GET: Returns the list of all test subjects
-exports.getAllTestSubjects = (req, res) => {
-  TestSubject.find({}, (err, data) => {
+// GET: Returns the list of all archive categories
+exports.getAllArchiveCategories = (req, res) => {
+  ArchiveCategory.find({}, (err, data) => {
     if (err) {
       res.send(err);
     } else {
@@ -14,21 +14,21 @@ exports.getAllTestSubjects = (req, res) => {
   });
 };
 
-// POST:  Add a new test subject in the DB in function of the parameters given in the body request
-exports.addTestSubject = (req, res) => {
+// POST:  Add a new archive category in the DB in function of the parameters given in the body request
+exports.addArchiveCategory = (req, res) => {
   User.hasAuthorization(req, ['master'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
-      var newTestSubject = new TestSubject(req.body);
-      newTestSubject.created = Date.now();
-      newTestSubject.save((err, data) => {
+      var newArchiveCategory = new ArchiveCategory(req.body);
+      newArchiveCategory.created = Date.now();
+      newArchiveCategory.save((err, data) => {
         if (err) {
           res.send(err);
         } else {
           res.json({
             name: 'Success',
-            message: 'Test subject successfully added',
-            test: data,
+            message: 'Archive category successfully added',
+            archiveCategory: data,
           });
         }
       });
@@ -38,17 +38,17 @@ exports.addTestSubject = (req, res) => {
   });
 };
 
-// GET: Returns the test subject with the associated ID
-exports.getTestSubject = (req, res) => {
+// GET: Returns the archive category with the associated ID
+exports.getArchiveCategory = (req, res) => {
   const id = req.params.id;
-  TestSubject.findById(id, (err, data) => {
+  ArchiveCategory.findById(id, (err, data) => {
     if (err) {
       res.send(err);
     } else {
       if (data === null) {
         res.status(404).json({
           name: 'Failed',
-          message: 'This test subject id doesn\'t exist',
+          message: 'This archive category id doesn\'t exist',
         });
       } else {
         res.json(data);
@@ -57,17 +57,17 @@ exports.getTestSubject = (req, res) => {
   });
 };
 
-// GET: Returns the test subject with the associated name
-exports.getTestSubjectByName = (req, res) => {
+// GET: Returns the archive category with the associated name
+exports.getArchiveCategoryByName = (req, res) => {
   const name = req.params.name;
-  TestSubject.findOne({name: name}, (err, data) => {
+  ArchiveCategory.findOne({name: name}, (err, data) => {
     if (err) {
       res.send(err);
     } else {
       if (data === null) {
         res.status(404).json({
           name: 'Failed',
-          message: 'This test subject name doesn\'t exist',
+          message: 'This archive category name doesn\'t exist',
         });
       } else {
         res.json(data);
@@ -76,8 +76,8 @@ exports.getTestSubjectByName = (req, res) => {
   });
 };
 
-// POST:  Update the test subject with the associated ID in function of the parameters given in the body request
-exports.updateTestSubject = (req, res) => {
+// POST: Update the archive category with the associated ID in function of the parameters given in the body request
+exports.updateArchiveCategory = (req, res) => {
   User.hasAuthorization(req, ['master'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
@@ -86,19 +86,19 @@ exports.updateTestSubject = (req, res) => {
       if (body.emptyConfiguration) {
         body.configuration = [];
       }
-      TestSubject.findByIdAndUpdate(id, body, (err, data) => {
+      ArchiveCategory.findByIdAndUpdate(id, body, (err, data) => {
         if (err) {
           res.send(err);
         } else {
           if (data === null) {
             res.status(404).json({
               name: 'Failed',
-              message: 'This test subject id doesn\'t exist',
+              message: 'This archive category id doesn\'t exist',
             });
           } else {
             res.json({
               name: 'Success',
-              message: 'Test subject successfully modified',
+              message: 'Archive category successfully modified',
               modified: body,
               before: data,
             });
@@ -111,26 +111,26 @@ exports.updateTestSubject = (req, res) => {
   });
 };
 
-// DELETE: Delete the test subject with the associated ID
-exports.deleteTestSubject = (req, res) => {
+// DELETE: Delete the archive category with the associated ID
+exports.deleteArchiveCategory = (req, res) => {
   User.hasAuthorization(req, ['master'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
       const id = req.params.id;
-      TestSubject.findByIdAndRemove(id, (err, data) => {
+      ArchiveCategory.findByIdAndRemove(id, (err, data) => {
         if (err) {
           res.send(err);
         } else {
           if (data === null) {
             res.status(404).json({
               name: 'Failed',
-              message: 'This test subject id doesn\'t exist',
+              message: 'This archive category id doesn\'t exist',
             });
           } else {
             res.json({
               name: 'Success',
-              message: 'Test subject successfully deleted',
-              test: data,
+              message: 'Archive category successfully deleted',
+              archiveCategory: data,
             });
           }
         }
@@ -141,13 +141,13 @@ exports.deleteTestSubject = (req, res) => {
   });
 };
 
-// GET: Returns the test subject with the associated ID
+// GET: Returns the options of a configuration
 exports.getOptionsOfConfig = (req, res) => {
-  const subjectName = req.params.subject;
+  const categoryName = req.params.category;
   const configName = req.params.configName;
-  TestSubject.aggregate([
+  ArchiveCategory.aggregate([
     {'$unwind': '$configuration'},
-    {'$match': {'configuration.name': configName, 'name': subjectName}},
+    {'$match': {'configuration.name': configName, 'name': categoryName}},
     {'$group': {'_id': '$configuration.options'}},
   ])
   .exec((err, data) => {
@@ -155,7 +155,7 @@ exports.getOptionsOfConfig = (req, res) => {
       res.send(err);
     } else {
       if (data.length === 1) {
-        res.json(data[0]['_id']);
+        res.json(data[0]._id);
       } else {
         res.status(404).json({'error': 'Nothing found'});
       }
@@ -163,21 +163,21 @@ exports.getOptionsOfConfig = (req, res) => {
   });
 };
 
-// GET: Returns the links of a test subject
-exports.getLinksOfTestSubject = (req, res) => {
-  const subjectName = req.params.subject;
-  TestSubject.findOne({'name': subjectName}, (err, testSubject) => {
+// GET: Returns the links of an archive category
+exports.getLinksOfArchiveCategory = (req, res) => {
+  const categoryName = req.params.category;
+  ArchiveCategory.findOne({'name': categoryName}, (err, archiveCategory) => {
     if (err) {
       res.send(err);
     } else {
-      if (testSubject === null) {
+      if (archiveCategory === null) {
         res.status(404).json({
           name: 'Failed',
-          message: 'This test subject id doesn\'t exist',
+          message: 'This archive category id doesn\'t exist',
         });
       } else {
         var links = {};
-        testSubject.configuration.forEach((config) => {
+        archiveCategory.configuration.forEach((config) => {
           if (config.baseUrl) {
             links[config.name] = config.baseUrl;
           }

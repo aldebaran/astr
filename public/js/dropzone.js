@@ -3583,7 +3583,7 @@
 
       myDropzone.on('sending', function(file, xhr, formData) {
         // put the test ID in the body request to modify to filename later with the API
-        formData.set('testId', $('#testId').html());
+        formData.set('archiveId', $('#archiveId').html());
         formData.append('files', file.name);
         $('.scroll-to-top').trigger('click');
         setTimeout(function() {
@@ -3617,7 +3617,7 @@
           showModal('Uploading', '<div class="loader"></div><div class="small text-muted text-center">You will be redirected...</div>');
           setTimeout(function() {
             window.onbeforeunload = null;
-            location.href = 'test-add.html?result=success';
+            location.href = 'upload-archive.html?result=success';
           }, 1000);
         }
       });
@@ -3626,7 +3626,7 @@
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0 && file.status !== 'error') {
           setTimeout(function() {
             window.onbeforeunload = null;
-            location.href = 'test-add.html?result=success';
+            location.href = 'upload-archive.html?result=success';
           }, 500);
         }
       });
@@ -3635,8 +3635,8 @@
         e.preventDefault();
         // wait 200ms to make sure the test is pushed in the DB
         setTimeout(function() {
-          if ($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
-            $('#cardAddNewTest form').children().wrapAll('<fieldset disabled></fieldset>');
+          if ($('#isFileUploaded').val() === 'true' && $('#archiveId').html().trim() !== '') {
+            $('#cardAddNewArchive form').children().wrapAll('<fieldset disabled></fieldset>');
             myDropzone.processQueue(); // Tell Dropzone to process all queued files.
           }
         }, 200);

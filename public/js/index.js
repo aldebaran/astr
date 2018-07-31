@@ -2,7 +2,7 @@
   'use strict'; // Start of use strict
   // Configure tooltips for collapsed side navigation
   $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
-    template: '<div class="tooltip navbar-sidenav-tooltip" role="tooltip" style="pointer-events: none;"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+    template: '<div class="tooltip navbar-sidenav-tooltip" role="tooltip" style="pointer-events: none; max-width: 10em;"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
   });
   // Toggle the side navigation
   $('#sidenavToggler').click(function(e) {
@@ -43,6 +43,11 @@
     event.preventDefault();
   });
 
+  // application name
+  $.get('api', function(app) {
+    $('.navbar-brand').html('A.S.T.R. - ' + app.name);
+  });
+
   // navigation menu (top)
   if (isConnected() && isMaster()) {
     $('#navbar-top').html('' +
@@ -56,9 +61,14 @@
           '<div class="dropdown-message small">Your personnal information</div>' +
         '</a>' +
         '<div class="dropdown-divider"></div>' +
-        '<a class="dropdown-item" href="admin.html">' +
+        '<a class="dropdown-item" href="manage-users.html">' +
+          '<strong>Users</strong>' +
+          '<div class="dropdown-message small">Manage users permissions</div>' +
+        '</a>' +
+        '<div class="dropdown-divider"></div>' +
+        '<a class="dropdown-item" href="manage-application.html">' +
           '<strong>Admin</strong>' +
-          '<div class="dropdown-message small">Manage user permissions</div>' +
+          '<div class="dropdown-message small">Manage the application</div>' +
         '</a>' +
       '<div>' +
     '</li>' +

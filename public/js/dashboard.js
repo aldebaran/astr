@@ -1,14 +1,18 @@
 (function($) {
   'use strict';
 
-  $.get('api/tests', function(tests) {
-    $('#numberOfTests').html(tests.length);
-    $('#nbOfTests').html(tests.length);
+  $.get('api/archives', function(archives) {
+    $('#numberOfArchives').html(archives.length);
+    if (archives.length > 1) {
+      $('#nbOfArchivesText').html('<strong>' + archives.length + '</strong> archives');
+    } else {
+      $('#nbOfArchivesText').html('<strong>' + archives.length + '</strong> archive');
+    }
   });
-  $.get('api/test-subjects', function(tests) {
-    $('#numberOfTestSubjects').html(tests.length);
+  $.get('api/categories', function(archives) {
+    $('#numberOfArchiveCategories').html(archives.length);
   });
-  $.get('api/tests/authors', function(authors) {
+  $.get('api/archives/authors', function(authors) {
     $('#numberOfAuthors').html(authors.length);
   });
 })(jQuery);

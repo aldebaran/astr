@@ -1,26 +1,12 @@
 var path = require('path');
-var fs = require('fs');
 var mongoose = require('mongoose');
-var Test = mongoose.model('Test');
+var Archive = mongoose.model('Archive');
 var diskspace = require('diskspace');
 var getFolderSize = require('get-folder-size');
 
-exports.getAppInfo = (req, res) => {
-  fs.readFile('package.json', 'utf8', (err, data) => {
-    if (err) {
-      res.send(err);
-    } else {
-      json = JSON.parse(data);
-      res.json({
-        name: json.name,
-        version: json.version,
-      });
-    }
-  });
-};
-
-exports.getTestFrequency = (req, res) => {
-  Test.aggregate([
+// GET: Returns a dictionnary with the number of archives uploaded per month
+exports.getArchivingFrequency = (req, res) => {
+  Archive.aggregate([
     {'$project': {
           'month': {'$month': '$created'},
           'year': {'$year': '$created'},
@@ -55,7 +41,7 @@ exports.getTestFrequency = (req, res) => {
           result[key] = month.count;
         });
 
-        // insert missing months (when 0 tests archived)
+        // insert missing months (when 0 archive in month)
         var min = Math.min(...Object.keys(result));
         var max = Math.max(...Object.keys(result));
         var tmp = min;
@@ -79,6 +65,7 @@ exports.getTestFrequency = (req, res) => {
     });
 };
 
+// GET: Returns a dictionnary with the disk usage information
 exports.getDiskUsage = (req, res) => {
   diskspace.check('/', function(err1, result) {
     if (err1) {

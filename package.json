@@ -1,7 +1,7 @@
 {
   "name": "astr",
-  "version": "2.2.0",
-  "description": "archiving system of test results",
+  "version": "3.0.0",
+  "description": "Archiving System Truly Restful",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js --ignore 'archives/' $*",

@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>A.S.T.R.</title>
+  <title>A.S.T.R. - Manage Application</title>
   <!-- Bootstrap core CSS-->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom fonts -->
@@ -74,71 +74,54 @@
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="index.html">Dashboard</a>
+          <a href="manage-application.html">Admin</a>
         </li>
-        <li class="breadcrumb-item active">My Dashboard</li>
+        <li class="breadcrumb-item active">Manage application</li>
       </ol>
 
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5>Information</h5>
+        </div>
+        <div class="card-body" id="application-info">
+        </div>
+      </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="mb-0 mt-4">
-            <i class="fa fa-newspaper-o"></i> Welcome on A.S.T.R.
-          </div>
-          <hr class="mt-2">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm">
-          <p>
-            A.S.T.R. is a powerful archiving system, designed to help you find your data <strong>quickly</strong> and <strong>easily</strong>.
-            <br>
-            <br>You can interact with the system thanks to the website, but also directly with the RESTful API.
-            <br>A <a target="_blank" rel="noopener noreferrer" href="https://gitlab.aldebaran.lan/hardware-test/astr/tree/master/lib-python-astr">Python library</a> has been created to help you interact with it.
-            <br>
-            <br>So far, <span id="nbOfArchivesText"></span> have been uploaded.
-            <br>
-            <div class="small text-muted">For more information about the tool, check the <a href="https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/README.md">README</a> on GitLab.</div>
-          </p>
-        </div>
-      </div>
-      <div class="row graphs">
-        <div class="col-lg-8">
-          <div class="card mb-3">
-            <div class="card-header">
-              <i class="fa fa-bar-chart"></i> Archiving frequency
+      <div class="modal fade" id="modalCustomName" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Application custom name</h4>
             </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-sm-8 my-auto">
-                    <canvas id="myBarChart" width="100%" height="30"></canvas>
-                </div>
-                <div class="col-sm-4 text-center my-auto">
-                  <div class="h4 mb-0 text-primary" id="numberOfArchives"></div>
-                  <div class="small text-muted">Archives uploaded</div>
-                  <hr>
-                  <div class="h4 mb-0 text-danger" id="numberOfArchiveCategories"></div>
-                  <div class="small text-muted">Archive Categories</div>
-                  <hr>
-                  <div class="h4 mb-0 text-success" id="numberOfAuthors"></div>
-                  <div class="small text-muted">Authors</div>
+            <form id="formCustomName">
+              <div class="modal-body">
+                <p>You can use a custom name for each deployment of A.S.T.R.</p>
+                <div class="form-group">
+                  <label for="inputCustomName">Application name</label>
+                  <input type="text" class="form-control" id="inputCustomName" aria-describedby="customNameHelp" placeholder="Enter application name" required>
+                  <small id="customNameHelp" class="form-text text-muted">Example: IVS Tests</small>
                 </div>
               </div>
-            </div>
+              <div class="modal-footer">
+                <button class="btn btn-info" type="submit">Submit</button>
+                <button class="btn btn-primary" data-dismiss="modal">Close</button>
+              </div>
+            </form>
           </div>
         </div>
-        <div class="col-lg-4">
-          <div class="card mb-3">
-            <div class="card-header">
-              <i class="fa fa-pie-chart"></i> Disk usage
+      </div>
+
+      <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
             </div>
-            <div class="card-body">
-              <div class="small text-muted text-center">Click on the legends bellow to hide elements.</div>
-              <canvas id="myPieChart" width="100%" height="50%"></canvas>
+            <div class="modal-body">
             </div>
           </div>
         </div>
       </div>
+
     </div>
 
     <!-- Footer -->
@@ -160,13 +143,10 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    <!-- Page level plugin JavaScript-->
-    <script src="vendor/chart.js/Chart.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="js/index.js"></script>
     <!-- Specific script for this page-->
-    <script src="js/dashboard.js"></script>
-    <script src="js/dashboard-charts.js"></script>
+    <script src="js/manage-application.js"></script>
   </div>
 </body>
 

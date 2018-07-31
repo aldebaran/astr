@@ -494,7 +494,7 @@ progress:after { content: '%'; }
   max-width: 40rem;
 }
 
-.card-body.tests {
+.card-body.archives {
   height: 10em;
   overflow: auto;
 }
@@ -746,4 +746,8 @@ span.text-muted {
 
 .graphs {
   margin-top: 3em;
+}
+
+#buttonCustomName {
+  margin-left: 1em;
 }
