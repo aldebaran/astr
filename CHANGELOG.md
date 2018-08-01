@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - None
 
-## [3.0] - XXXXX-XX-XX
+## [3.0] - 2018-08-01
 
 ### Added
 - [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) State when the archive is being zipped (to avoid downloading a corrupted zip).
@@ -84,7 +84,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 *First official release.*
 
 [Unreleased]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v3.0...HEAD
-[3.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...v3.0
+[3.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.2...v3.0
 [2.2]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...v2.2
 [2.1]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.0...v2.1
 [2.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v1.0...v2.0
