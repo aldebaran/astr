@@ -16,7 +16,7 @@ exports.getAllArchives = (req, res) => {
     .sort({'created': -1})
     .exec((err, data) => {
       if (err) {
-        res.send(err);
+        res.status(500).send(err);
       } else {
         res.json(data);
       }
@@ -32,7 +32,7 @@ exports.getAllMissingArchives = (req, res) => {
     .where('isZipPresent').equals(false)
     .exec((err, data) => {
       if (err) {
-        res.send(err);
+        res.status(500).send(err);
       } else {
         res.json(data);
       }
@@ -57,7 +57,7 @@ exports.getArchivesByQuery = (req, res) => {
       .sort({'created': -1})
       .exec((err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           res.json(data);
         }
@@ -68,7 +68,7 @@ exports.getArchivesByQuery = (req, res) => {
       .sort({'created': -1})
       .exec((err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           res.json(data);
         }
@@ -98,7 +98,7 @@ exports.getArchivesByQueryAndPage = (req, res) => {
       .skip((page-1)*resultPerPage)
       .exec((err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           res.send(data);
         }
@@ -111,7 +111,7 @@ exports.getArchivesByQueryAndPage = (req, res) => {
       .skip((page-1)*resultPerPage)
       .exec((err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           res.send(data);
         }
@@ -135,7 +135,7 @@ exports.addArchive = (req, res) => {
         json: true,
       }, (err1, res1, archiveCategory) => {
         if (err1) {
-          res.send(err1);
+          res.status(500).send(err1);
         } else if (archiveCategory.name === 'Failed') {
           res.send(archiveCategory);
         } else {
@@ -160,7 +160,7 @@ exports.addArchive = (req, res) => {
               // save the archive in the database
               newArchive.save((err, data) => {
                 if (err) {
-                  res.send(err);
+                  res.status(500).send(err);
                 } else {
                   res.json({
                     name: 'Success',
@@ -193,7 +193,7 @@ exports.getArchive = (req, res) => {
   var id = req.params.id;
   Archive.findById(id, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       if (data === null) {
         res.status(404).json({
@@ -212,7 +212,7 @@ exports.getArchiveInYAMLFormat = (req, res) => {
   var id = req.params.id;
   Archive.findById(id, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       if (data === null) {
         res.status(404).json({
@@ -251,7 +251,7 @@ exports.updateArchive = (req, res) => {
 
       Archive.findById(id, (err, archive) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           if (archive === null) {
             res.status(404).json({
@@ -278,7 +278,7 @@ exports.updateArchive = (req, res) => {
             }
             Archive.findByIdAndUpdate(id, archive, {new: true}, (err2, data) => {
               if (err2) {
-                res.send(err2);
+                res.status(500).send(err2);
               } else if (req.body.newZip === false) {
                 // update txt file inside the archive (info)
                 request.get({
@@ -383,7 +383,7 @@ exports.deleteArchive = (req, res) => {
       });
       Archive.findByIdAndRemove(id, (err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           if (data === null) {
             res.status(404).json({
@@ -409,7 +409,7 @@ exports.deleteArchive = (req, res) => {
 exports.getDistinctAuthors = (req, res) => {
   Archive.distinct('author', {}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -420,7 +420,7 @@ exports.getDistinctAuthors = (req, res) => {
 exports.getDistinctCategories = (req, res) => {
   Archive.distinct('category', {}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -431,7 +431,7 @@ exports.getDistinctCategories = (req, res) => {
 exports.getDistinctDescriptors = (req, res) => {
   Archive.distinct('descriptors.name', {}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -443,7 +443,7 @@ exports.getDescriptorsOfArchiveCategory = (req, res) => {
   var category = req.params.category;
   Archive.distinct('descriptors.name', {category: category}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -461,7 +461,7 @@ exports.getOptionsOfDescriptor = (req, res) => {
   ])
   .exec((err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       if (data.length === 1) {
         res.json(data[0].values.sort());
@@ -481,7 +481,7 @@ exports.changeArchiveCategoryName = (req, res) => {
       var newName = req.body.newName;
       Archive.update({'category': previousName}, {'category': newName}, {multi: true}, (err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           res.json(data);
         }
@@ -501,7 +501,7 @@ exports.addDescriptor = (req, res) => {
       var category = req.body.category;
       Archive.update({'category': category}, {'$push': {'descriptors': descriptor}}, {multi: true}, (err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           res.json(data);
         }
@@ -522,7 +522,7 @@ exports.changeDescriptorName = (req, res) => {
       var category = req.body.category;
       Archive.update({'category': category, 'descriptors.name': previousName}, {'$set': {'descriptors.$.name': newName}}, {multi: true}, (err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           res.json(data);
         }

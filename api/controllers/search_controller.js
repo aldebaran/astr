@@ -7,7 +7,7 @@ var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and yo
 exports.getAllSearch = (req, res) => {
   Search.find({}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -23,7 +23,7 @@ exports.addSearch = (req, res) => {
       newSearch.created = Date.now();
       newSearch.save((err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           res.json({
             name: 'Success',
@@ -43,7 +43,7 @@ exports.getSearch = (req, res) => {
   const id = req.params.id;
   Search.findById(id, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       if (data === null) {
         res.status(404).json({
@@ -65,7 +65,7 @@ exports.deleteSearch = (req, res) => {
       const id = req.params.id;
       Search.findByIdAndRemove(id, (err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           if (data === null) {
             res.status(404).json({

@@ -8,7 +8,7 @@ var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and yo
 exports.getAppInfo = (req, res) => {
   Application.findOne({}, {_id: 0, __v: 0}, (err, application) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(application);
     }
@@ -20,12 +20,12 @@ exports.updateAppInfo = (req, res) => {
   if (req.connection.remoteAddress.includes('127.0.0.1') || req.connection.remoteAddress.includes('::1') || req.connection.remoteAddress.includes('localhost')) {
     Application.findOne({}, (err, application) => {
       if (err) {
-        res.send(err);
+        res.status(500).send(err);
       } else {
         // read information
         fs.readFile('package.json', 'utf8', (err, data) => {
           if (err) {
-            res.send(err);
+            res.status(500).send(err);
           } else {
             json = JSON.parse(data);
             if (application === null) {
@@ -39,7 +39,7 @@ exports.updateAppInfo = (req, res) => {
               var appli = new Application(info);
               appli.save((err, data) => {
                 if (err) {
-                  res.send(err);
+                  res.status(500).send(err);
                 } else {
                   res.json(data);
                 }
@@ -50,7 +50,7 @@ exports.updateAppInfo = (req, res) => {
               application.lastBootUptime = Date.now();
               Application.findByIdAndUpdate(application._id, application, {new: true}, (err, data) => {
                 if (err) {
-                  res.send(err);
+                  res.status(500).send(err);
                 } else {
                   res.json(data);
                 }
@@ -74,7 +74,7 @@ exports.changeName = (req, res) => {
       if (name && name.trim() !== '') {
         Application.findOneAndUpdate({}, {'$set': {'name': name}}, {new: true}, (err, data) => {
           if (err) {
-            res.send(err);
+            res.status(500).send(err);
           } else {
             res.json(data);
           }

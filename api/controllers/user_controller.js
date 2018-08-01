@@ -9,7 +9,7 @@ var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and yo
 exports.getAllUsers = (req, res) => {
   User.find({}, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -20,7 +20,7 @@ exports.getAllUsers = (req, res) => {
 exports.getAllMasters = (req, res) => {
   User.find({master: true}, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -104,7 +104,7 @@ exports.deleteUser = (req, res) => {
       const id = req.params.id;
       User.findByIdAndRemove(id, {password: 0, tokens: 0}, (err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         }
         if (data === null) {
           res.status(404).json({

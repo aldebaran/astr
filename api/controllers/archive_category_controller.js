@@ -7,7 +7,7 @@ var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and yo
 exports.getAllArchiveCategories = (req, res) => {
   ArchiveCategory.find({}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -23,7 +23,7 @@ exports.addArchiveCategory = (req, res) => {
       newArchiveCategory.created = Date.now();
       newArchiveCategory.save((err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           res.json({
             name: 'Success',
@@ -43,7 +43,7 @@ exports.getArchiveCategory = (req, res) => {
   const id = req.params.id;
   ArchiveCategory.findById(id, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       if (data === null) {
         res.status(404).json({
@@ -62,7 +62,7 @@ exports.getArchiveCategoryByName = (req, res) => {
   const name = req.params.name;
   ArchiveCategory.findOne({name: name}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       if (data === null) {
         res.status(404).json({
@@ -88,7 +88,7 @@ exports.updateArchiveCategory = (req, res) => {
       }
       ArchiveCategory.findByIdAndUpdate(id, body, (err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           if (data === null) {
             res.status(404).json({
@@ -119,7 +119,7 @@ exports.deleteArchiveCategory = (req, res) => {
       const id = req.params.id;
       ArchiveCategory.findByIdAndRemove(id, (err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         } else {
           if (data === null) {
             res.status(404).json({
@@ -152,7 +152,7 @@ exports.getOptionsOfDescriptor = (req, res) => {
   ])
   .exec((err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       if (data.length === 1) {
         res.json(data[0]._id);
@@ -168,7 +168,7 @@ exports.getLinksOfArchiveCategory = (req, res) => {
   const categoryName = req.params.category;
   ArchiveCategory.findOne({'name': categoryName}, (err, archiveCategory) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       if (archiveCategory === null) {
         res.status(404).json({

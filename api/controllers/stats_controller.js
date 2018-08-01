@@ -18,7 +18,7 @@ exports.getArchivingFrequency = (req, res) => {
       },
     }], (err, data) => {
       if (err) {
-        res.send(err);
+        res.status(500).send(err);
       } else if (data.length > 0) {
         var result = {};
         var resultSorted = {};
@@ -69,11 +69,11 @@ exports.getArchivingFrequency = (req, res) => {
 exports.getDiskUsage = (req, res) => {
   diskspace.check('/', function(err1, result) {
     if (err1) {
-      res.send(err1);
+      res.status(500).send(err1);
     } else {
       getFolderSize(path.join(__dirname, '../../archives'), (err2, size) => {
         if (err2) {
-          res.send(err2);
+          res.status(500).send(err2);
         } else {
           res.json({
             total: formatBytes(result.total),

@@ -24,7 +24,7 @@ exports.downloadById = (req, res, next) => {
   } else {
     Archive.findById(id, (err, archive) => {
       if (err) {
-        res.send(err);
+        res.status(500).send(err);
       } else {
         if (archive === null) {
           res.status(404).json({
