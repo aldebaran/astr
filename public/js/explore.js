@@ -15,10 +15,10 @@
       $('#selectCategory').append('<option>' + category + '</option>');
     });
   });
-  // get all archive configuration
-  $.get('api/archives/configurations', function(configurations) {
-    configurations.forEach(function(config) {
-      $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
+  // get all archive descriptors
+  $.get('api/archives/descriptors', function(descriptors) {
+    descriptors.forEach(function(descriptor) {
+      $('#selectDescriptor').append('<option value="' + descriptor + '">Add a filter on ' + descriptor + '</option>');
     });
   });
 
@@ -64,11 +64,11 @@
         }
       });
     }
-    // add the configuration to the body request
-    $('.inputConfig').each(function() {
+    // add the descriptors to the body request
+    $('.inputDescriptor').each(function() {
       if ($(this).val() !== '') {
         bodyRequest['$and'].push({
-          'configuration': {
+          'descriptors': {
             '$elemMatch': {
               'name': $(this).closest('.form-group').find('label').html(),
               'value': $(this).val(),
@@ -91,69 +91,69 @@
 
   $('#selectCategory').change(function() {
     if ($('#selectCategory').val() !== 'default') {
-      // select only the configuration of the archive category
-      $.get('api/archives/configurations/' + $('#selectCategory').val(), function(configurations) {
-        $('#selectConfig').html('<option value="default">Click here to add filters</option>');
-        configurations.forEach(function(config) {
-          $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
+      // select only the descriptors of the archive category
+      $.get('api/archives/descriptors/' + $('#selectCategory').val(), function(descriptors) {
+        $('#selectDescriptor').html('<option value="default">Click here to add filters</option>');
+        descriptors.forEach(function(descriptor) {
+          $('#selectDescriptor').append('<option value="' + descriptor + '">Add a filter on ' + descriptor + '</option>');
         });
       });
     } else {
-      $.get('api/archives/configurations', function(configurations) {
-        $('#selectConfig').html('<option value="default">Click here to add filters</option>');
-        configurations.forEach(function(config) {
-          $('#selectConfig').append('<option value="' + config + '">Add a filter on ' + config + '</option>');
+      $.get('api/archives/descriptors', function(descriptors) {
+        $('#selectDescriptor').html('<option value="default">Click here to add filters</option>');
+        descriptors.forEach(function(descriptor) {
+          $('#selectDescriptor').append('<option value="' + descriptor + '">Add a filter on ' + descriptor + '</option>');
         });
       });
     }
 
-    // delete existing configuration
-    $('.config-group').each(function() {
+    // delete existing descriptors
+    $('.descriptor-group').each(function() {
       $(this).remove();
     });
-    selectedConfig = [];
+    selectedDescriptor = [];
   });
 
   $('#form-search').submit(function(e) {
     e.preventDefault();
   });
 
-  // add input when a new configuration is selected
-  var selectedConfig = [];
-  $('#selectConfig').change(function() {
-    if ($('#selectConfig').val() !== 'default' && !selectedConfig.includes($('#selectConfig').val())) {
-      selectedConfig.push($('#selectConfig').val());
+  // add input when a new descriptor is selected
+  var selectedDescriptor = [];
+  $('#selectDescriptor').change(function() {
+    if ($('#selectDescriptor').val() !== 'default' && !selectedDescriptor.includes($('#selectDescriptor').val())) {
+      selectedDescriptor.push($('#selectDescriptor').val());
       $('#form-search').append('' +
-      '<div class="form-group config-group">' +
-        '<label class="labelConfig">' + $('#selectConfig').val() + '</label>' +
+      '<div class="form-group descriptor-group">' +
+        '<label class="labelDescriptor">' + $('#selectDescriptor').val() + '</label>' +
         '<div class="row">' +
           '<div class="col">' +
-            '<select class="form-control inputConfig">' +
+            '<select class="form-control inputDescriptor">' +
               '<option></option>' +
             '</select>' +
           '</div>' +
           '<div class="col-2">' +
-            '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+            '<button type="button" class="btn btn-warning deleteDescriptor" id="deleteDescriptor"><i class="fa fa-times" aria-hidden="true"></i></button>' +
           '</div>' +
         '</div>' +
       '</div>'
       );
-      $.get('/api/archives/options/' + $('#selectConfig').val(), function(options) {
+      $.get('/api/archives/options/' + $('#selectDescriptor').val(), function(options) {
         options.forEach(function(option) {
-          $('.inputConfig:last').append('<option>' + option + '</option>');
+          $('.inputDescriptor:last').append('<option>' + option + '</option>');
         });
-        $('#selectConfig').val('default');
+        $('#selectDescriptor').val('default');
       });
     } else {
-      $('#selectConfig').val('default');
+      $('#selectDescriptor').val('default');
     }
   });
 
-  // delete config input
-  $('#form-search').on('click', '.deleteConfig', function() {
-    // remove config from the array
-    selectedConfig.splice(selectedConfig.indexOf($(this).closest('.form-group').find('label').html()), 1);
-    // remove config input from the page
+  // delete descriptor input
+  $('#form-search').on('click', '.deleteDescriptor', function() {
+    // remove descriptor from the array
+    selectedDescriptor.splice(selectedDescriptor.indexOf($(this).closest('.form-group').find('label').html()), 1);
+    // remove descriptor input from the page
     $(this).closest('.form-group').remove();
     $('#form-search').trigger('change');
   });
@@ -163,6 +163,9 @@
     if ($(this).is(':checked')) {
       $(this).next().removeClass('text-secondary');
       $('#dateFromTo').show();
+      if ($('#inputDate').val()) {
+        $('#inputDate2').prop('disabled', false);
+      }
     } else {
       $(this).next().addClass('text-secondary');
       $('#dateFromTo').hide();
@@ -217,11 +220,11 @@
           }
 
           $.get('api/categories/links/' + archive.category, function(links) {
-            archive.configuration.forEach(function(config) {
-              if (links[config.name]) {
-                $('#body'+archive._id).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
+            archive.descriptors.forEach(function(descriptor) {
+              if (links[descriptor.name]) {
+                $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName"><i class="fa fa-link" aria-hidden="true"></i> ' + descriptor.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[descriptor.name] + descriptor.value + '">' + descriptor.value + '</a></li>');
               } else {
-                $('#body'+archive._id).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+                $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName">' + descriptor.name + ':</span><span class="value"> ' + descriptor.value + '</span></li>');
               }
             });
           });
@@ -257,11 +260,11 @@
           }
 
           $.get('api/categories/links/' + archive.category, function(links) {
-            archive.configuration.forEach(function(config) {
-              if (links[config.name]) {
-                $('#body'+archive._id).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
+            archive.descriptors.forEach(function(descriptor) {
+              if (links[descriptor.name]) {
+                $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName"><i class="fa fa-link" aria-hidden="true"></i> ' + descriptor.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[descriptor.name] + descriptor.value + '">' + descriptor.value + '</a></li>');
               } else {
-                $('#body'+archive._id).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+                $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName">' + descriptor.name + ':</span><span class="value"> ' + descriptor.value + '</span></li>');
               }
             });
           });
@@ -303,11 +306,11 @@
           }
 
           $.get('api/categories/links/' + archive.category, function(links) {
-            archive.configuration.forEach(function(config) {
-              if (links[config.name]) {
-                $('#body'+archive._id).append('<li class="config"><span class="configName"><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[config.name] + config.value + '">' + config.value + '</a></li>');
+            archive.descriptors.forEach(function(descriptor) {
+              if (links[descriptor.name]) {
+                $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName"><i class="fa fa-link" aria-hidden="true"></i> ' + descriptor.name + ': </span><a target="_blank" rel="noopener noreferrer" href="' + links[descriptor.name] + descriptor.value + '">' + descriptor.value + '</a></li>');
               } else {
-                $('#body'+archive._id).append('<li class="config"><span class="configName">' + config.name + ':</span><span class="value"> ' + config.value + '</span></li>');
+                $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName">' + descriptor.name + ':</span><span class="value"> ' + descriptor.value + '</span></li>');
               }
             });
           });
@@ -439,10 +442,10 @@
               }
             });
           }
-          $('.inputConfig').each(function() {
+          $('.inputDescriptor').each(function() {
             if ($(this).val() !== '') {
               bodyRequest['$and'].push({
-                'configuration': {
+                'descriptors': {
                   '$elemMatch': {
                     'name': $(this).closest('.form-group').find('label').html(),
                     'value': $(this).val(),
@@ -515,27 +518,27 @@
       '</div>' +
       '<button type="button" class="btn btn-outline-info" id="buttonUpdateArchive">Click here to update the archive content (zip)</button>');
 
-      archive.configuration.forEach(function(config) {
+      archive.descriptors.forEach(function(descriptor) {
         $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
-          '<label>' + config.name + '</label>' +
-          '<select class="form-control selectConfigEdit ' + config.name + '">' +
-            '<option>' + config.value + '</option>' +
+          '<label>' + descriptor.name + '</label>' +
+          '<select class="form-control selectDescriptorEdit ' + descriptor.name + '">' +
+            '<option>' + descriptor.value + '</option>' +
           '</select>' +
         '</div>'
         );
-        $.get('api/categories/options/' + archive.category + '/' + config.name, function(options) {
+        $.get('api/categories/options/' + archive.category + '/' + descriptor.name, function(options) {
           if (options.length > 0) {
             options.forEach(function(option, idx, array) {
-              if (option !== $('.selectConfigEdit.' + config.name).val()) {
-                $('.selectConfigEdit.' + config.name).append('<option>' + option + '</option>');
+              if (option !== $('.selectDescriptorEdit.' + descriptor.name).val()) {
+                $('.selectDescriptorEdit.' + descriptor.name).append('<option>' + option + '</option>');
               }
               if (idx === array.length-1) {
-                $('.selectConfigEdit.' + config.name).append('<option>Other</option>');
+                $('.selectDescriptorEdit.' + descriptor.name).append('<option>Other</option>');
               }
             });
           } else {
-            $('.selectConfigEdit.' + config.name).append('<option>Other</option>');
+            $('.selectDescriptorEdit.' + descriptor.name).append('<option>Other</option>');
           }
         });
       });
@@ -547,12 +550,12 @@
     });
   });
 
-  // add an input if the user select "Other" on a configuration
-  $('#modalEdit').on('change', '.selectConfigEdit', function() {
+  // add an input if the user select "Other" on a descriptor
+  $('#modalEdit').on('change', '.selectDescriptorEdit', function() {
     if ($(this).val() === 'Other') {
-      $(this).closest('.form-group').append('<input type="text" class="form-control inputConfigEdit" required>');
+      $(this).closest('.form-group').append('<input type="text" class="form-control inputDescriptorEdit" required>');
     } else {
-      $(this).closest('.form-group').find('.inputConfigEdit').remove();
+      $(this).closest('.form-group').find('.inputDescriptorEdit').remove();
     }
   });
 
@@ -563,25 +566,25 @@
       var okayToPush = true;
       var archive = {
         date: $('#inputDateEdit').val(),
-        configuration: [],
+        descriptors: [],
         newZip: $('#isFileUploaded').val(),
       };
       if ($('#inputCommentsEdit').val().trim() !== '') {
         archive.comments = $('#inputCommentsEdit').val().trim();
       }
-      $('.selectConfigEdit').each(function() {
+      $('.selectDescriptorEdit').each(function() {
         if ($(this).val() !== 'Other') {
-          archive.configuration.push({
+          archive.descriptors.push({
             name: $(this).prev().html(),
             value: $(this).val().trim(),
           });
         }
       });
-      $('.inputConfigEdit').each(function() {
+      $('.inputDescriptorEdit').each(function() {
         if ($(this).val().trim() === '') {
           okayToPush = false;
         } else {
-          archive.configuration.push({
+          archive.descriptors.push({
             name: $(this).prev().prev().html(),
             value: $(this).val().trim().toLowerCase().replace(/\s+/g, ' '),
           });
@@ -628,7 +631,7 @@
     var search = {
       user: getUserName(),
       ids: [],
-      configuration: [],
+      descriptors: [],
     };
     if ($('#inputDate').val() !== '') {
       if ($('#checkboxDateRange').is(':checked') && $('#inputDate2').val() !== '') {
@@ -658,17 +661,17 @@
       search.archiveAuthor = $('#selectAuthor').val();
     }
 
-    $('.config-group').each(function() {
-      if ($(this).find('.inputConfig').val() !== '') {
-        search.configuration.push({
-          name: $(this).find('.labelConfig').html(),
-          value: $(this).find('.inputConfig').val(),
+    $('.descriptor-group').each(function() {
+      if ($(this).find('.inputDescriptor').val() !== '') {
+        search.descriptors.push({
+          name: $(this).find('.labelDescriptor').html(),
+          value: $(this).find('.inputDescriptor').val(),
         });
       }
     });
 
     if (isConnected()) {
-      if (search.configuration.length > 0 || search.ids.length > 0 || search.date || search.archiveAuthor || search.archiveCategory) {
+      if (search.descriptors.length > 0 || search.ids.length > 0 || search.date || search.archiveAuthor || search.archiveCategory) {
         // check if search already exist
         $.get('api/search', function(savedSearches) {
           return new Promise(function(resolve) {
@@ -681,7 +684,7 @@
                   if (
                     (savedSearch.user === search.user) && (savedSearch.archiveCategory === search.archiveCategory)
                     && (savedSearch.archiveAuthor === search.archiveAuthor) && (JSON.stringify(savedSearch.date) === JSON.stringify(search.date))
-                    && configurationsAreTheSame(savedSearch.configuration, search.configuration) && idsAreTheSame
+                    && descriptorsAreTheSame(savedSearch.descriptors, search.descriptors) && idsAreTheSame
                   ) {
                     resolve(true);
                   } else if (idx === savedSearches.length - 1) {
@@ -743,29 +746,29 @@
           if (search.archiveAuthor) {
             $('#selectAuthor').val(search.archiveAuthor);
           }
-          if (search.configuration.length > 0) {
-            search.configuration.forEach(function(config) {
-              selectedConfig.push(config.name);
+          if (search.descriptors.length > 0) {
+            search.descriptors.forEach(function(descriptor) {
+              selectedDescriptor.push(descriptor.name);
               $('#form-search').append('' +
-              '<div class="form-group config-group">' +
-                '<label class="labelConfig">' + config.name + '</label>' +
+              '<div class="form-group descriptor-group">' +
+                '<label class="labelDescriptor">' + descriptor.name + '</label>' +
                 '<div class="row">' +
                   '<div class="col">' +
-                    '<select class="form-control inputConfig ' + config.name + '">' +
+                    '<select class="form-control inputDescriptor ' + descriptor.name + '">' +
                       '<option></option>' +
                     '</select>' +
                   '</div>' +
                   '<div class="col-2">' +
-                    '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+                    '<button type="button" class="btn btn-warning deleteDescriptor" id="deleteDescriptor"><i class="fa fa-times" aria-hidden="true"></i></button>' +
                   '</div>' +
                 '</div>' +
               '</div>'
               );
-              $.get('/api/archives/options/' + config.name, function(options) {
+              $.get('/api/archives/options/' + descriptor.name, function(options) {
                 options.forEach(function(option) {
-                  $('.inputConfig.' + config.name).append('<option>' + option + '</option>');
+                  $('.inputDescriptor.' + descriptor.name).append('<option>' + option + '</option>');
                 });
-                $('.inputConfig.' + config.name).val(config.value);
+                $('.inputDescriptor.' + descriptor.name).val(descriptor.value);
               });
             });
           }
@@ -809,27 +812,27 @@
       }
       if (query['$and']) {
         query['$and'].forEach(function(specificFilter) {
-          selectedConfig.push(specificFilter.configuration['$elemMatch'].name);
+          selectedDescriptor.push(specificFilter.descriptors['$elemMatch'].name);
           $('#form-search').append('' +
-          '<div class="form-group config-group">' +
-            '<label class="labelConfig">' + specificFilter.configuration['$elemMatch'].name + '</label>' +
+          '<div class="form-group descriptor-group">' +
+            '<label class="labelDescriptor">' + specificFilter.descriptors['$elemMatch'].name + '</label>' +
             '<div class="row">' +
               '<div class="col">' +
-                '<select class="form-control inputConfig" id="inputConfig' + specificFilter.configuration['$elemMatch'].name + '">' +
+                '<select class="form-control inputDescriptor" id="inputDescriptor' + specificFilter.descriptors['$elemMatch'].name + '">' +
                   '<option></option>' +
                 '</select>' +
               '</div>' +
               '<div class="col-2">' +
-                '<button type="button" class="btn btn-warning deleteConfig" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+                '<button type="button" class="btn btn-warning deleteDescriptor" id="deleteDescriptor"><i class="fa fa-times" aria-hidden="true"></i></button>' +
               '</div>' +
             '</div>' +
           '</div>'
           );
-          $.get('/api/archives/options/' + specificFilter.configuration['$elemMatch'].name, function(options) {
+          $.get('/api/archives/options/' + specificFilter.descriptors['$elemMatch'].name, function(options) {
             options.forEach(function(option) {
-              $('#inputConfig' + specificFilter.configuration['$elemMatch'].name).append('<option>' + option + '</option>');
+              $('#inputDescriptor' + specificFilter.descriptors['$elemMatch'].name).append('<option>' + option + '</option>');
             });
-            $('#inputConfig' + specificFilter.configuration['$elemMatch'].name).val(specificFilter.configuration['$elemMatch'].value);
+            $('#inputDescriptor' + specificFilter.descriptors['$elemMatch'].name).val(specificFilter.descriptors['$elemMatch'].value);
           });
         });
       }
@@ -917,18 +920,18 @@
     }
   }
 
-  function configurationsAreTheSame(firstConfigArray, secondConfigArray) {
-    if (firstConfigArray.length === secondConfigArray.length) {
-      if (firstConfigArray.length === 0) {
+  function descriptorsAreTheSame(firstDescriptorsArray, secondDescriptorsArray) {
+    if (firstDescriptorsArray.length === secondDescriptorsArray.length) {
+      if (firstDescriptorsArray.length === 0) {
         return true;
       } else {
         var dict1 = {};
         var dict2 = {};
-        firstConfigArray.forEach(function(config) {
-          dict1[config.name] = config.value;
+        firstDescriptorsArray.forEach(function(descriptor) {
+          dict1[descriptor.name] = descriptor.value;
         });
-        secondConfigArray.forEach(function(config) {
-          dict2[config.name] = config.value;
+        secondDescriptorsArray.forEach(function(descriptor) {
+          dict2[descriptor.name] = descriptor.value;
         });
         for (var key in dict1) {
           if (!dict2[key] || dict1[key] !== dict2[key]) {

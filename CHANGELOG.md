@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - [#128](https://gitlab.aldebaran.lan/hardware-test/astr/issues/128) User doesn't add or delete files in the archive anymore but replace the entire archive with a new one.
-- [#132](https://gitlab.aldebaran.lan/hardware-test/astr/issues/132) A.S.T.R. is no longer dedicated to store data about tests. It can be use for any kind of data.
+- [#132](https://gitlab.aldebaran.lan/hardware-test/astr/issues/132) A.S.T.R. is no longer dedicated to store data about tests. It can be use for any kind of data. Therefore, *"Tests"* have been replaced by *"Archives"*, *"Test Subjects"* by *"Archive Categories"*, and *"Configurations (of tests)"* by *"Descriptors (of archives)"*
 - [#132](https://gitlab.aldebaran.lan/hardware-test/astr/issues/132) A.S.T.R. stands for Archiving System Truly Restful.
 
 ### Fixed

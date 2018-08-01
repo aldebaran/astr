@@ -30,17 +30,17 @@
             '<td>' + search.archiveCategory + '</td>' +
             '<td>' + search.archiveAuthor + '</td>' +
             '<td>' + search.date + '</td>' +
-            '<td class="config"></td>' +
+            '<td class="descriptors"></td>' +
             '<td class="ids"></td>' +
             '<td><a href="' + window.location.origin + '/' + link + '"><i class="fa fa-link" aria-hidden="true"></i> ' + link + '</a> <button class="btn btn-outline-success" id="copyToClipboard" style="float: right;  ">Copy to clipboard</button></td>' +
             '<td><button type="button" class="btn btn-danger admin-user" id="deleteSearch"><i class="fa fa-trash" aria-hidden="true"></i></button></td>' +
           '</tr>');
-          if (search.configuration.length > 0) {
-            search.configuration.forEach(function(config) {
-              $('.config:last').append('<div><span class="key">' + config.name + ': </span><span class=value>' + config.value + '</span></div>');
+          if (search.descriptors.length > 0) {
+            search.descriptors.forEach(function(descriptor) {
+              $('.descriptors:last').append('<div><span class="key">' + descriptor.name + ': </span><span class=value>' + descriptor.value + '</span></div>');
             });
           } else {
-            $('.config:last').html('<span class="null">ALL</span>');
+            $('.descriptors:last').html('<span class="null">ALL</span>');
           }
           if (search.ids.length > 0) {
             search.ids.forEach(function(id, index) {

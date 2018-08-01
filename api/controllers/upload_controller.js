@@ -69,7 +69,7 @@ exports.newArchive = (req, res, next) => {
       });
 
       new Promise(function(resolve) {
-        // get the archive to include a txt file with its configuration in the zip
+        // get the archive to include a txt file with its descriptors in the zip
         request.get({
           url: 'http://localhost:' + req.connection.localPort + '/api/archives/YAMLformat/id/' + req.body.archiveId,
           json: true,
@@ -171,7 +171,7 @@ exports.replaceArchive = (req, res, next) => {
       });
 
       new Promise(function(resolve) {
-        // get the archive to include a txt file with its configuration in the zip
+        // get the archive to include a txt file with its descriptors in the zip
         request.get({
           url: 'http://localhost:' + req.connection.localPort + '/api/archives/YAMLformat/id/' + req.body.archiveId,
           json: true,

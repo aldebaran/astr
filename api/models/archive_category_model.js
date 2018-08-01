@@ -9,7 +9,7 @@ var ArchiveCategorySchema = new Schema({
     trim: true,
     uppercase: true,
   },
-  configuration: [{
+  descriptors: [{
     name: {type: String, lowercase: true, trim: true},
     options: [{type: String, uppercase: true, trim: true}],
     baseUrl: {type: String, lowercase: true, trim: true, required: false},

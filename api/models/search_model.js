@@ -32,7 +32,7 @@ var SearchSchema = new Schema({
     unique: false,
     required: false,
   },
-  configuration: [{
+  descriptors: [{
     name: {type: String, lowercase: true, trim: true},
     value: {type: String, uppercase: true, trim: true},
   }],

@@ -83,8 +83,8 @@ exports.updateArchiveCategory = (req, res) => {
     if (hasAuthorization) {
       const id = req.params.id;
       const body = req.body;
-      if (body.emptyConfiguration) {
-        body.configuration = [];
+      if (body.noDescriptors) {
+        body.descriptors = [];
       }
       ArchiveCategory.findByIdAndUpdate(id, body, (err, data) => {
         if (err) {
@@ -141,14 +141,14 @@ exports.deleteArchiveCategory = (req, res) => {
   });
 };
 
-// GET: Returns the options of a configuration
-exports.getOptionsOfConfig = (req, res) => {
+// GET: Returns the options of a descriptor
+exports.getOptionsOfDescriptor = (req, res) => {
   const categoryName = req.params.category;
-  const configName = req.params.configName;
+  const descriptorName = req.params.descriptorName;
   ArchiveCategory.aggregate([
-    {'$unwind': '$configuration'},
-    {'$match': {'configuration.name': configName, 'name': categoryName}},
-    {'$group': {'_id': '$configuration.options'}},
+    {'$unwind': '$descriptors'},
+    {'$match': {'descriptors.name': descriptorName, 'name': categoryName}},
+    {'$group': {'_id': '$descriptors.options'}},
   ])
   .exec((err, data) => {
     if (err) {
@@ -177,9 +177,9 @@ exports.getLinksOfArchiveCategory = (req, res) => {
         });
       } else {
         var links = {};
-        archiveCategory.configuration.forEach((config) => {
-          if (config.baseUrl) {
-            links[config.name] = config.baseUrl;
+        archiveCategory.descriptors.forEach((descriptor) => {
+          if (descriptor.baseUrl) {
+            links[descriptor.name] = descriptor.baseUrl;
           }
         });
         res.json(links);

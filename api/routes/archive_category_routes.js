@@ -19,8 +19,8 @@ module.exports = function(app) {
   app.route('/api/categories/name/:name')
   .get(archiveCategory.getArchiveCategoryByName); // GET: Returns the archive category with the associated name
 
-  app.route('/api/categories/options/:category/:configName')
-  .get(archiveCategory.getOptionsOfConfig); // GET: Returns the options of a configuration
+  app.route('/api/categories/options/:category/:descriptorName')
+  .get(archiveCategory.getOptionsOfDescriptor); // GET: Returns the options of a descriptor
 
   app.route('/api/categories/links/:category')
   .get(archiveCategory.getLinksOfArchiveCategory); // GET: Returns the links of an archive category

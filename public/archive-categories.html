@@ -81,6 +81,16 @@
 
       <div class="row">
         <div class="col-sm archive-category-card" id="cardExisitingCategory">
+          <div class="mb-0 mt-4">
+            <i class="fa fa-cube"></i> What is an archive category ?
+          </div>
+          <hr class="mt-2">
+          <p><cite>An archive category is used to <strong>define a set of descriptors</strong> that will be <strong>shared by several archives</strong>.<br>
+            A different set of descriptors to describe your archive implies a different category.<br>
+            A descriptor has a unique name and can hold any value.<br>
+            Options can be attached on descriptors, so that the descriptor's value can be quickly given while adding a new archive.<br>
+            Descriptors can be turned into links to other website.
+          </cite></p>
           <div class="card mb-3">
             <div class="card-header">
               <h5>Existing archive categories</h5>
@@ -112,23 +122,23 @@
                   <small id="nameHelp" class="form-text text-muted">Example: Motor Control</small>
                 </div>
                 <br>
-                <h5>Configuration</h5>
-                <div id="formConfig">
+                <h5>Descriptors</h5>
+                <div id="formDescriptor">
                   <div class="form-group">
-                    <div class="row config border-bottom border-top">
+                    <div class="row descriptor border-bottom border-top">
                       <div class="col">
-                        <label id="labelConfigName">Configuration name</label>
-                        <input type="text" class="form-control inputConfigName" placeholder="Enter the configuration name" required>
+                        <label id="labelDescriptorName">Descriptor name</label>
+                        <input type="text" class="form-control inputDescriptorName" placeholder="Enter the descriptor name" required>
                         <small class="form-text text-muted">Example: Robot type</small>
                         <div class="makeLinkDisabled">
                           <button type="button" class="btn btn-outline-primary" id="buttonMakeLink"><i class="fa fa-link"></i> Link</button>
-                          <small class="form-text text-muted infoLink">Make this configuration a link to another website (Testrail, Redmine, etc.)
-                            <i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this configuration into a link.<br>
-                            Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>
+                          <small class="form-text text-muted infoLink">Make this descriptor a link to another website (Testrail, Redmine, etc.)
+                            <i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>
+                            Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>
                             <strong>Example</strong><br>
-                            Configuration name: <i>Issue ID</i><br>
+                            Descriptor name: <i>Issue ID</i><br>
                             Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>
-                            Configuration value: <i>42305</i><br>
+                            Descriptor value: <i>42305</i><br>
                             Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>
                             <i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don't forget the &quot;/&quot; at the end of the base URL.">
                             </i>
@@ -155,7 +165,7 @@
                     </div>
                   </div>
                 </div>
-                <button type="button" class="btn btn-outline-primary" id="buttonMoreConfig"><i class="fa fa-plus-circle"></i> Configuration</button>
+                <button type="button" class="btn btn-outline-primary" id="buttonMoreDescriptor"><i class="fa fa-plus-circle"></i> Descriptor</button>
                 <br><br>
                 <input type="submit" value="Submit" class="btn btn-info">
               </form>

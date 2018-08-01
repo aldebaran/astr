@@ -15,41 +15,41 @@
   $('#selectCategory').change(function() {
     if ($('#selectCategory').val() !== 'default') {
       $.get('api/categories/id/' + $('#selectCategory').val(), function(category) {
-        $('#config').html('<h4>Configuration</h4>');
-        category.configuration.forEach(function(config) {
-          $('#config').append('' +
+        $('#descriptors').html('<h4>Descriptors</h4>');
+        category.descriptors.forEach(function(descriptor) {
+          $('#descriptors').append('' +
           '<div class="form-group">' +
-            '<label for="inputConfig">' + config.name + '</label>' +
-            '<select class="form-control selectConfig">' +
+            '<label for="inputDescriptor">' + descriptor.name + '</label>' +
+            '<select class="form-control selectDescriptor">' +
             '</select>' +
             '<small class="form-text text-muted">Select an option or "Other"</small>' +
           '</div>');
 
-          if (config.options.length > 0) {
-            config.options.forEach(function(option, idx, array) {
-              $('#config').find('select:last').append('<option>' + option + '</option>');
+          if (descriptor.options.length > 0) {
+            descriptor.options.forEach(function(option, idx, array) {
+              $('#descriptors').find('select:last').append('<option>' + option + '</option>');
               if (idx === array.length - 1) {
-                $('#config').find('select:last').append('<option>Other</option>');
+                $('#descriptors').find('select:last').append('<option>Other</option>');
               }
             });
           } else {
-            $('#config').find('select:last').append('<option>Other</option>');
-            $('.form-group:last').append('<input type="text" class="form-control inputConfig" required>');
+            $('#descriptors').find('select:last').append('<option>Other</option>');
+            $('.form-group:last').append('<input type="text" class="form-control inputDescriptor" required>');
           }
         });
-        $('#config').append('<input type="submit" value="Submit" id="submitArchive" class="btn btn-info">');
+        $('#descriptors').append('<input type="submit" value="Submit" id="submitArchive" class="btn btn-info">');
       });
     } else {
-      $('#config').html('');
+      $('#descriptors').html('');
     }
   });
 
-  // add an input if the user select "Other" on a configuration
-  $('#cardAddNewArchive').on('change', '.selectConfig', function() {
+  // add an input if the user select "Other" on a descriptor
+  $('#cardAddNewArchive').on('change', '.selectDescriptor', function() {
     if ($(this).val() === 'Other') {
-      $(this).closest('.form-group').append('<input type="text" class="form-control inputConfig" required>');
+      $(this).closest('.form-group').append('<input type="text" class="form-control inputDescriptor" required>');
     } else {
-      $(this).closest('.form-group').find('.inputConfig').remove();
+      $(this).closest('.form-group').find('.inputDescriptor').remove();
     }
   });
 
@@ -62,24 +62,24 @@
         category: $('#selectCategory option:selected').html(),
         date: $('#inputDate').val(),
         author: getUserName(),
-        configuration: [],
+        descriptors: [],
       };
       if ($('#inputComments').val().trim() !== '') {
         archive.comments = $('#inputComments').val().trim();
       }
-      $('.inputConfig').each(function() {
+      $('.inputDescriptor').each(function() {
         if ($(this).val().trim() === '') {
           okayToPush = false;
         } else {
-          archive.configuration.push({
+          archive.descriptors.push({
             name: $(this).closest('.form-group').find('label').html(),
             value: $(this).val().trim(),
           });
         }
       });
-      $('.selectConfig').each(function() {
+      $('.selectDescriptor').each(function() {
         if ($(this).val() !== 'Other') {
-          archive.configuration.push({
+          archive.descriptors.push({
             name: $(this).closest('.form-group').find('label').html(),
             value: $(this).val(),
           });

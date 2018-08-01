@@ -266,24 +266,24 @@ Find all the information about it in the dedicated repository: [lib-python-astr]
     - POST: Add a new archive in the DB in function of the parameters given in the body request **(user must have write permission)**
 4. [/api/archives/id/:id](http://10.0.160.147:8000/api/archives/id/5adf356dda64c157e53c6b18)
     - GET: Returns the archive with the associated ID
-    - POST: Update the archive with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated) **(user must be master or owner of the archive)**
+    - POST: Update the archive with the associated ID in function of the parameters given in the body request (only the date, the comments, and the descriptors values can be updated) **(user must be master or owner of the archive)**
     - DELETE: Delete the archive with the associated ID **(user must be master or owner of the archive)**
 5. [/api/archives/authors](http://10.0.160.147:8000/api/archives/authors)
     - GET: Returns the list of archive authors (that added at least one archive)
 6. [/api/archives/categories](http://10.0.160.147:8000/api/archives/categories)
     - GET: Returns the list of archive categories (used at least by one archive)
-7. [/api/archives/configurations](http://10.0.160.147:8000/api/archives/configurations)
-    - GET: Returns the list of configurations (used at least by one archive)
-8. [/api/archives/configurations/:category](http://10.0.160.147:8000/api/archives/configurations/CAMERA)
-    - GET: Returns the list of configurations of the associated archive category (used at least by one archive)
-9. [/api/archives/options/:configName](http://10.0.160.147:8000/api/archives/options/robot_type)
-    - GET: Returns the  options of the associated configuration (used at least one time)
+7. [/api/archives/descriptors](http://10.0.160.147:8000/api/archives/descriptors)
+    - GET: Returns the list of descriptors (used at least by one archive)
+8. [/api/archives/descriptors/:category](http://10.0.160.147:8000/api/archives/descriptors/CAMERA)
+    - GET: Returns the list of descriptors of the associated archive category (used at least by one archive)
+9. [/api/archives/options/:descriptorName](http://10.0.160.147:8000/api/archives/options/robot_type)
+    - GET: Returns the  options of the associated descriptor (used at least one time)
 10. [/api/archives/changeArchiveCategoryName](http://10.0.160.147:8000/api/archives/changeArchiveCategoryName)
     - POST: Change the category name of all the archives matched by {category: previousName} (body contains previousName and newName) **(user must be master)**
-11. [/api/archives/addConfig](http://10.0.160.147:8000/api/archives/addConfig)
-    - POST: Push a new configuration in all archives matched by the archive category (body contains *category* and *config: {name, value}*) **(user must be master)**
-12. [/api/archives/changeConfigName](http://10.0.160.147:8000/api/archives/changeConfigName)
-    - POST: Change the name of the matched configuration in all archives matched by the archive category (body contains *category*, *previousName* and *newName*) **(user must be master)**
+11. [/api/archives/addDescriptor](http://10.0.160.147:8000/api/archives/addDescriptor)
+    - POST: Push a new descriptor in all archives matched by the archive category (body contains *category* and *descriptor: {name, value}*) **(user must be master)**
+12. [/api/archives/changeDescriptorName](http://10.0.160.147:8000/api/archives/changeDescriptorName)
+    - POST: Change the name of the matched descriptors in all archives matched by the archive category (body contains *category*, *previousName* and *newName*) **(user must be master)**
 13. [/api/archives/withoutArchive](http://10.0.160.147:8000/api/archives/withoutArchive)
     - GET: Returns the list of all archives that are missing in the folder "archives" (to delete them)
 14. [/api/archives/YAMLformat/id/:id](http://10.0.160.147:8000/api/archives/YAMLformat/id/:id)
@@ -300,8 +300,8 @@ Find all the information about it in the dedicated repository: [lib-python-astr]
     - DELETE: Delete the archive category with the associated ID **(user must be master)**
 3. [/api/categories/name/:name](http://10.0.160.147:8000/api/categories/name/CAMERA)
     - GET: Returns the archive category with the associated name
-4. [/api/categories/options/:category/:configName](http://10.0.160.147:8000/api/categories/options/WIFI/robot_type)
-    - GET: Returns the options of a configuration
+4. [/api/categories/options/:category/:descriptorName](http://10.0.160.147:8000/api/categories/options/WIFI/robot_type)
+    - GET: Returns the options of a descriptor
 5. [/api/categories/links/:category](http://10.0.160.147:8000/api/categories/links/:category)
     - GET: Returns the links of an archive category
 

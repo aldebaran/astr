@@ -20,7 +20,7 @@ var ArchiveSchema = new Schema({
     required: true,
     trim: true,
   },
-  configuration: [{
+  descriptors: [{
     name: {type: String, lowercase: true, trim: true},
     value: {type: String, uppercase: true, trim: true},
   }],

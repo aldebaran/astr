@@ -129,7 +129,7 @@ exports.addArchive = (req, res) => {
       newArchive.created = Date.now();
       newArchive.lastModification = Date.now();
       newArchive.date = new Date(newArchive.date);
-      // check if the archive category exists and if all configuration are given
+      // check if the archive category exists and if all descriptors are given
       request.get({
         url: 'http://localhost:' + req.connection.localPort + '/api/categories/name/' + newArchive.category,
         json: true,
@@ -139,23 +139,23 @@ exports.addArchive = (req, res) => {
         } else if (archiveCategory.name === 'Failed') {
           res.send(archiveCategory);
         } else {
-          allCategoryConfigurationsAreInArchive(newArchive, archiveCategory)
-          .then((allCategoryConfigurationsAreInArchive) => {
-            if (allCategoryConfigurationsAreInArchive) {
+          allDescriptorsAreInArchive(newArchive, archiveCategory)
+          .then((allDescriptorsAreInArchive) => {
+            if (allDescriptorsAreInArchive) {
               newArchive.archiveCategoryId = archiveCategory._id;
-              // delete configs that are not in the archive category
-              var categoryConfigNames = [];
-              archiveCategory.configuration.forEach(function(categoryConfig, idx) {
-                categoryConfigNames.push(categoryConfig.name);
-                if (idx === archiveCategory.configuration.length - 1) {
-                  newArchive.configuration = newArchive.configuration.filter(
-                    (config) => categoryConfigNames.includes(config.name)
+              // delete descriptors that are not in the archive category
+              var descriptorsNames = [];
+              archiveCategory.descriptors.forEach(function(descriptor, idx) {
+                descriptorsNames.push(descriptor.name);
+                if (idx === archiveCategory.descriptors.length - 1) {
+                  newArchive.descriptors = newArchive.descriptors.filter(
+                    (desc) => descriptorsNames.includes(desc.name)
                   );
                 }
               });
 
-              // sort configuration by name
-              newArchive.configuration.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );
+              // sort descriptors by name
+              newArchive.descriptors.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );
 
               // save the archive in the database
               newArchive.save((err, data) => {
@@ -170,12 +170,12 @@ exports.addArchive = (req, res) => {
                 }
               });
             } else {
-              missingConfigs(newArchive, archiveCategory)
-              .then((missingConfigs) => {
+              missingDescriptors(newArchive, archiveCategory)
+              .then((missingDescriptors) => {
                 res.send({
                   name: 'Failed',
-                  message: 'The archive must include all configurations of the archive category',
-                  missing_configurations: missingConfigs,
+                  message: 'The archive must include all descriptors of the archive category',
+                  missing_descriptors: missingDescriptors,
                 });
               });
             }
@@ -229,9 +229,9 @@ exports.getArchiveInYAMLFormat = (req, res) => {
         if (data.comments) {
           txt += 'comments: ' + data.comments + '\n';
         }
-        txt += 'configurations:\n';
-        data.configuration.forEach(function(config) {
-          txt += '  ' + config.name + ': ' + config.value + '\n';
+        txt += 'descriptors:\n';
+        data.descriptors.forEach(function(descriptor) {
+          txt += '  ' + descriptor.name + ': ' + descriptor.value + '\n';
         });
         res.send(txt);
       }
@@ -239,7 +239,7 @@ exports.getArchiveInYAMLFormat = (req, res) => {
   });
 };
 
-// POST: Update the archive with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated)
+// POST: Update the archive with the associated ID in function of the parameters given in the body request (only the date, the comments, and the descriptors values can be updated)
 // "newZip" in body request is "true" if the zip is being replaced with "api/upload/replace-zip"
 exports.updateArchive = (req, res) => {
   User.hasAuthorization(req, ['master', 'owner'])
@@ -267,11 +267,11 @@ exports.updateArchive = (req, res) => {
             if (body.comments) {
               archive.comments = body.comments;
             }
-            if (body.configuration && body.configuration.length > 0) {
-              body.configuration.forEach(function(newConfig) {
-                archive.configuration.forEach(function(currentConfig) {
-                  if (newConfig.name === currentConfig.name) {
-                    currentConfig.value = newConfig.value;
+            if (body.descriptors && body.descriptors.length > 0) {
+              body.descriptors.forEach(function(newDescriptor) {
+                archive.descriptors.forEach(function(currentDescriptor) {
+                  if (newDescriptor.name === currentDescriptor.name) {
+                    currentDescriptor.value = newDescriptor.value;
                   }
                 });
               });
@@ -427,9 +427,9 @@ exports.getDistinctCategories = (req, res) => {
   });
 };
 
-// GET: Returns the list of configurations (used at least by one archive)
-exports.getDistinctConfigurations = (req, res) => {
-  Archive.distinct('configuration.name', {}, (err, data) => {
+// GET: Returns the list of descriptors (used at least by one archive)
+exports.getDistinctDescriptors = (req, res) => {
+  Archive.distinct('descriptors.name', {}, (err, data) => {
     if (err) {
       res.send(err);
     } else {
@@ -438,10 +438,10 @@ exports.getDistinctConfigurations = (req, res) => {
   });
 };
 
-// GET: Returns the list of configurations of the associated archive category (used at least by one archive)
-exports.getConfigurationsOfArchiveCategory = (req, res) => {
+// GET: Returns the list of descriptors of the associated archive category (used at least by one archive)
+exports.getDescriptorsOfArchiveCategory = (req, res) => {
   var category = req.params.category;
-  Archive.distinct('configuration.name', {category: category}, (err, data) => {
+  Archive.distinct('descriptors.name', {category: category}, (err, data) => {
     if (err) {
       res.send(err);
     } else {
@@ -450,13 +450,13 @@ exports.getConfigurationsOfArchiveCategory = (req, res) => {
   });
 };
 
-// GET: Returns the  options of the associated configuration (used at least one time)
-exports.getOptionsOfConfig = (req, res) => {
-  var configName = req.params.configname;
+// GET: Returns the  options of the associated descriptor (used at least one time)
+exports.getOptionsOfDescriptor = (req, res) => {
+  var descriptorName = req.params.descriptorName;
   Archive.aggregate([
-    {'$unwind': '$configuration'},
-    {'$match': {'configuration.name': configName}},
-    {'$group': {'_id': null, 'values': {'$addToSet': '$configuration.value'}}},
+    {'$unwind': '$descriptors'},
+    {'$match': {'descriptors.name': descriptorName}},
+    {'$group': {'_id': null, 'values': {'$addToSet': '$descriptors.value'}}},
     {'$project': {'values': true, '_id': false}},
   ])
   .exec((err, data) => {
@@ -492,14 +492,14 @@ exports.changeArchiveCategoryName = (req, res) => {
   });
 };
 
-// POST: Push a new configuration in all archives matched by the archive category (body contains category and config: {name, value})
-exports.addConfig = (req, res) => {
+// POST: Push a new descriptor in all archives matched by the archive category (body contains category and descriptor: {name, value})
+exports.addDescriptor = (req, res) => {
   User.hasAuthorization(req, ['master'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
-      var config = req.body.config;
+      var descriptor = req.body.descriptor;
       var category = req.body.category;
-      Archive.update({'category': category}, {'$push': {'configuration': config}}, {multi: true}, (err, data) => {
+      Archive.update({'category': category}, {'$push': {'descriptors': descriptor}}, {multi: true}, (err, data) => {
         if (err) {
           res.send(err);
         } else {
@@ -512,15 +512,15 @@ exports.addConfig = (req, res) => {
   });
 };
 
-// POST: Change the name of the matched configuration in all archives matched by the archive category (body contains category, previousName and newName)
-exports.changeConfigName = (req, res) => {
+// POST: Change the name of the matched descriptors in all archives matched by the archive category (body contains category, previousName and newName)
+exports.changeDescriptorName = (req, res) => {
   User.hasAuthorization(req, ['master'])
   .then((hasAuthorization) => {
     if (hasAuthorization) {
       var previousName = req.body.previousName;
       var newName = req.body.newName;
       var category = req.body.category;
-      Archive.update({'category': category, 'configuration.name': previousName}, {'$set': {'configuration.$.name': newName}}, {multi: true}, (err, data) => {
+      Archive.update({'category': category, 'descriptors.name': previousName}, {'$set': {'descriptors.$.name': newName}}, {multi: true}, (err, data) => {
         if (err) {
           res.send(err);
         } else {
@@ -595,21 +595,21 @@ function checkIfZipPresent(req) {
 }
 
 /**
- * Verify that all the configurations of an archive category are in the new archive
+ * Verify that all the descriptors of an archive category are in the new archive
  * @param {object} newArchive
  * @param {object} archiveCategory
  * @return {Promise.<Boolean>}
  */
-function allCategoryConfigurationsAreInArchive(newArchive, archiveCategory) {
+function allDescriptorsAreInArchive(newArchive, archiveCategory) {
   return new Promise((resolve) => {
-    var archiveConfigNames = [];
-    newArchive.configuration.forEach(function(archiveConfig, idx) {
-      archiveConfigNames.push(archiveConfig.name);
-      if (idx === newArchive.configuration.length - 1) {
-        archiveCategory.configuration.forEach(function(categoryConfig, index) {
-          if (!archiveConfigNames.includes(categoryConfig.name)) {
+    var archiveDescriptorsNames = [];
+    newArchive.descriptors.forEach(function(archiveDescriptor, idx) {
+      archiveDescriptorsNames.push(archiveDescriptor.name);
+      if (idx === newArchive.descriptors.length - 1) {
+        archiveCategory.descriptors.forEach(function(descriptor, index) {
+          if (!archiveDescriptorsNames.includes(descriptor.name)) {
             resolve(false);
-          } else if (index === archiveCategory.configuration.length - 1) {
+          } else if (index === archiveCategory.descriptors.length - 1) {
             resolve(true);
           }
         });
@@ -619,23 +619,23 @@ function allCategoryConfigurationsAreInArchive(newArchive, archiveCategory) {
 }
 
 /**
- * Get all the missing configuration of an archive
+ * Get all the missing descriptors of an archive
  * @param {object} newArchive
  * @param {object} archiveCategory
  * @return {Promise.<Array.<String>>}
  */
-function missingConfigs(newArchive, archiveCategory) {
+function missingDescriptors(newArchive, archiveCategory) {
   return new Promise((resolve) => {
     var res = [];
-    var archiveConfigNames = [];
-    newArchive.configuration.forEach(function(archiveConfig, idx) {
-      archiveConfigNames.push(archiveConfig.name);
-      if (idx === newArchive.configuration.length - 1) {
-        archiveCategory.configuration.forEach(function(categoryConfig, index) {
-          if (!archiveConfigNames.includes(categoryConfig.name)) {
-            res.push(categoryConfig.name);
+    var archiveDescriptorsNames = [];
+    newArchive.descriptors.forEach(function(archiveDescriptor, idx) {
+      archiveDescriptorsNames.push(archiveDescriptor.name);
+      if (idx === newArchive.descriptors.length - 1) {
+        archiveCategory.descriptors.forEach(function(descriptor, index) {
+          if (!archiveDescriptorsNames.includes(descriptor.name)) {
+            res.push(descriptor.name);
           }
-          if (index === archiveCategory.configuration.length - 1) {
+          if (index === archiveCategory.descriptors.length - 1) {
             resolve(res);
           }
         });
