@@ -3,15 +3,6 @@
 ### Archives ###
 archives
 
-### Python ###
-__pycache__/
-*.pyc
-libastr.egg-info
-.idea/
-tests/
-script.py
-test-client.py
-
 ### DotSettings ###
 *.DotSettings
 

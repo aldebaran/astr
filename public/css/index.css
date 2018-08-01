@@ -494,7 +494,7 @@ progress:after { content: '%'; }
   max-width: 40rem;
 }
 
-.card-body.tests {
+.card-body.archives {
   height: 10em;
   overflow: auto;
 }
@@ -530,7 +530,7 @@ span.value {
   color: #0db1e2;
 }
 
-li.config {
+li.descriptor {
   color: #fc6914;
   font-weight: 500;
   list-style-type: none;
@@ -556,7 +556,7 @@ li.config {
 	background-color: rgba(0,0,0,0.1);
 }
 
-#formConfig {
+#formDescriptor {
   margin-top: 1em;
 }
 
@@ -570,19 +570,24 @@ a.download-button {
   margin-right: 5px;
 }
 
+a.download-button-lock {
+  float: right;
+  margin-right: 5px;
+}
+
 .fa-download {
   color: white;
 }
 
-#config {
+#descriptors {
   margin-top: 2em;
 }
 
-#config .form-group {
+#descriptors .form-group {
   padding-bottom: 1em;
 }
 
-#config label {
+#descriptors label {
   font-weight: bold;
   color: green;
 }
@@ -619,7 +624,7 @@ a.download-button {
   overflow-x: hidden;
 }
 
-#deleteConfig {
+#deleteDescriptor {
   margin-left: -1em;
 }
 
@@ -676,11 +681,11 @@ a.download-button {
   margin-bottom: 1em;
 }
 
-.inputConfigEdit {
+.inputDescriptorEdit {
   margin-top: 1em;
 }
 
-.row.config {
+.row.descriptor {
   padding-top: 1em;
   padding-bottom: 1em;
 }
@@ -724,7 +729,7 @@ span.text-muted {
   cursor: pointer;
 }
 
-#buttonUpdateArchiveContent {
+#buttonUpdateArchive {
   margin-bottom: 1em;
 }
 
@@ -741,4 +746,12 @@ span.text-muted {
 
 .graphs {
   margin-top: 3em;
+}
+
+#buttonCustomName {
+  margin-left: 1em;
+}
+
+#cardExisitingCategory .card {
+  margin-top: 2em;
 }

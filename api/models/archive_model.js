@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var TestSchema = new Schema({
-  type: {
+var ArchiveSchema = new Schema({
+  category: {
     type: String,
     unique: false,
     required: true,
@@ -20,7 +20,7 @@ var TestSchema = new Schema({
     required: true,
     trim: true,
   },
-  configuration: [{
+  descriptors: [{
     name: {type: String, lowercase: true, trim: true},
     value: {type: String, uppercase: true, trim: true},
   }],
@@ -40,20 +40,20 @@ var TestSchema = new Schema({
     default: Date.Now,
     required: true,
   },
-  archive: {
+  isZipPresent: {
     type: Boolean,
     required: false,
   },
-  archiveContent: {
-    type: [String],
-    require: false,
-    default: ['Please wait, the archive is being zipped...'],
+  isDownloadable: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
-  testSubjectId: {
+  archiveCategoryId: {
     type: String,
     unique: false,
     required: true,
   },
 });
 
-module.exports = mongoose.model('Test', TestSchema);
+module.exports = mongoose.model('Archive', ArchiveSchema);

@@ -8,13 +8,13 @@ var SearchSchema = new Schema({
     required: true,
     trim: true,
   },
-  testAuthor: {
+  archiveAuthor: {
     type: String,
     unique: false,
     required: false,
     trim: true,
   },
-  testSubjectName: {
+  archiveCategory: {
     type: String,
     unique: false,
     required: false,
@@ -32,7 +32,7 @@ var SearchSchema = new Schema({
     unique: false,
     required: false,
   },
-  configuration: [{
+  descriptors: [{
     name: {type: String, lowercase: true, trim: true},
     value: {type: String, uppercase: true, trim: true},
   }],

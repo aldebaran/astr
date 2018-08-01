@@ -3561,16 +3561,29 @@
 
       myDropzone.on('addedfile', function(file) {
         if (file.upload.total < this.options.maxFilesize * 1024 * 1024) {
-          $('#isFileUploaded').val('true');
+          // check if filename already exists
+          if (this.files.length > 1) {
+            for (var i = 0; i < this.files.length - 1; i++) { // -1 to exclude current file
+              if (this.files[i].name == file.name) {
+                showModal('Error', 'You are trying to upload files with the same name: <strong>' + file.name + '</strong><br><br>Please rename your files before uploading them. Otherwise, the archive will have name conflicts.');
+                $('#isFileUploaded').val('false');
+                this.removeAllFiles(true);
+              } else if (i === this.files.length - 2) {
+                $('#isFileUploaded').val('true');
+              }
+            }
+          } else {
+            $('#isFileUploaded').val('true');
+          }
         } else {
-          showModal('Error', 'This file is too big.<br>Max size: ' + this.options.maxFilesize + 'MB');
+          showModal('Error', '<strong>' + file.name + '</strong> is too big (' + formatBytes(file.size) + ').<br>Max size: ' + this.options.maxFilesize + ' MB');
           this.removeFile(file);
         }
       });
 
       myDropzone.on('sending', function(file, xhr, formData) {
         // put the test ID in the body request to modify to filename later with the API
-        formData.set('testId', $('#testId').html());
+        formData.set('archiveId', $('#archiveId').html());
         formData.append('files', file.name);
         $('.scroll-to-top').trigger('click');
         setTimeout(function() {
@@ -3604,7 +3617,7 @@
           showModal('Uploading', '<div class="loader"></div><div class="small text-muted text-center">You will be redirected...</div>');
           setTimeout(function() {
             window.onbeforeunload = null;
-            location.href = 'test-add.html?result=success';
+            location.href = 'upload-archive.html?result=success';
           }, 1000);
         }
       });
@@ -3613,7 +3626,7 @@
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0 && file.status !== 'error') {
           setTimeout(function() {
             window.onbeforeunload = null;
-            location.href = 'test-add.html?result=success';
+            location.href = 'upload-archive.html?result=success';
           }, 500);
         }
       });
@@ -3622,8 +3635,8 @@
         e.preventDefault();
         // wait 200ms to make sure the test is pushed in the DB
         setTimeout(function() {
-          if ($('#isFileUploaded').val() === 'true' && $('#testId').html().trim() !== '') {
-            $('#cardAddNewTest form').children().wrapAll('<fieldset disabled></fieldset>');
+          if ($('#isFileUploaded').val() === 'true' && $('#archiveId').html().trim() !== '') {
+            $('#cardAddNewArchive form').children().wrapAll('<fieldset disabled></fieldset>');
             myDropzone.processQueue(); // Tell Dropzone to process all queued files.
           }
         }, 200);
@@ -3671,4 +3684,6 @@
     $('#myModal .modal-body').html('<p>' + message + '<p>');
     $('#myModal').modal('show');
   }
+
+  function formatBytes(a,b){if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]}
 })(jQuery);

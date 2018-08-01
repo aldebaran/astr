@@ -9,7 +9,7 @@ var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and yo
 exports.getAllUsers = (req, res) => {
   User.find({}, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -20,7 +20,7 @@ exports.getAllUsers = (req, res) => {
 exports.getAllMasters = (req, res) => {
   User.find({master: true}, {password: 0, tokens: 0}, (err, data) => {
     if (err) {
-      res.send(err);
+      res.status(500).send(err);
     } else {
       res.json(data);
     }
@@ -104,7 +104,7 @@ exports.deleteUser = (req, res) => {
       const id = req.params.id;
       User.findByIdAndRemove(id, {password: 0, tokens: 0}, (err, data) => {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         }
         if (data === null) {
           res.status(404).json({
@@ -152,7 +152,7 @@ exports.AddUserAndLogin = (req, res, next) => {
         req.session.userId = user._id;
         // create a new session-token
         request.get({
-            url: 'http://localhost:8000/api/user/newToken/session',
+            url: 'http://localhost:' + req.connection.localPort + '/api/user/newToken/session',
             json: true,
             body: {
               userId: user._id,
@@ -179,7 +179,7 @@ exports.AddUserAndLogin = (req, res, next) => {
 
         // create a new session-token
         request.get({
-            url: 'http://localhost:8000/api/user/newToken/session/session',
+            url: 'http://localhost:' + req.connection.localPort + '/api/user/newToken/session/session',
             json: true,
             body: {
               userId: user._id,
@@ -213,7 +213,7 @@ exports.getProfile = (req, res, next) => {
           });
         } else {
           return res.json({
-            id: user['_id'],
+            id: user._id,
             name: user.firstname + ' ' + user.lastname,
             email: user.email,
             write_permission: user.write_permission,

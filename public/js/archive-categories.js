@@ -2,28 +2,28 @@
   'use strict';
 
   if (!isMaster()) {
-    showModal('Information', 'Welcome on the Test Subject page !<br><br>Since you are not a Master, you won\'t be able to modify or create new test subjects. But you can still take a look at the existing subjects.');
+    showModal('Information', 'Welcome on the Archive Category page !<br><br>Since you are not a Master, you won\'t be able to modify or create new archive categories. But you can still take a look at the existing categories.');
   }
 
-  // Create a new test subject
-  $('#buttonMoreConfig').click(function() {
-    // check if the last configuration row is not empty
-    if ($('.inputConfigName:last').val().trim() !== '') {
-      $('#formConfig').append('' +
+  // Create a new archive category
+  $('#buttonMoreDescriptor').click(function() {
+    // check if the last descriptor row is not empty
+    if ($('.inputDescriptorName:last').val().trim() !== '') {
+      $('#formDescriptor').append('' +
       '<div class="form-group">' +
-        '<div class="row config border-bottom">' +
+        '<div class="row descriptor border-bottom">' +
           '<div class="col">' +
-            '<label id="labelConfigName">Configuration name</label>' +
-            '<input type="text" class="form-control inputConfigName" placeholder="Enter the configuration name">' +
+            '<label id="labelDescriptorName">Descriptor name</label>' +
+            '<input type="text" class="form-control inputDescriptorName" placeholder="Enter the descriptor name">' +
             '<div class="makeLinkDisabled">' +
               '<button type="button" class="btn btn-outline-primary" id="buttonMakeLink"><i class="fa fa-link"></i> Link</button>' +
               '<small class="form-text text-muted infoLink">' +
-                '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this configuration into a link.<br>' +
-                'Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>' +
+                '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>' +
+                'Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>' +
                 '<strong>Example</strong><br>' +
-                'Configuration name: <i>Issue ID</i><br>' +
+                'Descriptor name: <i>Issue ID</i><br>' +
                 'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
-                'Configuration value: <i>42305</i><br>' +
+                'Descriptor value: <i>42305</i><br>' +
                 'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
                 '<i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don\'t forget the &quot;/&quot; at the end of the base URL.">' +
                 '</i>' +
@@ -50,91 +50,91 @@
       '</div>');
       $('[data-toggle="tooltip"]').tooltip();
     } else {
-      showModal('Warning', 'Fulfill the actual configuration input to add another.');
+      showModal('Warning', 'Fulfill the current descriptor input to add another.');
     }
   });
 
-  $('#formConfig').on('click', '#buttonMoreOption', function() {
+  $('#formDescriptor').on('click', '#buttonMoreOption', function() {
     // check if the last option row is not empty
     if ($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOption" type="text" placeholder="Enter an option">').insertBefore(this);
     } else {
-      showModal('Warning', 'Fulfill the actual option to add another.');
+      showModal('Warning', 'Fulfill the current option to add another.');
     }
   });
 
-  $('#formConfig').on('click', '#buttonMakeLink', function() {
+  $('#formDescriptor').on('click', '#buttonMakeLink', function() {
     $(this).closest('div').hide();
     $(this).closest('div').next().show();
   });
 
-  $('#formConfig').on('click', '#deleteLink', function() {
+  $('#formDescriptor').on('click', '#deleteLink', function() {
     $(this).closest('.makeLinkEnabled').hide();
     $(this).closest('.makeLinkEnabled').prev().show();
   });
 
-  // modify test subject name
+  // modify category name
   $('#inputName').change(function() {
     var name = $(this).val().trim().toUpperCase().replace(/\s+/g, ' ');
     $(this).val(name);
   });
 
-  // modify the configuration name
-  $('#submitNewSubject').on('change', '.inputConfigName', function() {
+  // modify the descriptor name
+  $('#submitNewCategory').on('change', '.inputDescriptorName', function() {
     var name = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
     $(this).val(name);
   });
 
   // modify option name on change
-  $('#submitNewSubject').on('change', '.inputOption', function() {
+  $('#submitNewCategory').on('change', '.inputOption', function() {
     var name = $(this).val().trim().toUpperCase().replace(/\s+/g, ' ');
     $(this).val(name);
   });
 
-  $('#submitNewSubject').submit(function(e) {
+  $('#submitNewCategory').submit(function(e) {
     e.preventDefault();
 
     // if the user is logged and is master
     if (isConnected() && isMaster()) {
-      var r = confirm('Please confirm that you want to add this new test subject.');
+      var r = confirm('Please confirm that you want to add this new archive category.');
       if (r === true) {
-        var subject = {
+        var category = {
           name: $('#inputName').val().trim().replace(/\s+/g, ' '),
           author: getUserName(),
-          configuration: [],
+          descriptors: [],
         };
-        $('.inputConfigName').each(function() {
-          var configName = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
+        $('.inputDescriptorName').each(function() {
+          var descriptorName = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
           var options = [];
           $(this).closest('.row').find('.inputOption').each(function() {
             if ($(this).val().trim() !== '') {
               options.push($(this).val().trim().toUpperCase().replace(/\s+/g, ' '));
             }
           });
-          if (configName !== '') {
+          if (descriptorName !== '') {
             if ($(this).siblings('.makeLinkEnabled').is(':visible') && $(this).siblings('.makeLinkEnabled').find('.inputUrlBase').val().trim() !== '') {
-              // configuration with link
-              subject.configuration.push({
-                name: configName,
+              // descriptor with link
+              category.descriptors.push({
+                name: descriptorName,
                 options: options,
                 baseUrl: $(this).siblings('.makeLinkEnabled').find('.inputUrlBase').val().trim(),
               });
             } else {
-              // simple configuration
-              subject.configuration.push({
-                name: configName,
+              // simple descriptor
+              category.descriptors.push({
+                name: descriptorName,
                 options: options,
               });
             }
           }
         });
 
-        // send the new subject
+        // send the new category
         $.ajax({
           method: 'POST',
-          url: 'api/test-subjects',
+          url: 'api/categories',
           headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
-          data: subject,
+          data: category,
           success: function() {
             location.reload();
           },
@@ -142,57 +142,57 @@
       }
     } else if (isConnected()) {
       // if the user is logged but without permission
-      showModal('Error', 'Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.<br><br>Admins:<br>' + getMasterList().replace(/\n/g, '<br>'));
+      showModal('Error', 'Sorry, you don\'t have the authorization to create new archive categories. Please contact an admin to modify your privileges.<br><br>Admins:<br>' + getMasterList().replace(/\n/g, '<br>'));
     } else {
       // if the user isn't logged
-      showModal('Error', 'Please log in to add a new test subject !');
+      showModal('Error', 'Please log in to create a new archive category !');
     }
   });
 
 
-  // Existing subjects
-  $.get('api/test-subjects', function(subjects) {
-    subjects.forEach(function(subject) {
-      $('#selectSubject').append('<option value="' + subject['_id'] + '">' + subject.name + '</option>');
+  // Existing categories
+  $.get('api/categories', function(categories) {
+    categories.forEach(function(category) {
+      $('#selectCategory').append('<option value="' + category._id + '">' + category.name + '</option>');
     });
   });
 
-  $('#selectSubject').change(function() {
-    if ($('#selectSubject').val() !== 'default') {
-      $.get('api/test-subjects/id/' + $('#selectSubject').val(), function(data) {
-        $('#infoSubject').attr('val', data['_id']);
-        $('#infoSubject').html('' +
+  $('#selectCategory').change(function() {
+    if ($('#selectCategory').val() !== 'default') {
+      $.get('api/categories/id/' + $('#selectCategory').val(), function(data) {
+        $('#infoCategory').attr('val', data._id);
+        $('#infoCategory').html('' +
         '<span class="key"> Name: </span><span class="value">' + data.name + '</span><br>' +
-        '<span class="key"> Author: </span><span class="value" id="subjectAuthor">' + data.author + '</span><br>' +
+        '<span class="key"> Author: </span><span class="value" id="categoryAuthor">' + data.author + '</span><br>' +
         '<span class="key"> Created: </span><span class="value">' + new Date(data.created).toLocaleDateString() + '</span><br>' +
-        '<span class="key"> Configuration</span><br>');
-        data.configuration.forEach(function(config) {
-          if (config.options.length > 0 && config.baseUrl) {
-            $('#infoSubject').append('<li class="config"><span><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + '</span><span class="value"> <a href="' + config.baseUrl + '">(' + config.baseUrl + '[:' + config.name + '])</a> [' + config.options.join(', ') + ']' + '</span></li>');
-          } else if (config.options.length > 0) {
-            $('#infoSubject').append('<li class="config"><span>' + config.name + '</span><span class="value"> [' + config.options.join(', ') + ']' + '</span></li>');
-          } else if (config.baseUrl) {
-            $('#infoSubject').append('<li class="config"><span><i class="fa fa-link" aria-hidden="true"></i> ' + config.name + '</span><span class="value"> <a href="' + config.baseUrl + '">(' + config.baseUrl + '[:' + config.name + '])</a></span></li>');
+        '<span class="key"> Descriptors</span><br>');
+        data.descriptors.forEach(function(descriptor) {
+          if (descriptor.options.length > 0 && descriptor.baseUrl) {
+            $('#infoCategory').append('<li class="descriptor"><span><i class="fa fa-link" aria-hidden="true"></i> ' + descriptor.name + '</span><span class="value"> <a href="' + descriptor.baseUrl + '">(' + descriptor.baseUrl + '[:' + descriptor.name + '])</a> [' + descriptor.options.join(', ') + ']' + '</span></li>');
+          } else if (descriptor.options.length > 0) {
+            $('#infoCategory').append('<li class="descriptor"><span>' + descriptor.name + '</span><span class="value"> [' + descriptor.options.join(', ') + ']' + '</span></li>');
+          } else if (descriptor.baseUrl) {
+            $('#infoCategory').append('<li class="descriptor"><span><i class="fa fa-link" aria-hidden="true"></i> ' + descriptor.name + '</span><span class="value"> <a href="' + descriptor.baseUrl + '">(' + descriptor.baseUrl + '[:' + descriptor.name + '])</a></span></li>');
           } else {
-            $('#infoSubject').append('<li class="config"><span>' + config.name + '</span></li>');
+            $('#infoCategory').append('<li class="descriptor"><span>' + descriptor.name + '</span></li>');
           }
         });
 
-        // master can delete and edit the subject
+        // master can delete and edit the category
         if (isMaster()) {
-          $('#infoSubject').append('' +
+          $('#infoCategory').append('' +
             '<div class="button-footer">' +
-              '<button type="button" class="btn btn-danger admin-user" id="deleteTestSubject"><i class="fa fa-times" aria-hidden="true"></i> Delete</button>' +
-              '<button type="button" class="btn btn-info admin-user" id="editTestSubject" data-toggle="modal" data-target="#modalEdit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>' +
+              '<button type="button" class="btn btn-danger admin-user" id="deleteArchiveCategory"><i class="fa fa-times" aria-hidden="true"></i> Delete</button>' +
+              '<button type="button" class="btn btn-info admin-user" id="editArchiveCategory" data-toggle="modal" data-target="#modalEdit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>' +
             '</div>'
           );
 
-          $('#deleteTestSubject').click(function() {
-            var r = confirm('Please confirm that you want to delete this test subject.');
+          $('#deleteArchiveCategory').click(function() {
+            var r = confirm('Please confirm that you want to delete this archive category.');
             if (r === true) {
               $.ajax({
                 type: 'DELETE',
-                url: 'api/test-subjects/id/' + $(this).closest('#infoSubject').attr('val'),
+                url: 'api/categories/id/' + $(this).closest('#infoCategory').attr('val'),
                 headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
                 success: function() {
                   location.reload();
@@ -203,35 +203,35 @@
         }
       });
     } else {
-      $('#infoSubject').html('');
+      $('#infoCategory').html('');
     }
   });
 
-  // Edit test subject
-  $('#cardExistingSubject').on('click', '#editTestSubject', function() {
-    $.get('api/test-subjects/id/' + $(this).closest('.card-body').find('#selectSubject').val(), function(subject) {
+  // Edit archive category
+  $('#cardExisitingCategory').on('click', '#editArchiveCategory', function() {
+    $.get('api/categories/id/' + $(this).closest('.card-body').find('#selectCategory').val(), function(category) {
       $('#modalEdit .modal-body').html('' +
       '<div class="form-group">' +
         '<label for="inputNameEdit">Name</label>' +
-        '<input type="text" id="inputNameEdit" class="form-control" value="' + subject.name + '" required>' +
+        '<input type="text" id="inputNameEdit" class="form-control" value="' + category.name + '" required>' +
       '</div>'
       );
-      subject.configuration.forEach(function(config) {
+      category.descriptors.forEach(function(descriptor) {
         $('#modalEdit .modal-body').append('' +
         '<div class="form-group">' +
-          '<div class="row config border-top">' +
+          '<div class="row descriptor border-top">' +
             '<div class="col">' +
-              '<label id="labelConfigNameEdit">Configuration name</label>' +
-              '<input type="text" class="form-control inputConfigNameEdit" value="' + config.name + '" previousname="' + config.name + '" required>' +
+              '<label id="labelDescriptorNameEdit">Descriptor name</label>' +
+              '<input type="text" class="form-control inputDescriptorNameEdit" value="' + descriptor.name + '" previousname="' + descriptor.name + '" required>' +
               '<div class="makeLinkDisabledEdit">' +
                 '<button type="button" class="btn btn-outline-primary" id="buttonMakeLinkEdit"><i class="fa fa-link"></i> Link</button>' +
                 '<small class="form-text text-muted infoLink">' +
-                  '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this configuration into a link.<br>' +
-                  'Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>' +
+                  '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>' +
+                  'Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>' +
                   '<strong>Example</strong><br>' +
-                  'Configuration name: <i>Issue ID</i><br>' +
+                  'Descriptor name: <i>Issue ID</i><br>' +
                   'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
-                  'Configuration value: <i>42305</i><br>' +
+                  'Descriptor value: <i>42305</i><br>' +
                   'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
                   '<i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don\'t forget the &quot;/&quot; at the end of the base URL.">' +
                   '</i>' +
@@ -249,7 +249,7 @@
               '</div>' +
             '</div>' +
             '<div class="col">' +
-              '<label id="label' + config.name + '">Options</label>' +
+              '<label id="label' + descriptor.name + '">Options</label>' +
               '<button type="button" class="btn btn-outline-primary" id="buttonMoreOptionEdit"><i class="fa fa-plus-circle"></i> Option</button>' +
             '</div>' +
           '</div>' +
@@ -257,7 +257,7 @@
             '<div class="col">' +
             '</div>' +
             '<div class="col">' +
-              '<button type="button" class="btn btn-outline-danger float-right" id="deleteConfig"><i class="fa fa-times" aria-hidden="true"></i> Delete this configuration</button>' +
+              '<button type="button" class="btn btn-outline-danger float-right" id="deleteDescriptor"><i class="fa fa-times" aria-hidden="true"></i> Delete this descriptor</button>' +
             '</div>' +
           '</div>' +
         '</div>');
@@ -265,39 +265,39 @@
         $('[data-toggle="tooltip"]').tooltip();
 
         // exisiting options
-        if (config.options.length > 0) {
-          config.options.forEach(function(option) {
-            $('<input class="form-control inputOptionEdit" type="text" value="' + option + '">').insertAfter('#label'+config.name);
+        if (descriptor.options.length > 0) {
+          descriptor.options.forEach(function(option) {
+            $('<input class="form-control inputOptionEdit" type="text" value="' + option + '">').insertAfter('#label'+descriptor.name);
           });
         } else {
-          $('<input class="form-control inputOptionEdit" type="text" value="">').insertAfter('#label'+config.name);
+          $('<input class="form-control inputOptionEdit" type="text" value="">').insertAfter('#label'+descriptor.name);
         }
 
         // exisiting links
-        if (config.baseUrl) {
-          $('.inputConfigNameEdit').each(function() {
-            if ($(this).val() === config.name) {
+        if (descriptor.baseUrl) {
+          $('.inputDescriptorNameEdit').each(function() {
+            if ($(this).val() === descriptor.name) {
               $(this).siblings('.makeLinkDisabledEdit').find('#buttonMakeLinkEdit').trigger('click');
-              $(this).siblings('.makeLinkEnabledEdit').find('.inputUrlBaseEdit').val(config.baseUrl);
+              $(this).siblings('.makeLinkEnabledEdit').find('.inputUrlBaseEdit').val(descriptor.baseUrl);
             }
           });
         }
       });
 
-      // button to add a new config
-      $('<button type="button" class="btn btn-outline-primary" id="buttonMoreConfigEdit"><i class="fa fa-plus-circle"></i> Configuration</button>').insertAfter('#modalEdit .modal-body .form-group:last');
+      // button to add a new descriptor
+      $('<button type="button" class="btn btn-outline-primary" id="buttonMoreDescriptorEdit"><i class="fa fa-plus-circle"></i> Descriptor</button>').insertAfter('#modalEdit .modal-body .form-group:last');
     });
   });
 
-  // modal button listener (new config)
-  $('#modalEdit .modal-body').on('click', '#buttonMoreConfigEdit', function() {
-    if (!$(this).parent().find('.form-group:last').find('.inputConfigNameEdit').length > 0 || $(this).parent().find('.form-group:last').find('.inputConfigNameEdit').val().trim() !== '') {
+  // modal button listener (new descriptor)
+  $('#modalEdit .modal-body').on('click', '#buttonMoreDescriptorEdit', function() {
+    if (!$(this).parent().find('.form-group:last').find('.inputDescriptorNameEdit').length > 0 || $(this).parent().find('.form-group:last').find('.inputDescriptorNameEdit').val().trim() !== '') {
       $('' +
       '<div class="form-group">' +
-        '<div class="row config border-bottom">' +
+        '<div class="row descriptor border-bottom">' +
           '<div class="col">' +
-            '<label id="labelConfigNameEdit">Configuration name</label>' +
-            '<input type="text" class="form-control inputConfigNameEdit newConfig" placeholder="Enter the name">' +
+            '<label id="labelDescriptorNameEdit">Descriptor name</label>' +
+            '<input type="text" class="form-control inputDescriptorNameEdit newDescriptor" placeholder="Enter the name">' +
             '<div class="makeLinkDisabledEdit">' +
               '<button type="button" class="btn btn-outline-primary" id="buttonMakeLinkEdit"><i class="fa fa-link"></i> Link</button>' +
             '</div>' +
@@ -318,9 +318,9 @@
             '<button type="button" class="btn btn-outline-primary" id="buttonMoreOptionEdit"><i class="fa fa-plus-circle"></i> Option</button>' +
           '</div>' +
         '</div>' +
-      '</div>').insertBefore('#buttonMoreConfigEdit');
+      '</div>').insertBefore('#buttonMoreDescriptorEdit');
     } else {
-      showModal('Warning', 'Fulfill the actual configuration to add another.');
+      showModal('Warning', 'Fulfill the current descriptor to add another.');
     }
   });
 
@@ -329,13 +329,13 @@
     if ($(this).parent().find('input:last').val().trim() !== '') {
       $('<input class="form-control inputOptionEdit" type="text" placeholder="Enter an option">').insertBefore(this);
     } else {
-      showModal('Warning', 'Fulfill the actual option to add another.');
+      showModal('Warning', 'Fulfill the current option to add another.');
     }
   });
 
-  // modal button listener (delete config)
-  $('#modalEdit .modal-body').on('click', '#deleteConfig', function() {
-    var r = confirm('Are you sure you want to delete this configuration ? It won\'t affect the tests already stored');
+  // modal button listener (delete descriptor)
+  $('#modalEdit .modal-body').on('click', '#deleteDescriptor', function() {
+    var r = confirm('Are you sure you want to delete this descriptor ? It won\'t affect the archives already stored');
     if (r === true) {
       $(this).closest('.form-group').remove();
     }
@@ -353,8 +353,8 @@
     $(this).closest('.makeLinkEnabledEdit').prev().show();
   });
 
-  // modify configuration name on change
-  $('#modalEdit .modal-body').on('change', '.inputConfigNameEdit', function() {
+  // modify descriptor name on change
+  $('#modalEdit .modal-body').on('change', '.inputDescriptorNameEdit', function() {
     var name = $(this).val().trim().toLowerCase().replace(/\s+/g, '_');
     $(this).val(name);
     $(this).addClass('nameChanged');
@@ -366,54 +366,54 @@
     $(this).val(name);
   });
 
-  // Submit event when editing a subject
+  // Submit event when editing a category
   $('.form-edit').submit(function(e) {
     e.preventDefault();
-    var r = confirm('⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️\n\nThis will modify all the associated tests ! If you deleted some configurations, they will stay in the tests.\nPlease confirm that you want to modify this test subject.');
+    var r = confirm('⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️\n\nThis will modify all the associated archives ! If you deleted some descriptors, they will stay in the archives.\nPlease confirm that you want to modify this archive category.');
     if (r === true) {
-      var editedSubject = {
+      var editedCategory = {
         name: $('#inputNameEdit').val().replace(/\s+/g, ' '),
-        configuration: [],
+        descriptors: [],
       };
-      if ($('.inputConfigNameEdit').length > 0) {
-        $('.inputConfigNameEdit').each(function() {
-          if (!$(this).hasClass('newConfig') || ($(this).hasClass('newConfig') && $(this).val().trim() !== '')) {
-            var config = {
+      if ($('.inputDescriptorNameEdit').length > 0) {
+        $('.inputDescriptorNameEdit').each(function() {
+          if (!$(this).hasClass('newDescriptor') || ($(this).hasClass('newDescriptor') && $(this).val().trim() !== '')) {
+            var descriptor = {
               name: $(this).val(),
               options: [],
             };
             // add options
             $(this).closest('.form-group').find('.inputOptionEdit').each(function() {
               if ($(this).val().trim() !== '') {
-                config.options.push($(this).val());
+                descriptor.options.push($(this).val());
               }
             });
             // add base URL
             if ($(this).siblings('.makeLinkEnabledEdit').is(':visible') && $(this).siblings('.makeLinkEnabledEdit').find('.inputUrlBaseEdit').val().trim() !== '') {
-              config.baseUrl = $(this).siblings('.makeLinkEnabledEdit').find('.inputUrlBaseEdit').val().trim();
+              descriptor.baseUrl = $(this).siblings('.makeLinkEnabledEdit').find('.inputUrlBaseEdit').val().trim();
             }
-            editedSubject.configuration.push(config);
+            editedCategory.descriptors.push(descriptor);
           }
         });
       } else {
-        editedSubject.emptyConfiguration = true;
+        editedCategory.noDescriptors = true;
       }
 
       $.ajax({
         method: 'POST',
-        url: 'api/test-subjects/id/' + $('#infoSubject').attr('val'),
+        url: 'api/categories/id/' + $('#infoCategory').attr('val'),
         headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
-        data: editedSubject,
+        data: editedCategory,
         success: function(data) {
           if (data.name === 'Success') {
-            // modify all the associated tests
-            $.post('api/tests', {testSubjectId: $('#infoSubject').attr('val')}, function(tests) {
+            // modify all the associated archives
+            $.post('api/archives', {archiveCategoryId: $('#infoCategory').attr('val')}, function(archives) {
               new Promise(function(resolve, reject) {
-                if (tests.length > 0) {
-                  if (subjectNameChanged(data.before, data.modified)) {
+                if (archives.length > 0) {
+                  if (categoryNameChanged(data.before, data.modified)) {
                     $.ajax({
                       method: 'POST',
-                      url: 'api/tests/changeTestSubjectName',
+                      url: 'api/archives/changeArchiveCategoryName',
                       headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
                       data: {previousName: data.before.name, newName: data.modified.name},
                       success: function(data) {
@@ -421,20 +421,20 @@
                       },
                     });
                   }
-                  // handle changes on configuration
-                  $('.inputConfigNameEdit').each(function() {
-                    if ($(this).hasClass('newConfig') && $(this).val().trim() !== '') {
-                      // add this config to all tests with the associated subject
+                  // handle changes on descriptors
+                  $('.inputDescriptorNameEdit').each(function() {
+                    if ($(this).hasClass('newDescriptor') && $(this).val().trim() !== '') {
+                      // add this descriptor to all archives with the associated category
                       var body = {
-                        subject: editedSubject.name,
-                        config: {
+                        category: editedCategory.name,
+                        descriptor: {
                           name: $(this).val().trim(),
                           value: '',
                         },
                       };
                       $.ajax({
                         method: 'POST',
-                        url: 'api/tests/addConfig',
+                        url: 'api/archives/addDescriptor',
                         headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
                         data: body,
                         success: function(data) {
@@ -442,15 +442,15 @@
                         },
                       });
                     } else if ($(this).hasClass('nameChanged') && $(this).val().trim() !== '') {
-                      // change this config name on all tests with the associated subject
+                      // change this descriptor name on all archives with the associated category
                       var body = {
-                        subject: editedSubject.name,
+                        category: editedCategory.name,
                         previousName: $(this).attr('previousname'),
                         newName: $(this).val().trim(),
                       };
                       $.ajax({
                         method: 'POST',
-                        url: 'api/tests/changeConfigName',
+                        url: 'api/archives/changeDescriptorName',
                         headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
                         data: body,
                         success: function(data) {
@@ -545,8 +545,8 @@
     if (parts.length == 2) return parts.pop().split(';').shift();
   }
 
-  function subjectNameChanged(testSubjectBefore, testSubjectAfter) {
-    if (testSubjectBefore.name !== testSubjectAfter.name) {
+  function categoryNameChanged(categoryBefore, categoryAfter) {
+    if (categoryBefore.name !== categoryAfter.name) {
       return true;
     } else {
       return false;

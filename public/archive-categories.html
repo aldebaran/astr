@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>A.S.T.R. - Archiving System of Test Results</title>
+  <title>A.S.T.R. - Archive Categories</title>
   <!-- Bootstrap core CSS-->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom fonts -->
@@ -21,7 +21,7 @@
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
   <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <a class="navbar-brand" href="index.html">A.S.T.R. - Archiving System of Test Results</a>
+    <a class="navbar-brand" href="index.html">A.S.T.R.</a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -33,24 +33,24 @@
             <span class="nav-link-text">Dashboard</span>
           </a>
         </li>
-        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tests">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Archives">
           <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
-            <i class="fa fa-fw fa-wrench"></i>
-            <span class="nav-link-text">Tests</span>
+            <i class="fa fa-fw fa-folder-open"></i>
+            <span class="nav-link-text">Archives</span>
           </a>
           <ul class="sidenav-second-level collapse" id="collapseComponents">
             <li>
-              <a href="tests.html">Search</a>
+              <a href="explore.html">Explore</a>
             </li>
             <li>
-              <a href="test-add.html">Archive a new test</a>
+              <a href="upload-archive.html">Upload a new archive</a>
             </li>
             <li>
-              <a href="test-subjects.html">Test Subjects</a>
+              <a href="archive-categories.html">Categories</a>
             </li>
           </ul>
         </li>
-        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Links">
           <a class="nav-link" href="links.html">
             <i class="fa fa-fw fa-link"></i>
             <span class="nav-link-text">Links</span>
@@ -74,61 +74,71 @@
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="tests.html">Tests</a>
+          <a href="explore.html">Archives</a>
         </li>
-        <li class="breadcrumb-item active">Test Subjects</li>
+        <li class="breadcrumb-item active">Categories</li>
       </ol>
 
       <div class="row">
-        <div class="col-sm test-subject-card" id="cardExistingSubject">
+        <div class="col-sm archive-category-card" id="cardExisitingCategory">
+          <div class="mb-0 mt-4">
+            <i class="fa fa-cube"></i> What is an archive category ?
+          </div>
+          <hr class="mt-2">
+          <p><cite>An archive category is used to <strong>define a set of descriptors</strong> that will be <strong>shared by several archives</strong>.<br>
+            A different set of descriptors to describe your archive implies a different category.<br>
+            A descriptor has a unique name and can hold any value.<br>
+            Options can be attached on descriptors, so that the descriptor's value can be quickly given while adding a new archive.<br>
+            Descriptors can be turned into links to other website.
+          </cite></p>
           <div class="card mb-3">
             <div class="card-header">
-              <h5>Existing test subjects</h5>
+              <h5>Existing archive categories</h5>
             </div>
             <div class="card-body">
               <form>
                 <div class="form-group">
-                  <label for="selectSubject">Select a subject</label>
-                  <select class="form-control" id="selectSubject">
+                  <label for="selectCategory">Select a category</label>
+                  <select class="form-control" id="selectCategory">
                     <option value="default"></option>
                   </select>
                 </div>
               </form>
-              <div id="infoSubject">
+              <div id="infoCategory">
               </div>
             </div>
           </div>
         </div>
-        <div class="col-sm test-subject-card">
+        <div class="col-sm archive-category-card">
           <div class="card mb-3">
             <div class="card-header">
-              <h5>Create a new test subject</h5>
+              <h5>Create a new archive category</h5>
             </div>
             <div class="card-body">
-              <form id="submitNewSubject" autocomplete="off">
+              <form id="submitNewCategory" autocomplete="off">
                 <div class="form-group">
                   <h5 for="inputName">Name</h5>
-                  <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="Enter the subject name" required>
+                  <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="Enter the name of the category" required>
                   <small id="nameHelp" class="form-text text-muted">Example: Motor Control</small>
                 </div>
                 <br>
-                <h5>Configuration</h5>
-                <div id="formConfig">
+                <h5>Descriptors</h5>
+                <div id="formDescriptor">
                   <div class="form-group">
-                    <div class="row config border-bottom border-top">
+                    <div class="row descriptor border-bottom border-top">
                       <div class="col">
-                        <label id="labelConfigName">Configuration name</label>
-                        <input type="text" class="form-control inputConfigName" placeholder="Enter the configuration name" required>
+                        <label id="labelDescriptorName">Descriptor name</label>
+                        <input type="text" class="form-control inputDescriptorName" placeholder="Enter the descriptor name" required>
                         <small class="form-text text-muted">Example: Robot type</small>
                         <div class="makeLinkDisabled">
                           <button type="button" class="btn btn-outline-primary" id="buttonMakeLink"><i class="fa fa-link"></i> Link</button>
-                          <small class="form-text text-muted infoLink">Make this configuration a link to Testrail, Redmine, etc.
-                            <i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this configuration into a link.<br>
-                            Just specify the base URL, the value of the configuration will be added automatically at the end to create the link.<br><br>
+                          <small class="form-text text-muted infoLink">Make this descriptor a link to another website (Testrail, Redmine, etc.)
+                            <i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>
+                            Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>
                             <strong>Example</strong><br>
-                            Configuration name: <i>Issue ID</i><br>
+                            Descriptor name: <i>Issue ID</i><br>
                             Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>
-                            Configuration value: <i>42305</i><br>
+                            Descriptor value: <i>42305</i><br>
                             Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>
                             <i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don't forget the &quot;/&quot; at the end of the base URL.">
                             </i>
@@ -155,7 +165,7 @@
                     </div>
                   </div>
                 </div>
-                <button type="button" class="btn btn-outline-primary" id="buttonMoreConfig"><i class="fa fa-plus-circle"></i> Configuration</button>
+                <button type="button" class="btn btn-outline-primary" id="buttonMoreDescriptor"><i class="fa fa-plus-circle"></i> Descriptor</button>
                 <br><br>
                 <input type="submit" value="Submit" class="btn btn-info">
               </form>
@@ -164,12 +174,12 @@
         </div>
       </div>
 
-      <!-- modal to edit the subject -->
+      <!-- modal to edit the category -->
       <div class="modal fade" id="modalEdit">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title">Edit test subject</h4>
+              <h4 class="modal-title">Edit category</h4>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form class="form-edit">
@@ -194,9 +204,6 @@
         </div>
       </div>
 
-
-
-
     </div>
 
     <!-- Footer -->
@@ -220,8 +227,8 @@
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="js/index.js"></script>
-    <!-- Specific script for tests-->
-    <script src="js/test-subjects.js"></script>
+    <!-- Specific script for this page-->
+    <script src="js/archive-categories.js"></script>
   </div>
 </body>
 

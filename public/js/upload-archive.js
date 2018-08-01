@@ -2,54 +2,54 @@
   'use strict';
 
   if (!hasWritePermission()) {
-    showModal('Information', 'Welcome on the Archiver page !<br><br>Since you don\'t have the write permission, you won\'t be able to archive a new test.<br><br>Contact a master to modify your privileges.<br>' + getMasterList().replace(/\n/g, '<br>'));
+    showModal('Information', 'Welcome on the Archiver page !<br><br>Since you don\'t have the write permission, you won\'t be able to upload a new archive.<br><br>Contact a master to modify your privileges.<br>' + getMasterList().replace(/\n/g, '<br>'));
   }
 
-  // get the list of existing subjects
-  $.get('api/test-subjects', function(subjects) {
-    subjects.forEach(function(subject) {
-      $('#selectSubject').append('<option value="' + subject['_id'] + '">' + subject.name + '</option>');
+  // get the list of existing categories
+  $.get('api/categories', function(categories) {
+    categories.forEach(function(category) {
+      $('#selectCategory').append('<option value="' + category._id + '">' + category.name + '</option>');
     });
   });
 
-  $('#selectSubject').change(function() {
-    if ($('#selectSubject').val() !== 'default') {
-      $.get('api/test-subjects/id/' + $('#selectSubject').val(), function(subject) {
-        $('#config').html('<h4>Configuration</h4>');
-        subject.configuration.forEach(function(config) {
-          $('#config').append('' +
+  $('#selectCategory').change(function() {
+    if ($('#selectCategory').val() !== 'default') {
+      $.get('api/categories/id/' + $('#selectCategory').val(), function(category) {
+        $('#descriptors').html('<h4>Descriptors</h4>');
+        category.descriptors.forEach(function(descriptor) {
+          $('#descriptors').append('' +
           '<div class="form-group">' +
-            '<label for="inputConfig">' + config.name + '</label>' +
-            '<select class="form-control selectConfig">' +
+            '<label for="inputDescriptor">' + descriptor.name + '</label>' +
+            '<select class="form-control selectDescriptor">' +
             '</select>' +
             '<small class="form-text text-muted">Select an option or "Other"</small>' +
           '</div>');
 
-          if (config.options.length > 0) {
-            config.options.forEach(function(option, idx, array) {
-              $('#config').find('select:last').append('<option>' + option + '</option>');
+          if (descriptor.options.length > 0) {
+            descriptor.options.forEach(function(option, idx, array) {
+              $('#descriptors').find('select:last').append('<option>' + option + '</option>');
               if (idx === array.length - 1) {
-                $('#config').find('select:last').append('<option>Other</option>');
+                $('#descriptors').find('select:last').append('<option>Other</option>');
               }
             });
           } else {
-            $('#config').find('select:last').append('<option>Other</option>');
-            $('.form-group:last').append('<input type="text" class="form-control inputConfig" required>');
+            $('#descriptors').find('select:last').append('<option>Other</option>');
+            $('.form-group:last').append('<input type="text" class="form-control inputDescriptor" required>');
           }
         });
-        $('#config').append('<input type="submit" value="Submit" id="submitTest" class="btn btn-info">');
+        $('#descriptors').append('<input type="submit" value="Submit" id="submitArchive" class="btn btn-info">');
       });
     } else {
-      $('#config').html('');
+      $('#descriptors').html('');
     }
   });
 
-  // add an input if the user select "Other" on a configuration
-  $('#cardAddNewTest').on('change', '.selectConfig', function() {
+  // add an input if the user select "Other" on a descriptor
+  $('#cardAddNewArchive').on('change', '.selectDescriptor', function() {
     if ($(this).val() === 'Other') {
-      $(this).closest('.form-group').append('<input type="text" class="form-control inputConfig" required>');
+      $(this).closest('.form-group').append('<input type="text" class="form-control inputDescriptor" required>');
     } else {
-      $(this).closest('.form-group').find('.inputConfig').remove();
+      $(this).closest('.form-group').find('.inputDescriptor').remove();
     }
   });
 
@@ -58,28 +58,28 @@
     e.preventDefault();
     var okayToPush = true;
     if (isConnected() && hasWritePermission() && $('#isFileUploaded').val() === 'true') {
-      var test = {
-        type: $('#selectSubject option:selected').html(),
+      var archive = {
+        category: $('#selectCategory option:selected').html(),
         date: $('#inputDate').val(),
         author: getUserName(),
-        configuration: [],
+        descriptors: [],
       };
       if ($('#inputComments').val().trim() !== '') {
-        test.comments = $('#inputComments').val().trim();
+        archive.comments = $('#inputComments').val().trim();
       }
-      $('.inputConfig').each(function() {
+      $('.inputDescriptor').each(function() {
         if ($(this).val().trim() === '') {
           okayToPush = false;
         } else {
-          test.configuration.push({
+          archive.descriptors.push({
             name: $(this).closest('.form-group').find('label').html(),
             value: $(this).val().trim(),
           });
         }
       });
-      $('.selectConfig').each(function() {
+      $('.selectDescriptor').each(function() {
         if ($(this).val() !== 'Other') {
-          test.configuration.push({
+          archive.descriptors.push({
             name: $(this).closest('.form-group').find('label').html(),
             value: $(this).val(),
           });
@@ -87,33 +87,33 @@
       });
 
       if (okayToPush === true) {
-        $('#submitTest').attr('disabled', true);
+        $('#submitArchive').attr('disabled', true);
         $.ajax({
           method: 'POST',
-          url: 'api/tests/add',
+          url: 'api/archives/add',
           headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
-          data: test,
+          data: archive,
           success: function(data) {
-            $('#testId').html(data.test['_id']);
+            $('#archiveId').html(data.archive._id);
           },
         });
       } else {
-        showModal('Error', 'Your test was not added because you left an empty field.');
+        showModal('Error', 'Your archive was not added because you left an empty field.');
       }
     } else if (!isConnected()) {
-      showModal('Error', 'Please log in to submit new tests.');
+      showModal('Error', 'Please log in to submit new archives.');
     } else if (isConnected() && $('#isFileUploaded').val() === 'true') {
-      showModal('Error', 'Sorry, you don\'t have the authorization to write new test subjects. Please contact an admin to modify your privileges.<br><br>Admins:<br>' + getMasterList().replace(/\n/g, '<br>'));
+      showModal('Error', 'Sorry, you don\'t have the authorization to upload new archives. Please contact an admin to modify your privileges.<br><br>Admins:<br>' + getMasterList().replace(/\n/g, '<br>'));
     } else if ($('#isFileUploaded').val() !== 'true') {
-      showModal('Error', 'Upload a file to archive a new test.');
+      showModal('Error', 'Add some file(s) in the dropzone.');
     }
   });
 
   // confirmation panel after reload of the page
   if (getUrlParameter('result') && getUrlParameter('result') === 'success') {
     $('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-        '<h5 class="alert-heading">Your test is now saved <i class="fa fa-check" aria-hidden="true"></i></h5>' +
-        '<p><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Note that it may take a couple of seconds before you can download your archive (especially if you uploaded big files), because your files are being zipped.</p>' +
+        '<h5 class="alert-heading">Your archive is now saved <i class="fa fa-check" aria-hidden="true"></i></h5>' +
+        '<p><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Note that it may take a couple of seconds before you can download your files (especially if you uploaded big files), because your files are being zipped.</p>' +
         '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
           '<span aria-hidden="true">&times;</span>' +
         '</button>' +

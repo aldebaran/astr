@@ -7,9 +7,9 @@ module.exports = function(app) {
     next();
   });
 
-  app.route('/api/stats/tests-frequency')
-  .get(stats.getTestFrequency);
+  app.route('/api/stats/archiving-frequency')
+  .get(stats.getArchivingFrequency); // GET: Returns a dictionnary with the number of archives uploaded per month
 
   app.route('/api/stats/disk-usage')
-  .get(stats.getDiskUsage);
+  .get(stats.getDiskUsage); // GET: Returns a dictionnary with the disk usage information
 };

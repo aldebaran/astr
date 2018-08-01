@@ -1,4 +1,4 @@
-# Archiving System of Test Results (A.S.T.R.)
+# Archiving System Truly Restful (A.S.T.R.)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -26,18 +26,14 @@
     - [Description](#description)
     - [Expiration](#expiration)
 - [Python library](#python-library)
-  - [Purpose](#purpose)
-  - [Installation](#installation-1)
-  - [Configuration](#configuration)
-  - [Basic usage](#basic-usage)
 - [API endpoints](#api-endpoints)
-    - [Tests](#tests)
-    - [Test subjects](#test-subjects)
+    - [Archives](#archives)
+    - [Archive Categories](#archive-categories)
     - [Search](#search)
     - [Users](#users)
     - [Upload](#upload)
     - [Download](#download)
-    - [Archive](#archive)
+    - [Application](#application)
     - [Stats](#stats)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -72,7 +68,6 @@ Here are the main features:
     - [uuid](https://www.npmjs.com/package/uuid) *(to generate Universally Unique Identifier)*
     - [multer](https://www.npmjs.com/package/multer) *(to upload files on the server)*
     - [archiver](https://www.npmjs.com/package/archiver) *(to zip the files)*
-    - [adm-zip](https://www.npmjs.com/package/adm-zip) *(to add/update/delete files in a zip without having to unzip it)*
     - [diskspace](https://www.npmjs.com/package/diskspace) *(to have information about the disk usage of the server)*
     - [get-folder-size](https://www.npmjs.com/package/get-folder-size) *(to know the size of a folder)*
     - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
@@ -157,13 +152,28 @@ npm install pm2 -g
 ```
 npm run prod
 ```
-*:arrow_right_hook: This command starts the application with [pm2](https://www.npmjs.com/package/pm2).*
+*:arrow_right_hook: This command starts the application with [pm2](https://www.npmjs.com/package/pm2) at port 8000.*
 
 - Or (for development only)
 ```
 npm run dev
 ```
-*:arrow_right_hook:	This command starts the application with [nodemon](https://www.npmjs.com/package/nodemon).*
+*:arrow_right_hook:	This command starts the application with [nodemon](https://www.npmjs.com/package/nodemon) at port 8000.*
+
+- To use a different port, launch the application as follow
+```
+# for production
+npm run prod -- -- 3000
+# for development
+npm run dev 3000
+```
+
+- To stop the server in production mode
+```
+npm stop
+# OR
+pm2 delete {pm2_processs_id}
+```
 
 ### 8. Create the first Admin
 
@@ -217,7 +227,7 @@ An example with curl:
 ```
 curl -X DELETE \
      -u john.doe@softbankrobotics.com:d2147e39-8b6e-4c7b-b4ca-f93529dfbbd1 \
-      http://10.0.160.147:8000/api/tests/id/5b19442c5dd23f39e6f5e6d8
+      http://10.0.160.147:8000/api/archives/id/5b19442c5dd23f39e6f5e6d8
 ```
 
 In the [Python library](https://gitlab.aldebaran.lan/hardware-test/astr/tree/master/lib-python-astr), everything is already handled by [client.py](https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/lib-python-astr/libastr/client.py). The user only needs to configure his environment variables (cf. [configuration](#configuration))
@@ -239,115 +249,61 @@ Tokens expiration dates are checked when the user logs in. If the date is passed
 
 ## Python library
 
-### Purpose
+Libastr is a **Python3** library designed to ease python scripting with A.S.T.R. API. It includes multiple features like retrieving, downloading, uploading archives.
 
-Libastr is a **Python3** library designed to ease python scripting with A.S.T.R. API. It includes multiple features like retrieving tests, downloading archives, upload new test archives, etc.
-
-### Installation
-
-1. Download [lib-python-astr](https://gitlab.aldebaran.lan/hardware-test/astr/tree/master/lib-python-astr) on your computer.
-
-2. Pip install the library in a virtualenv:
-
-- Create a virtual environment with [virtualenvwrapper](http://virtualenvwrapper.readthedocs.io/en/latest/)
-```
-mkvirtualenv libastr
-```
-
-- Switch to this environment (use `which python` to see the current environment)
-```
-workon libastr
-```
-
-- Go to the lib-python-astr folder
-```
-cd lib-python-astr
-```
-
-- Install the library (libastr should appear in `pip list`)
-```
-pip install .
-```
-
-### Configuration
-
-libastr needs the following environment variables.
-
-```
-export LIBASTR_URL='http://10.0.160.147:8000'
-export LIBASTR_EMAIL='john.doe@softbankrobotics.com'
-export LIBASTR_TOKEN='b4b71bf6-a3dd-4975-85b8-03de05096fc0'
-```
-
-
-### Basic usage
-
-```python
-from libastr import Astr
-
-astr = Astr()
-
-# retrieve archived tests
-print(astr.test.get_by_args(author="John DOE",
-                            type="MOTOR CONTROL",
-                            configuration={"robot_type": "PEPPER"}))
-
-# download an archive
-astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
-                         path="/home/john.doe/Desktop")
-```
+Find all the information about it in the dedicated repository: [lib-python-astr](https://gitlab.aldebaran.lan/naoqi-tests/lib-python-astr)
 
 ## API endpoints
 
-#### Tests
+#### Archives
 
-1. [/api/tests](http://10.0.160.147:8000/api/tests)
-    - GET: Returns the list of all tests (sorted by creation date in descending order)
-    - POST: Returns the list of tests that match with the parameters given in the body request (sorted by creation date in descending order)
-2. [/api/tests/page/:page/:resultPerPage](http://10.0.160.147:8000/api/tests/page/2/30)
-    - POST: Returns the list of tests that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
-3. [/api/tests/add](http://10.0.160.147:8000/api/tests/add)
-    - POST: Add a new test in the DB in function of the parameters given in the body request **(user must have write permission)**
-4. [/api/tests/id/:id](http://10.0.160.147:8000/api/tests/id/5adf356dda64c157e53c6b18)
-    - GET: Returns the test with the associated ID
-    - POST: Update the test with the associated ID in function of the parameters given in the body request (only the date, the comments, and the configuration values can be updated) **(user must be master or owner of the test)**
-    - DELETE: Delete the test with the associated ID **(user must be master or owner of the test)**
-5. [/api/tests/authors](http://10.0.160.147:8000/api/tests/authors)
-    - GET: Returns the list of test authors (that wrote at least one test)
-6. [/api/tests/subjects](http://10.0.160.147:8000/api/tests/subjects)
-    - GET: Returns the list of test subjects (used at least by one test)
-7. [/api/tests/configurations](http://10.0.160.147:8000/api/tests/configurations)
-    - GET: Returns the list of configurations (used at least by one test)
-8. [/api/tests/configurations/:subject](http://10.0.160.147:8000/api/tests/configurations/CAMERA)
-    - GET: Returns the list of configurations of the associated subject (used at least by one test)
-9. [/api/tests/options/:configName](http://10.0.160.147:8000/api/tests/options/robot_type)
-    - GET: Returns the  options of the associated configuration (used at least one time)
-10. [/api/tests/changeTestSubjectName](http://10.0.160.147:8000/api/tests/changeTestSubjectName)
-    - POST: Change the test type of all the tests matched by {type: previousName} (body contains *previousName* and *newName*) **(user must be master)**
-11. [/api/tests/addConfig](http://10.0.160.147:8000/api/tests/addConfig)
-    - POST: Push a new configuration in all tests matched by the test type/subject (body contains *subject* and *config: {name, value}*) **(user must be master)**
-12. [/api/tests/changeConfigName](http://10.0.160.147:8000/api/tests/changeConfigName)
-    - POST: Change the name of the matched configuration in all tests matched by the test type/subject (body contains *subject*, *previousName* and *newName*) **(user must be master)**
-13. [/api/tests/withoutArchive](http://10.0.160.147:8000/api/tests/withoutArchive)
-    - GET: Returns the list of all tests without any archive (to delete them)
-14. [/api/tests/YAMLformat/id/:id]((http://10.0.160.147:8000/api/tests/YAMLformat/id/:id)
-    - GET: Returns the test with the associated ID in a YAML format, to store it in the archive
+1. [/api/archives](http://10.0.160.147:8000/api/archives)
+    - GET: Returns the list of all archives (sorted by creation date in descending order)
+    - POST: Returns the list of archives that match with the parameters given in the body request (sorted by creation date in descending order)
+2. [/api/archives/page/:page/:resultPerPage](http://10.0.160.147:8000/api/archives/page/2/30)
+    - POST: Returns the list of archives that match with the parameters given in the body request, with pagination (sorted by creation date in descending order)
+3. [/api/archives/add](http://10.0.160.147:8000/api/archives/add)
+    - POST: Add a new archive in the DB in function of the parameters given in the body request **(user must have write permission)**
+4. [/api/archives/id/:id](http://10.0.160.147:8000/api/archives/id/5adf356dda64c157e53c6b18)
+    - GET: Returns the archive with the associated ID
+    - POST: Update the archive with the associated ID in function of the parameters given in the body request (only the date, the comments, and the descriptors values can be updated) **(user must be master or owner of the archive)**
+    - DELETE: Delete the archive with the associated ID **(user must be master or owner of the archive)**
+5. [/api/archives/authors](http://10.0.160.147:8000/api/archives/authors)
+    - GET: Returns the list of archive authors (that added at least one archive)
+6. [/api/archives/categories](http://10.0.160.147:8000/api/archives/categories)
+    - GET: Returns the list of archive categories (used at least by one archive)
+7. [/api/archives/descriptors](http://10.0.160.147:8000/api/archives/descriptors)
+    - GET: Returns the list of descriptors (used at least by one archive)
+8. [/api/archives/descriptors/:category](http://10.0.160.147:8000/api/archives/descriptors/CAMERA)
+    - GET: Returns the list of descriptors of the associated archive category (used at least by one archive)
+9. [/api/archives/options/:descriptorName](http://10.0.160.147:8000/api/archives/options/robot_type)
+    - GET: Returns the  options of the associated descriptor (used at least one time)
+10. [/api/archives/changeArchiveCategoryName](http://10.0.160.147:8000/api/archives/changeArchiveCategoryName)
+    - POST: Change the category name of all the archives matched by {category: previousName} (body contains previousName and newName) **(user must be master)**
+11. [/api/archives/addDescriptor](http://10.0.160.147:8000/api/archives/addDescriptor)
+    - POST: Push a new descriptor in all archives matched by the archive category (body contains *category* and *descriptor: {name, value}*) **(user must be master)**
+12. [/api/archives/changeDescriptorName](http://10.0.160.147:8000/api/archives/changeDescriptorName)
+    - POST: Change the name of the matched descriptors in all archives matched by the archive category (body contains *category*, *previousName* and *newName*) **(user must be master)**
+13. [/api/archives/withoutArchive](http://10.0.160.147:8000/api/archives/withoutArchive)
+    - GET: Returns the list of all archives that are missing in the folder "archives" (to delete them)
+14. [/api/archives/YAMLformat/id/:id](http://10.0.160.147:8000/api/archives/YAMLformat/id/:id)
+    - GET: Returns the archive with the associated ID in a YAML format, to store it in the zip
 
-#### Test subjects
+#### Archive Categories
 
-1. [/api/test-subjects](http://10.0.160.147:8000/api/test-subjects)
-    - GET: Returns the list of all test subjects
-    - POST:  Add a new test subject in the DB in function of the parameters given in the body request **(user must be master)**
-2. [/api/test-subjects/id/:id](http://10.0.160.147:8000/api/test-subjects/id/5adf3559da64c157e53c6b17)
-    - GET: Returns the test subject with the associated ID
-    - POST:  Update the test subject with the associated ID in function of the parameters given in the body request **(user must be master)**
-    - DELETE: Delete the test subject with the associated ID **(user must be master)**
-3. [/api/test-subjects/name/:name](http://10.0.160.147:8000/api/test-subjects/name/CAMERA)
-    - GET: Returns the test subject with the associated name
-4. [/api/test-subjects/options/:subject/:configName](http://10.0.160.147:8000/api/test-subjects/options/WIFI/robot_type)
-    - GET: Returns the options of a configuration
-4. [/api/test-subjects/links/:subject](http://10.0.160.147:8000/api/test-subjects/links/:subject)
-    - GET: Returns the links of a test subject
+1. [/api/categories](http://10.0.160.147:8000/api/categories)
+    - GET: Returns the list of all archive categories
+    - POST:  Add a new archive category in the DB in function of the parameters given in the body request **(user must be master)**
+2. [/api/categories/id/:id](http://10.0.160.147:8000/api/categories/id/5adf3559da64c157e53c6b17)
+    - GET: Returns the archive category with the associated ID
+    - POST: Update the archive category with the associated ID in function of the parameters given in the body request **(user must be master)**
+    - DELETE: Delete the archive category with the associated ID **(user must be master)**
+3. [/api/categories/name/:name](http://10.0.160.147:8000/api/categories/name/CAMERA)
+    - GET: Returns the archive category with the associated name
+4. [/api/categories/options/:category/:descriptorName](http://10.0.160.147:8000/api/categories/options/WIFI/robot_type)
+    - GET: Returns the options of a descriptor
+5. [/api/categories/links/:category](http://10.0.160.147:8000/api/categories/links/:category)
+    - GET: Returns the links of an archive category
 
 #### Search
 
@@ -377,32 +333,36 @@ astr.test.download_by_id(id="5b2a1e131dba23124f2962fe",
     - GET: Log out the user logged in the machine
 7. [/api/user/newToken/:type/:name](http://10.0.160.147:8000/api/user/newToken/persistent/laptop)
     - GET: Generate a new token for the user, returns it and store it encrypted in the database (type can be 'session' or 'persistent')
-7. [/api/user/deleteToken/:id](http://10.0.160.147:8000/api/user/deleteToken/5b20db9770e56a3891e64cd1)
+8. [/api/user/deleteToken/:id](http://10.0.160.147:8000/api/user/deleteToken/5b20db9770e56a3891e64cd1)
     - DELETE: Delete the token with the associated ID
 
 #### Upload
 
 1. [/api/upload](http://10.0.160.147:8000/api/upload)
-    - POST: Upload files to the server in a ZIP. The name of the archive is the ID of the test **(user must have write permission)**
-2. [/api/upload/newfiles](http://10.0.160.147:8000/api/upload/newfiles)
-    - POST: Upload files to the server (not zipped), to put them in an existing archive **(user must have write permission)**
+    - POST: Upload files to the server in a ZIP. The name of the zip is the ID of the archive **(user must have write permission)**
+2. [/api/upload/replace-zip](http://10.0.160.147:8000/api/upload/replace-zip)
+    - POST: Replace zip with a new one **(user must have write permission)**
 
 #### Download
 
 1. [/api/download/id/:id](http://10.0.160.147:8000/api/download/id/5ae9bba1b87b22360cc2e70f)
-    - GET: Download the archive of the test with the associated ID
+    - GET: Download the zip of the archive with the associated ID
 2. [/api/download/multiple](http://10.0.160.147:8000/api/download/multiple)
-    - POST: Download a ZIP containing the archives of multiple tests. The test IDs to download are passed in the body request.
+    - POST: Download a ZIP containing multiple archives. The archive IDs to download are passed in the body request.
+3. [/api/download/files](http://10.0.160.147:8000/api/download/files)
+    - GET: Returns the list of files in archives folder
 
-#### Archive
+#### Application
 
-1. [/api/archive/id/:id](http://10.0.160.147:8000/api/archive/id/:id)
-    - GET: Returns the list of files in the archive with the associated ID
-    - POST: Update the content of the archive with the associated ID. It is possible to delete files and add new ones. (two arrays can be in the body request: *"add"* and *"delete"*) **(user must be master or owner of the test)**
+1. [/api](http://10.0.160.147:8000/api)
+    - GET: Returns information about the application (name, version, creation date, lastBootUptime)
+    - POST: Update version, creation date and lastBootUptime automatically (only localhost can query it)
+2. [/api/change-app-name](http://10.0.160.147:8000/api/change-app-name)
+    - POST: Change the name of the application (to allow using a custom name) **(user must be master)**
 
 #### Stats
 
-1. [/api/stats/tests-frequency](http://10.0.160.147:8000/api/stats/tests-frequency)
-    - GET: Returns a dictionnary with the number of tests archived per month
+1. [/api/stats/archiving-frequency](http://10.0.160.147:8000/api/stats/archiving-frequency)
+    - GET: Returns a dictionnary with the number of archives uploaded per month
 2. [/api/stats/disk-usage](http://10.0.160.147:8000/api/stats/disk-usage)
     - GET: Returns a dictionnary with the disk usage information

@@ -7,13 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>A.S.T.R. - Archiving System of Test Results</title>
+  <title>A.S.T.R. - Upload Archive</title>
   <!-- Bootstrap core CSS-->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom fonts -->
   <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <!-- Custom style -->
   <link href="css/index.css" rel="stylesheet">
+  <link href="css/dropzone.css" rel="stylesheet">
   <!-- Favicon -->
   <link rel="shortcut icon" href="favicon.ico" />
 </head>
@@ -21,7 +22,7 @@
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
   <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <a class="navbar-brand" href="index.html">A.S.T.R. - Archiving System of Test Results</a>
+    <a class="navbar-brand" href="index.html">A.S.T.R.</a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -33,24 +34,24 @@
             <span class="nav-link-text">Dashboard</span>
           </a>
         </li>
-        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tests">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Archives">
           <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
-            <i class="fa fa-fw fa-wrench"></i>
-            <span class="nav-link-text">Tests</span>
+            <i class="fa fa-fw fa-folder-open"></i>
+            <span class="nav-link-text">Archives</span>
           </a>
           <ul class="sidenav-second-level collapse" id="collapseComponents">
             <li>
-              <a href="tests.html">Search</a>
+              <a href="explore.html">Explore</a>
             </li>
             <li>
-              <a href="test-add.html">Archive a new test</a>
+              <a href="upload-archive.html">Upload a new archive</a>
             </li>
             <li>
-              <a href="test-subjects.html">Test Subjects</a>
+              <a href="archive-categories.html">Categories</a>
             </li>
           </ul>
         </li>
-        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Links">
           <a class="nav-link" href="links.html">
             <i class="fa fa-fw fa-link"></i>
             <span class="nav-link-text">Links</span>
@@ -74,35 +75,70 @@
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="tests.html">Tests</a>
+          <a href="explore.html">Archives</a>
         </li>
-        <li class="breadcrumb-item active">My Searches</li>
+        <li class="breadcrumb-item active">Upload a new archive</li>
       </ol>
 
-      <div id="mySearches">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Subject</th>
-              <th scope="col">Author</th>
-              <th scope="col">Date</th>
-              <th scope="col">Configuration</th>
-              <th scope="col">IDs</th>
-              <th scope="col">Link <span class="text-muted">(that you can share with anyone)</span> </th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+      <div class="row">
+        <div class="col-sm">
+          <div class="card mb-3" id="cardAddNewArchive">
+            <div class="card-header">
+              <h5>New Archive</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="selectCategory">Select the archive category</label>
+                      <select class="form-control" id="selectCategory">
+                        <option value="default"></option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-auto">
+                    <div class="form-group">
+                      <label for="selectCategory">Or</label><br>
+                      <a class="btn btn-outline-primary" href="archive-categories.html">Create a new one</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputDate">Date of the archive</label>
+                  <input type="date" id="inputDate" max="2100-12-31" min="2010-01-01" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="inputComments">Comments (optional)</label>
+                  <textarea id="inputComments" class="form-control" rows="2"></textarea>
+                </div>
+                <div id="descriptors">
+                </div>
+              </form>
+              <div id="archiveId" style="display: none;">
+              </div>
+              <input id="isFileUploaded" type="text" style="display: none;" value="false">
+            </div>
+          </div>
+        </div>
+        <div class="col-sm">
+          <!-- drag and drop -->
+          <form id="my-dropzone" class="dropzone dz-clickable">
+            <div class="dz-message">Drop files here or click to upload.
+              <br> <span class="note">Your files will be zipped.</span>
+              <br>
+              <div class="small text-muted"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 50 files maximum</div>
+            </div>
+          </form>
+        </div>
       </div>
 
       <div class="modal fade" id="myModal">
         <div class="modal-dialog">
-          <div class="modal-content bg-success">
+          <div class="modal-content">
+            <div class="modal-header">
+            </div>
             <div class="modal-body">
-              <p class="text-center text-white"><strong>Token copied to clipboard!</strong></p>
             </div>
           </div>
         </div>
@@ -131,7 +167,10 @@
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="js/index.js"></script>
-    <script src="js/search.js"></script>
+    <!-- Specific script for this page-->
+    <script src="js/upload-archive.js"></script>
+    <!-- Specific script to upload file by drag and drop-->
+    <script src="js/dropzone.js"></script>
   </div>
 </body>
 
