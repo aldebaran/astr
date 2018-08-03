@@ -152,12 +152,13 @@ exports.AddUserAndLogin = (req, res, next) => {
         req.session.userId = user._id;
         // create a new session-token
         request.get({
-            url: 'http://localhost:' + req.connection.localPort + '/api/user/newToken/session',
+            url: 'http://localhost:' + req.connection.localPort + '/api/user/newToken/session/session',
             json: true,
             body: {
               userId: user._id,
             },
         }, (err2, res2, token) => {
+          console.log(token);
           if (err2) {
             console.log(err2);
           } else {
