@@ -29,7 +29,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - None
 
-## [3.0] - 2018-08-01
+## [3.0.1] - 2018-08-03
+
+### Fixed
+- No session-token on first login
+
+## [3.0.0] - 2018-08-01
 
 ### Added
 - [#134](https://gitlab.aldebaran.lan/hardware-test/astr/issues/134) State when the archive is being zipped (to avoid downloading a corrupted zip).
@@ -45,13 +50,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - [#128](https://gitlab.aldebaran.lan/hardware-test/astr/issues/128) Cannot read/update the content of a zip when size > 2GB.
 
-## [2.2] - 2018-07-25
+## [2.2.0] - 2018-07-25
 
 ### Fixed
 - Crash when 0 test in DB.
 - Does not create the folder containing the archives automatically.
 
-## [2.1] - 2018-07-19
+## [2.1.0] - 2018-07-19
 
 ### Added
 - [#81](https://gitlab.aldebaran.lan/hardware-test/astr/issues/81) [#83](https://gitlab.aldebaran.lan/hardware-test/astr/issues/83) Search and share tests by ID.
@@ -71,7 +76,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - [#111](https://gitlab.aldebaran.lan/hardware-test/astr/issues/111) Delete tests without archive.
 - [#112](https://gitlab.aldebaran.lan/hardware-test/astr/issues/112) Logout if the session token exprires in the cookies.
 
-## [2.0] - 2018-06-26
+## [2.0.0] - 2018-06-26
 
 ### Added
 - Python library.
@@ -79,12 +84,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Security
 - Authentification token to interact with the API.
 
-## [1.0] - 2018-05-23
+## 1.0.0 - 2018-05-23
 
 *First official release.*
 
 [Unreleased]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v3.0...HEAD
-[3.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.2...v3.0
-[2.2]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...v2.2
-[2.1]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.0...v2.1
-[2.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v1.0...v2.0
+[3.0.1]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v3.0...v3.0.1
+[3.0.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.2...v3.0
+[2.2.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...v2.2
+[2.1.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.0...v2.1
+[2.0.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v1.0...v2.0

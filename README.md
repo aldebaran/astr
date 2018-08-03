@@ -121,9 +121,11 @@ show dbs
 
 ### 4. Install Node.js
 
-:warning: Install the lastest version of Node.js, don't take the LTS version.
-
-- Follow [this](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) tutorial.
+:warning: Install [Node.js](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) (version 9.x).
+```
+curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
 
 ### 5. Clone the repository
 
@@ -138,6 +140,8 @@ git clone git@gitlab.aldebaran.lan:hardware-test/astr.git
 ```
 npm install
 ```
+
+- If an error occured, try with `sudo`
 
 - It will install all the Node.js modules used in the application (listed in [package.json](https://gitlab.aldebaran.lan/hardware-test/astr/blob/master/package.json))
 
