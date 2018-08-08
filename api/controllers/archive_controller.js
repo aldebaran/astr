@@ -224,7 +224,7 @@ exports.getArchiveInYAMLFormat = (req, res) => {
                  'id: ' + data._id + '\n' +
                  'date: ' + data.date.toISOString().substr(0, 10) + '\n' +
                  'author: ' + data.author + '\n' +
-                 'archive_category: ' + data.category + '\n'
+                 'category: ' + data.category + '\n'
         );
         if (data.comments) {
           txt += 'comments: ' + data.comments + '\n';
