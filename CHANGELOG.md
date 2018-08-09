@@ -29,6 +29,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - None
 
+## [3.1.0] - XXXX-XX-XX
+
+### Added
+- Search with Regex on archive descriptors
+
+### Fixed
+- Scrolling bug on modals when a new modal pops
+
 ## [3.0.1] - 2018-08-03
 
 ### Fixed
@@ -88,7 +96,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 *First official release.*
 
-[Unreleased]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v3.0...HEAD
+[Unreleased]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v3.1.0...HEAD
+[3.1.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v3.0.1...v3.1.0
 [3.0.1]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v3.0...v3.0.1
 [3.0.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.2...v3.0
 [2.2.0]: https://gitlab.aldebaran.lan/hardware-test/astr/compare/v2.1...v2.2

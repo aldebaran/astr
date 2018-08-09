@@ -759,3 +759,7 @@ span.text-muted {
 .modal {
   overflow-y:auto;
 }
+
+.regexGroup {
+  margin-top: 1ex;
+}
