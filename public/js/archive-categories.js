@@ -17,7 +17,7 @@
             '<input type="text" class="form-control inputDescriptorName" placeholder="Enter the descriptor name">' +
             '<div class="makeLinkDisabled">' +
               '<button type="button" class="btn btn-outline-primary" id="buttonMakeLink"><i class="fa fa-link"></i> Link</button>' +
-              '<small class="form-text text-muted infoLink">' +
+              '<small class="text-muted infoLink">' +
                 '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>' +
                 'Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>' +
                 '<strong>Example</strong><br>' +
@@ -225,7 +225,7 @@
               '<input type="text" class="form-control inputDescriptorNameEdit" value="' + descriptor.name + '" previousname="' + descriptor.name + '" required>' +
               '<div class="makeLinkDisabledEdit">' +
                 '<button type="button" class="btn btn-outline-primary" id="buttonMakeLinkEdit"><i class="fa fa-link"></i> Link</button>' +
-                '<small class="form-text text-muted infoLink">' +
+                '<small class="text-muted infoLink">' +
                   '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>' +
                   'Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>' +
                   '<strong>Example</strong><br>' +
@@ -300,6 +300,17 @@
             '<input type="text" class="form-control inputDescriptorNameEdit newDescriptor" placeholder="Enter the name">' +
             '<div class="makeLinkDisabledEdit">' +
               '<button type="button" class="btn btn-outline-primary" id="buttonMakeLinkEdit"><i class="fa fa-link"></i> Link</button>' +
+              '<small class="text-muted infoLink">' +
+                '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>' +
+                'Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>' +
+                '<strong>Example</strong><br>' +
+                'Descriptor name: <i>Issue ID</i><br>' +
+                'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
+                'Descriptor value: <i>42305</i><br>' +
+                'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
+                '<i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don\'t forget the &quot;/&quot; at the end of the base URL.">' +
+                '</i>' +
+              '</small>' +
             '</div>' +
             '<div class="makeLinkEnabledEdit" style="display: none;">' +
               '<div class="row makeLink">' +
@@ -319,6 +330,7 @@
           '</div>' +
         '</div>' +
       '</div>').insertBefore('#buttonMoreDescriptorEdit');
+      $('[data-toggle="tooltip"]').tooltip();
     } else {
       showModal('Warning', 'Fulfill the current descriptor to add another.');
     }

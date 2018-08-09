@@ -755,3 +755,7 @@ span.text-muted {
 #cardExisitingCategory .card {
   margin-top: 2em;
 }
+
+.modal {
+  overflow-y:auto;
+}
