@@ -769,6 +769,7 @@
           }
           if (search.archiveCategory) {
             $('#selectCategory').val(search.archiveCategory);
+            $('#selectCategory').trigger('change');
           }
           if (search.archiveAuthor) {
             $('#selectAuthor').val(search.archiveAuthor);
@@ -836,6 +837,7 @@
       }
       if (query.category) {
         $('#selectCategory').val(query.category);
+        $('#selectCategory').trigger('change');
       }
       if (query['$and']) {
         query['$and'].forEach(function(specificFilter) {
