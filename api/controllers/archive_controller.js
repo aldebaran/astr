@@ -533,6 +533,51 @@ exports.changeDescriptorName = (req, res) => {
   });
 };
 
+// GET: Clean the archives folder and returns the deleted files (delete files/folders not created today, that don't have the zip extension and a filename different than 24 hexadecimal digits). Executed automatically once a day.
+exports.cleanArchivesFolder = (req, res) => {
+  fs.readdir('archives/', (err, files) => {
+    if (files) {
+      var checkRegExp = /(^[a-f\d]{24}|multiple)+(.zip)$/i;
+      var filesToDelete = files.filter((file) => !checkRegExp.test(file));
+      var deletedFiles = [];
+      var today = new Date();
+      Promise.all(filesToDelete.map((file) => {
+        return new Promise((resolve) => {
+          fs.stat('archives/' + file, (err, fileStat) => {
+            if (err) {
+              console.log(err);
+            } else {
+              // delete the file/folder if not created today
+              if (fileStat.birthtime.getUTCDay() !== today.getUTCDay()
+              || fileStat.birthtime.getUTCMonth() !== today.getUTCMonth()
+              || fileStat.birthtime.getFullYear() !== today.getFullYear()) {
+                fs.remove('archives/' + file, (err) => {
+                  if (err) {
+                    console.log(err);
+                    resolve();
+                  } else {
+                    deletedFiles.push(file);
+                    console.log('deleted ' + file + ' because not desirable');
+                    resolve();
+                  }
+                });
+              } else {
+                resolve();
+              }
+            }
+          });
+        });
+      })).then(() => {
+        res.json({
+          'deletedFiles': deletedFiles,
+        });
+      });
+    } else {
+      res.json([]);
+    }
+  });
+};
+
 /**
  * Verify that all the archives have a zip.
  * If not, the archive is updated with "isZipPresent": false.

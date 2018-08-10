@@ -51,4 +51,7 @@ module.exports = function(app) {
 
   app.route('/api/archives/withoutZip')
   .get(archive.getAllMissingArchives); // GET: Returns the list of all archives that are missing in the folder "archives" (to delete them)
+
+  app.route('/api/archives/cleanArchivesFolder')
+  .get(archive.cleanArchivesFolder); // GET: Clean the archives folder and returns the deleted files (delete files/folders not created today, that don't have the zip extension and a filename different than 24 hexadecimal digits). Executed automatically once a day.
 };

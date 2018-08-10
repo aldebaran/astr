@@ -75,7 +75,13 @@ applicationRoutes(app);
 // start the server
 app.listen(port);
 
+console.log('ASTR started on port ' + port);
+
 // update application info
 request.post('http://localhost:' + port + '/api', () => {});
 
-console.log('ASTR started on port ' + port);
+// clean the folder "archives" once a day
+request.get('http://localhost:' + port + '/api/archives/cleanArchivesFolder', () => {});
+setInterval(() => {
+  request.get('http://localhost:' + port + '/api/archives/cleanArchivesFolder', () => {});
+}, 1000 * 60 * 60 * 24);

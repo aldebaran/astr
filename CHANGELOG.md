@@ -32,10 +32,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [3.1.0] - XXXX-XX-XX
 
 ### Added
-- Search with Regex on archive descriptors
+- [#76](https://gitlab.aldebaran.lan/hardware-test/astr/issues/76) Search with Regex on archive descriptors
+- [#135](https://gitlab.aldebaran.lan/hardware-test/astr/issues/135) Clean the archive folder once a day
 
 ### Fixed
 - Scrolling bug on modals when a new modal pops
+- All descriptors appear in the list even if an archive category is selected (when changing page or using a saved search)
 
 ## [3.0.1] - 2018-08-03
 

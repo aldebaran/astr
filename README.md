@@ -297,10 +297,12 @@ Find all the information about it in the dedicated repository: [lib-python-astr]
     - POST: Push a new descriptor in all archives matched by the archive category (body contains *category* and *descriptor: {name, value}*) **(user must be master)**
 12. [/api/archives/changeDescriptorName](http://10.0.160.147:8000/api/archives/changeDescriptorName)
     - POST: Change the name of the matched descriptors in all archives matched by the archive category (body contains *category*, *previousName* and *newName*) **(user must be master)**
-13. [/api/archives/withoutArchive](http://10.0.160.147:8000/api/archives/withoutArchive)
+13. [/api/archives/withoutZip](http://10.0.160.147:8000/api/archives/withoutZip)
     - GET: Returns the list of all archives that are missing in the folder "archives" (to delete them)
 14. [/api/archives/YAMLformat/id/:id](http://10.0.160.147:8000/api/archives/YAMLformat/id/:id)
     - GET: Returns the archive with the associated ID in a YAML format, to store it in the zip
+15. [/api/archives/cleanArchivesFolder](http://10.0.160.147:8000/api/archives/cleanArchivesFolder)
+    - GET: Clean the archives folder and returns the deleted files (delete files/folders not created today, that don't have the zip extension and a filename different than 24 hexadecimal digits). Executed automatically once a day.
 
 #### Archive Categories
 
