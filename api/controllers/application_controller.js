@@ -1,4 +1,3 @@
-var fs = require('fs');
 var mongoose = require('mongoose');
 var Application = mongoose.model('Application');
 var User = require('../models/user_model');
@@ -13,56 +12,6 @@ exports.getAppInfo = (req, res) => {
       res.json(application);
     }
   });
-};
-
-// POST: Update version, creation date and lastBootUptime automatically (only localhost can query it)
-exports.updateAppInfo = (req, res) => {
-  if (req.connection.remoteAddress.includes('127.0.0.1') || req.connection.remoteAddress.includes('::1') || req.connection.remoteAddress.includes('localhost')) {
-    Application.findOne({}, (err, application) => {
-      if (err) {
-        res.status(500).send(err);
-      } else {
-        // read information
-        fs.readFile('package.json', 'utf8', (err, data) => {
-          if (err) {
-            res.status(500).send(err);
-          } else {
-            json = JSON.parse(data);
-            if (application === null) {
-              // first initilization
-              var info = {
-                name: json.description,
-                version: json.version,
-                created: Date.now(),
-                lastBootUptime: Date.now(),
-              };
-              var appli = new Application(info);
-              appli.save((err, data) => {
-                if (err) {
-                  res.status(500).send(err);
-                } else {
-                  res.json(data);
-                }
-              });
-            } else {
-              // update version and lastBootUptime
-              application.version = json.version;
-              application.lastBootUptime = Date.now();
-              Application.findByIdAndUpdate(application._id, application, {new: true}, (err, data) => {
-                if (err) {
-                  res.status(500).send(err);
-                } else {
-                  res.json(data);
-                }
-              });
-            }
-          }
-        });
-      }
-    });
-  } else {
-    throw new Error('Error: connection must come from localhost. (the remote address is ' + req.connection.remoteAddress + ')');
-  }
 };
 
 // POST: Change the name of the application (to allow using a custom name) **(user must be master)**

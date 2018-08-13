@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - None
 
-## [3.1.0] - XXXX-XX-XX
+## [3.1.0] - 2018-08-13
 
 ### Added
 - [#76](https://gitlab.aldebaran.lan/hardware-test/astr/issues/76) Search with Regex on archive descriptors

@@ -395,7 +395,6 @@ Find all the information about it in the dedicated repository: [lib-python-astr]
 
 1. [/api](http://10.0.160.147:8000/api)
     - GET: Returns information about the application (name, version, creation date, lastBootUptime)
-    - POST: Update version, creation date and lastBootUptime automatically (only localhost can query it)
 2. [/api/change-app-name](http://10.0.160.147:8000/api/change-app-name)
     - POST: Change the name of the application (to allow using a custom name) **(user must be master)**
 

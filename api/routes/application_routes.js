@@ -8,8 +8,7 @@ module.exports = function(app) {
   });
 
   app.route('/api')
-  .get(application.getAppInfo) // GET: Returns information about the application (name, version, creation date, lastBootUptime)
-  .post(application.updateAppInfo); // POST: Update version, creation date and lastBootUptime automatically (only localhost can query it)
+  .get(application.getAppInfo); // GET: Returns information about the application (name, version, creation date, lastBootUptime)
 
   app.route('/api/change-app-name')
   .post(application.changeName); // POST: Change the name of the application (to allow using a custom name) **(user must be master)**

@@ -8,91 +8,118 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
-
+var Application = require('./api/models/application_model');
 var Archive = require('./api/models/archive_model');
 var ArchiveCategory = require('./api/models/archive_category_model');
 var Search = require('./api/models/search_model');
-var Application = require('./api/models/application_model');
-
+Application = mongoose.model('Application');
 Archive = mongoose.model('Archive');
 ArchiveCategory = mongoose.model('ArchiveCategory');
 Search = mongoose.model('Search');
-Application = mongoose.model('Application');
 
 // use port passed in command line argument if exists
 if (process.argv.length > 2 && !isNaN(process.argv[2])) {
   port = process.argv[2];
 }
 
-// get the archive path and create the folder if doesn't exist
-Application.findOne({}, (err, application) => {
-  if (err) {
-    console.log(err);
-  } else if (application === null) {
-    // first initilization
-    fs.mkdirp('archives/', (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-  } else {
-    fs.mkdirp(application.archivesPath, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-  }
-});
-
 // connection to mongoDB
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/ASTR');
 var db = mongoose.connection;
 
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-app.use(express.static('public'));
-app.use(cookieParser());
+// initilization: create/update application document (containing app name, version, archive path, ...)
+new Promise((resolve, reject) => {
+  Application.findOne({}, (err, application) => {
+    if (err) {
+      reject(err);
+    } else {
+      fs.readFile('package.json', 'utf8', (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          json = JSON.parse(data);
+          if (application === null) {
+            // first initilization
+            var info = {
+              name: json.description,
+              version: json.version,
+              created: Date.now(),
+              lastBootUptime: Date.now(),
+            };
+            application = new Application(info);
+            application.save((err, data) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(application);
+              }
+            });
+          } else {
+            // update version and lastBootUptime
+            application.version = json.version;
+            application.lastBootUptime = Date.now();
+            Application.findByIdAndUpdate(application._id, application, {new: true}, (err, data) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(application);
+              }
+            });
+          }
+        }
+      });
+    }
+  });
+}).then((application) => {
+  // create the folder containing the archive if doesn't exist
+  fs.mkdirp(application.archivesPath, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
 
-// use sessions for tracking logins
-app.use(session({
-  secret: 'work hard',
-  resave: true,
-  saveUninitialized: false,
-  store: new MongoStore({
-    mongooseConnection: db,
-  }),
-}));
+  app.use(bodyParser.urlencoded({extended: true}));
+  app.use(bodyParser.json());
+  app.use(express.static('public'));
+  app.use(cookieParser());
 
-// routes for the mongoDB API
-// importing routes
-var archiveRoutes = require('./api/routes/archive_routes');
-var archiveCategoryRoutes = require('./api/routes/archive_category_routes');
-var searchRoutes = require('./api/routes/search_routes');
-var userRoutes = require('./api/routes/user_routes');
-var uploadRoutes = require('./api/routes/upload_routes');
-var downloadRoutes = require('./api/routes/download_routes');
-var statsRoutes = require('./api/routes/stats_routes');
-var applicationRoutes = require('./api/routes/application_routes');
+  // use sessions for tracking logins
+  app.use(session({
+    secret: 'work hard',
+    resave: true,
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongooseConnection: db,
+    }),
+  }));
 
-// register the routes
-archiveRoutes(app);
-archiveCategoryRoutes(app);
-searchRoutes(app);
-userRoutes(app);
-uploadRoutes(app);
-downloadRoutes(app);
-statsRoutes(app);
-applicationRoutes(app);
+  // routes for the mongoDB API
+  // importing routes
+  var applicationRoutes = require('./api/routes/application_routes');
+  var archiveRoutes = require('./api/routes/archive_routes');
+  var archiveCategoryRoutes = require('./api/routes/archive_category_routes');
+  var searchRoutes = require('./api/routes/search_routes');
+  var userRoutes = require('./api/routes/user_routes');
+  var uploadRoutes = require('./api/routes/upload_routes');
+  var downloadRoutes = require('./api/routes/download_routes');
+  var statsRoutes = require('./api/routes/stats_routes');
 
-// start the server
-app.listen(port);
+  // register the routes
+  applicationRoutes(app);
+  archiveRoutes(app);
+  archiveCategoryRoutes(app);
+  searchRoutes(app);
+  userRoutes(app);
+  uploadRoutes(app);
+  downloadRoutes(app);
+  statsRoutes(app);
 
-console.log('ASTR started on port ' + port);
+  // start the server
+  app.listen(port);
 
-// update application info
-request.post('http://localhost:' + port + '/api', () => {
-  // then, clean the folder containing the archives once a day
+  console.log('ASTR started on port ' + port);
+
+  // clean the folder containing the archives once a day
   request.get('http://localhost:' + port + '/api/archives/cleanArchivesFolder', () => {});
   setInterval(() => {
     request.get('http://localhost:' + port + '/api/archives/cleanArchivesFolder', () => {});
