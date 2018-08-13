@@ -1,6 +1,6 @@
 {
   "name": "astr",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Archiving System Truly Restful",
   "main": "server.js",
   "scripts": {

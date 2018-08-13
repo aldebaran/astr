@@ -8,6 +8,12 @@ var ApplicationSchema = new Schema({
     required: true,
     trim: true,
   },
+  archivesPath: {
+    type: String,
+    required: false,
+    default: 'archives',
+    trim: true,
+  },
   version: {
     type: String,
     unique: true,

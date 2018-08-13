@@ -66,7 +66,19 @@
     }
     // add the descriptors to the body request
     $('.inputDescriptor').each(function() {
-      if ($(this).val() !== '') {
+      if ($(this).val() === 'regex' && $(this).next().find('.inputDescriptorRegex').val() !== '') {
+        bodyRequest['$and'].push({
+          'descriptors': {
+            '$elemMatch': {
+              'name': $(this).closest('.form-group').find('label').html(),
+              'value': {
+                '$regex': $(this).next().find('.inputDescriptorRegex').val(),
+              },
+            },
+          },
+        });
+        console.log($(this).next().find('.inputDescriptorRegex').val());
+      } else if ($(this).val() !== '' && $(this).val() !== 'regex') {
         bodyRequest['$and'].push({
           'descriptors': {
             '$elemMatch': {
@@ -84,7 +96,6 @@
     if (bodyRequest._id['$in'].length === 0) {
       delete bodyRequest._id;
     }
-
     // execute the search each time the box search content change
     search(bodyRequest, 1);
   });
@@ -142,6 +153,7 @@
         options.forEach(function(option) {
           $('.inputDescriptor:last').append('<option>' + option + '</option>');
         });
+        $('.inputDescriptor:last').append('<option value="regex">Use a regex</option>');
         $('#selectDescriptor').val('default');
       });
     } else {
@@ -156,6 +168,21 @@
     // remove descriptor input from the page
     $(this).closest('.form-group').remove();
     $('#form-search').trigger('change');
+  });
+
+  // add input for regex
+  $('#form-search').on('change', '.inputDescriptor', function() {
+    if ($(this).val() === 'regex') {
+      $('' +
+      '<div class="input-group mb-3 regexGroup">' +
+        '<input type="text" class="form-control inputDescriptorRegex" placeholder="Regex">' +
+        '<div class="input-group-append">' +
+          '<a href="https://www.debuggex.com/cheatsheet/regex/pcre" target="_blank" rel="noopener noreferrer" class="btn btn-secondary"><i class="fa fa-question-circle" aria-hidden="true"></i></a>' +
+        '</div>' +
+      '</div>').insertAfter(this);
+    } else if ($(this).next().hasClass('regexGroup')) {
+      $(this).next().remove();
+    }
   });
 
   // range of dates
@@ -742,6 +769,7 @@
           }
           if (search.archiveCategory) {
             $('#selectCategory').val(search.archiveCategory);
+            $('#selectCategory').trigger('change');
           }
           if (search.archiveAuthor) {
             $('#selectAuthor').val(search.archiveAuthor);
@@ -809,6 +837,7 @@
       }
       if (query.category) {
         $('#selectCategory').val(query.category);
+        $('#selectCategory').trigger('change');
       }
       if (query['$and']) {
         query['$and'].forEach(function(specificFilter) {

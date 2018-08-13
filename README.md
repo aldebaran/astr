@@ -11,15 +11,18 @@
   - [Techs used](#techs-used)
   - [Useful tools](#useful-tools)
 - [Installation](#installation)
-  - [1. Install MongoDB](#1-install-mongodb)
-  - [2. Launch MongoDB](#2-launch-mongodb)
-  - [3. Create the database](#3-create-the-database)
-  - [4. Install Node.js](#4-install-nodejs)
-  - [5. Clone the repository](#5-clone-the-repository)
-  - [6. Install the modules](#6-install-the-modules)
-  - [7. Launch the application](#7-launch-the-application)
-  - [8. Create the first Admin](#8-create-the-first-admin)
-  - [9. Monitor the application (optional)](#9-monitor-the-application-optional)
+  - [Installation with Docker and Ansible](#installation-with-docker-and-ansible)
+  - [Manual installation](#manual-installation)
+    - [1. Install MongoDB](#1-install-mongodb)
+    - [2. Launch MongoDB](#2-launch-mongodb)
+    - [3. Create the database](#3-create-the-database)
+    - [4. Install Node.js](#4-install-nodejs)
+    - [5. Clone the repository](#5-clone-the-repository)
+    - [6. Install the modules](#6-install-the-modules)
+    - [7. Launch the application](#7-launch-the-application)
+    - [8. Create the first Admin](#8-create-the-first-admin)
+    - [9. (optional) Configure the archive path](#9-optional-configure-the-archive-path)
+    - [10. (optional) Monitor the application](#10-optional-monitor-the-application)
 - [Authentification](#authentification)
   - [Request Header](#request-header)
   - [Tokens](#tokens)
@@ -68,6 +71,7 @@ Here are the main features:
     - [uuid](https://www.npmjs.com/package/uuid) *(to generate Universally Unique Identifier)*
     - [multer](https://www.npmjs.com/package/multer) *(to upload files on the server)*
     - [archiver](https://www.npmjs.com/package/archiver) *(to zip the files)*
+    - [node-stream-zip](https://www.npmjs.com/package/node-stream-zip) *(to unzip the files)*
     - [diskspace](https://www.npmjs.com/package/diskspace) *(to have information about the disk usage of the server)*
     - [get-folder-size](https://www.npmjs.com/package/get-folder-size) *(to know the size of a folder)*
     - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
@@ -80,16 +84,22 @@ Here are the main features:
 
 ## Installation
 
-To deploy the application on a server, follow these steps.
+To deploy the application, you can either use [Docker and Ansible](#installation-with-docker-and-ansible) (automated deployment), or install everything [manually](#manual-installation).
+
+### Installation with Docker and Ansible
+
+Follow the README of [infrastructure-ansible-astr](https://gitlab.aldebaran.lan/naoqi-tests/infrastructure-ansible-astr).
+
+### Manual installation
 
 On the server:
 
-### 1. Install MongoDB
+#### 1. Install MongoDB
 
 - [Ubuntu 14.04 / 16.04](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
 - [Debian 7 / 8 / 9](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
 
-### 2. Launch MongoDB
+#### 2. Launch MongoDB
 
 - Open a terminal and run
 
@@ -97,7 +107,7 @@ On the server:
 sudo service mongod start
 ```
 
-### 3. Create the database
+#### 3. Create the database
 
 - Open a Mongo Client in the terminal
 ```
@@ -119,7 +129,7 @@ db.uselesscollection.insert({})
 show dbs
 ```
 
-### 4. Install Node.js
+#### 4. Install Node.js
 
 :warning: Install [Node.js](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions) (version 9.x).
 ```
@@ -127,13 +137,13 @@ curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
-### 5. Clone the repository
+#### 5. Clone the repository
 
 ```
 git clone git@gitlab.aldebaran.lan:hardware-test/astr.git
 ```
 
-### 6. Install the modules
+#### 6. Install the modules
 
 - In your terminal, move to the folder of the repository
 - At the root of the folder run
@@ -150,7 +160,7 @@ npm install
 npm install pm2 -g
 ```
 
-### 7. Launch the application
+#### 7. Launch the application
 
 - At the root of the folder run
 ```
@@ -179,7 +189,7 @@ npm stop
 pm2 delete {pm2_processs_id}
 ```
 
-### 8. Create the first Admin
+#### 8. Create the first Admin
 
 **From your personal computer, open the website** (serverIP:8000)
 - Click on *Login*
@@ -204,7 +214,30 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 
 - That's it! You are now a "Master", that means you can modify directly users permissions on the website
 
-### 9. Monitor the application (optional)
+#### 9. (optional) Configure the archive path
+
+By default, the archives are stored in a folder named "archives" at the root of ASTR application. If you wish, you can configure a different path.
+
+**:warning: ALL THE DATA STORED ON THE PREVIOUS PATH WILL BE LOST :warning:**
+
+The path must be absolute and without "/" at the end *(example: /home/john.doe/Documents/astr_archives)*. If the last folder of your path doesn't exist yet, it will be created automatically.
+
+To configure the new path:
+- execute the following commands from the server:
+```
+mongo
+> use ASTR
+> db.applications.findOneAndUpdate({}, {$set: {archivesPath: "/your_new_path"}})
+```
+
+- restart ASTR
+```
+cd astr
+npm stop
+npm run prod
+```
+
+#### 10. (optional) Monitor the application
 
 - If you started the application with `npm run prod`, you can monitor it by running
 ```
@@ -288,10 +321,12 @@ Find all the information about it in the dedicated repository: [lib-python-astr]
     - POST: Push a new descriptor in all archives matched by the archive category (body contains *category* and *descriptor: {name, value}*) **(user must be master)**
 12. [/api/archives/changeDescriptorName](http://10.0.160.147:8000/api/archives/changeDescriptorName)
     - POST: Change the name of the matched descriptors in all archives matched by the archive category (body contains *category*, *previousName* and *newName*) **(user must be master)**
-13. [/api/archives/withoutArchive](http://10.0.160.147:8000/api/archives/withoutArchive)
+13. [/api/archives/withoutZip](http://10.0.160.147:8000/api/archives/withoutZip)
     - GET: Returns the list of all archives that are missing in the folder "archives" (to delete them)
 14. [/api/archives/YAMLformat/id/:id](http://10.0.160.147:8000/api/archives/YAMLformat/id/:id)
     - GET: Returns the archive with the associated ID in a YAML format, to store it in the zip
+15. [/api/archives/cleanArchivesFolder](http://10.0.160.147:8000/api/archives/cleanArchivesFolder)
+    - GET: Clean the archives folder and returns the deleted files (delete files/folders not created today, that don't have the zip extension and a filename different than 24 hexadecimal digits). Executed automatically once a day.
 
 #### Archive Categories
 
@@ -360,7 +395,6 @@ Find all the information about it in the dedicated repository: [lib-python-astr]
 
 1. [/api](http://10.0.160.147:8000/api)
     - GET: Returns information about the application (name, version, creation date, lastBootUptime)
-    - POST: Update version, creation date and lastBootUptime automatically (only localhost can query it)
 2. [/api/change-app-name](http://10.0.160.147:8000/api/change-app-name)
     - POST: Change the name of the application (to allow using a custom name) **(user must be master)**
 

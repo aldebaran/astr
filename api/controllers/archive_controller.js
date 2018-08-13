@@ -5,6 +5,7 @@ var archiver = require('archiver');
 var mongoose = require('mongoose');
 var User = require('../models/user_model');
 var Archive = mongoose.model('Archive');
+var Application = mongoose.model('Application');
 var error401 = '<h1>401 UNAUTHORIZED</h1><p>Please add your email address and your token in the Authorization Header of your request (use <a href="http://docs.python-requests.org/en/master/user/authentication/#basic-authentication">Basic Auth</a>).<br>If you already did that, it means that you don\'t have the required permission for this action.</p>';
 
 // GET: Returns the list of all archives (sorted by creation date in descending order)
@@ -224,7 +225,7 @@ exports.getArchiveInYAMLFormat = (req, res) => {
                  'id: ' + data._id + '\n' +
                  'date: ' + data.date.toISOString().substr(0, 10) + '\n' +
                  'author: ' + data.author + '\n' +
-                 'archive_category: ' + data.category + '\n'
+                 'category: ' + data.category + '\n'
         );
         if (data.comments) {
           txt += 'comments: ' + data.comments + '\n';
@@ -288,66 +289,72 @@ exports.updateArchive = (req, res) => {
                     console.log(err);
                   } else {
                     // create temporary folder to store info.txt and files from the archive
-                    var folderName = id + '_temp';
-                    var path = 'archives/' + folderName;
-                    fs.mkdir(path, (err) => {
+                    Application.findOne({}, (err, application) => {
                       if (err) {
                         console.log(err);
                       } else {
-                        // unzip the content of the archive
-                        const zip = new StreamZip({
-                            file: 'archives/' + id + '.zip',
-                            storeEntries: true,
-                        });
-                        zip.on('error', (err) => {
-                          console.log(err);
-                        });
-                        zip.on('ready', () => {
-                          console.log('extracting ' + path);
-                          zip.extract(null, './' + path, (err, count) => {
-                            console.log('extracted');
-                            zip.close();
-
-                            // create new info.txt
-                            fs.writeFile(path + '/info.txt', archiveInfo, (err) => {
-                              if (err) {
-                                console.log(err);
-                              }
+                        var folderName = id + '_temp';
+                        var path = application.archivesPath + '/' + folderName;
+                        fs.mkdir(path, (err) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            // unzip the content of the archive
+                            const zip = new StreamZip({
+                                file: application.archivesPath + '/' + id + '.zip',
+                                storeEntries: true,
                             });
-
-                            // zip the files with info.txt
-                            console.log('zipping ' + path);
-                            var output = fs.createWriteStream('archives/' + id + '.zip');
-                            var archive = archiver('zip', {
-                              zlib: {level: 0},
+                            zip.on('error', (err) => {
+                              console.log(err);
                             });
-                            output.on('close', function() {
-                              console.log('zipped');
-                              fs.removeSync(path);
-                              // update archive: isDownloadable = true
-                              Archive.findByIdAndUpdate(id, {'$set': {'isDownloadable': true}}, (err) => {
-                                if (err) {
+                            zip.on('ready', () => {
+                              console.log('extracting ' + path);
+                              zip.extract(null, './' + path, (err, count) => {
+                                console.log('extracted');
+                                zip.close();
+
+                                // create new info.txt
+                                fs.writeFile(path + '/info.txt', archiveInfo, (err) => {
+                                  if (err) {
+                                    console.log(err);
+                                  }
+                                });
+
+                                // zip the files with info.txt
+                                console.log('zipping ' + path);
+                                var output = fs.createWriteStream(application.archivesPath + '/' + id + '.zip');
+                                var archive = archiver('zip', {
+                                  zlib: {level: 0},
+                                });
+                                output.on('close', function() {
+                                  console.log('zipped');
+                                  fs.removeSync(path);
+                                  // update archive: isDownloadable = true
+                                  Archive.findByIdAndUpdate(id, {'$set': {'isDownloadable': true}}, (err) => {
+                                    if (err) {
+                                      console.log(err);
+                                    }
+                                  });
+                                });
+                                archive.on('warning', function(err) {
                                   console.log(err);
-                                }
+                                });
+                                archive.on('error', function(err) {
+                                  console.log(err);
+                                });
+                                archive.pipe(output);
+                                archive.directory(path, false);
+                                archive.finalize()
+                                .then(() => {
+                                  res.json({
+                                    name: 'Success',
+                                    message: 'Archive successfully modified',
+                                    archive: data,
+                                  });
+                                });
                               });
                             });
-                            archive.on('warning', function(err) {
-                              console.log(err);
-                            });
-                            archive.on('error', function(err) {
-                              console.log(err);
-                            });
-                            archive.pipe(output);
-                            archive.directory(path, false);
-                            archive.finalize()
-                            .then(() => {
-                              res.json({
-                                name: 'Success',
-                                message: 'Archive successfully modified',
-                                archive: data,
-                              });
-                            });
-                          });
+                          }
                         });
                       }
                     });
@@ -377,9 +384,15 @@ exports.deleteArchive = (req, res) => {
     if (hasAuthorization) {
       var id = req.params.id;
       // delete the zip
-      fs.unlink('archives/' + id + '.zip', (err) => {
-        if (err) console.log(err);
-        else console.log('successfully deleted ' + id + '.zip');
+      Application.findOne({}, (err, application) => {
+        if (err) {
+          console.log(err);
+        } else {
+          fs.unlink(application.archivesPath + '/' + id + '.zip', (err) => {
+            if (err) console.log(err);
+            else console.log('successfully deleted ' + id + '.zip');
+          });
+        }
       });
       Archive.findByIdAndRemove(id, (err, data) => {
         if (err) {
@@ -529,6 +542,57 @@ exports.changeDescriptorName = (req, res) => {
       });
     } else {
       res.status(401).send(error401);
+    }
+  });
+};
+
+// GET: Clean the archives folder and returns the deleted files (delete files/folders not created today, that don't have the zip extension and a filename different than 24 hexadecimal digits). Executed automatically once a day.
+exports.cleanArchivesFolder = (req, res) => {
+  Application.findOne({}, (err, application) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      fs.readdir(application.archivesPath, (err, files) => {
+        if (files) {
+          var checkRegExp = /(^[a-f\d]{24}|multiple)+(.zip)$/i;
+          var filesToDelete = files.filter((file) => !checkRegExp.test(file));
+          var deletedFiles = [];
+          var today = new Date();
+          Promise.all(filesToDelete.map((file) => {
+            return new Promise((resolve) => {
+              fs.stat(application.archivesPath + '/' + file, (err, fileStat) => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  // delete the file/folder if not created today
+                  if (fileStat.birthtime.getUTCDay() !== today.getUTCDay()
+                  || fileStat.birthtime.getUTCMonth() !== today.getUTCMonth()
+                  || fileStat.birthtime.getFullYear() !== today.getFullYear()) {
+                    fs.remove(application.archivesPath + '/' + file, (err) => {
+                      if (err) {
+                        console.log(err);
+                        resolve();
+                      } else {
+                        deletedFiles.push(file);
+                        console.log('deleted ' + file + ' because not desirable');
+                        resolve();
+                      }
+                    });
+                  } else {
+                    resolve();
+                  }
+                }
+              });
+            });
+          })).then(() => {
+            res.json({
+              'deletedFiles': deletedFiles,
+            });
+          });
+        } else {
+          res.json([]);
+        }
+      });
     }
   });
 };
