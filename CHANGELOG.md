@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - [#76](https://gitlab.aldebaran.lan/hardware-test/astr/issues/76) Search with Regex on archive descriptors
 - [#135](https://gitlab.aldebaran.lan/hardware-test/astr/issues/135) Clean the archive folder once a day
+- [#136](https://gitlab.aldebaran.lan/hardware-test/astr/issues/136) Configure a custom path to store the archives
 
 ### Fixed
 - Scrolling bug on modals when a new modal pops

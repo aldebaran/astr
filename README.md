@@ -21,7 +21,8 @@
     - [6. Install the modules](#6-install-the-modules)
     - [7. Launch the application](#7-launch-the-application)
     - [8. Create the first Admin](#8-create-the-first-admin)
-    - [9. Monitor the application (optional)](#9-monitor-the-application-optional)
+    - [9. (optional) Configure the archive path](#9-optional-configure-the-archive-path)
+    - [10. (optional) Monitor the application](#10-optional-monitor-the-application)
 - [Authentification](#authentification)
   - [Request Header](#request-header)
   - [Tokens](#tokens)
@@ -213,7 +214,30 @@ db.users.update({"email": "yourEmail"}, {"$set": {"master": true, "write_permiss
 
 - That's it! You are now a "Master", that means you can modify directly users permissions on the website
 
-#### 9. Monitor the application (optional)
+#### 9. (optional) Configure the archive path
+
+By default, the archives are stored in a folder named "archives" at the root of ASTR application. If you wish, you can configure a different path.
+
+**:warning: ALL THE DATA STORED ON THE PREVIOUS PATH WILL BE LOST :warning:**
+
+The path must be absolute and without "/" at the end *(example: /home/john.doe/Documents/astr_archives)*. If the last folder of your path doesn't exist yet, it will be created automatically.
+
+To configure the new path:
+- execute the following commands from the server:
+```
+mongo
+> use ASTR
+> db.applications.findOneAndUpdate({}, {$set: {archivesPath: "/your_new_path"}})
+```
+
+- restart ASTR
+```
+cd astr
+npm stop
+npm run prod
+```
+
+#### 10. (optional) Monitor the application
 
 - If you started the application with `npm run prod`, you can monitor it by running
 ```

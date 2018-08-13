@@ -24,10 +24,23 @@ if (process.argv.length > 2 && !isNaN(process.argv[2])) {
   port = process.argv[2];
 }
 
-// create the folder to store archives
-fs.mkdirp('archives/', (err) => {
+// get the archive path and create the folder if doesn't exist
+Application.findOne({}, (err, application) => {
   if (err) {
     console.log(err);
+  } else if (application === null) {
+    // first initilization
+    fs.mkdirp('archives/', (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+  } else {
+    fs.mkdirp(application.archivesPath, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
   }
 });
 
@@ -78,10 +91,10 @@ app.listen(port);
 console.log('ASTR started on port ' + port);
 
 // update application info
-request.post('http://localhost:' + port + '/api', () => {});
-
-// clean the folder "archives" once a day
-request.get('http://localhost:' + port + '/api/archives/cleanArchivesFolder', () => {});
-setInterval(() => {
+request.post('http://localhost:' + port + '/api', () => {
+  // then, clean the folder containing the archives once a day
   request.get('http://localhost:' + port + '/api/archives/cleanArchivesFolder', () => {});
-}, 1000 * 60 * 60 * 24);
+  setInterval(() => {
+    request.get('http://localhost:' + port + '/api/archives/cleanArchivesFolder', () => {});
+  }, 1000 * 60 * 60 * 24);
+});

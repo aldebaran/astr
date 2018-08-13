@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Archive = mongoose.model('Archive');
 var diskspace = require('diskspace');
 var getFolderSize = require('get-folder-size');
+var Application = mongoose.model('Application');
 
 // GET: Returns a dictionnary with the number of archives uploaded per month
 exports.getArchivingFrequency = (req, res) => {
@@ -71,22 +72,51 @@ exports.getDiskUsage = (req, res) => {
     if (err1) {
       res.status(500).send(err1);
     } else {
-      getFolderSize(path.join(__dirname, '../../archives'), (err2, size) => {
-        if (err2) {
-          res.status(500).send(err2);
+      Application.findOne({}, (err, application) => {
+        if (err) {
+          console.log(err);
         } else {
-          res.json({
-            total: formatBytes(result.total),
-            used: formatBytes(result.used),
-            free: formatBytes(result.free),
-            astr: formatBytes(size),
-            used_without_astr: formatBytes(result.used - size),
-            total_bytes: result.total,
-            used_bytes: result.used,
-            free_bytes: result.free,
-            astr_bytes: size,
-            used_without_astr_bytes: result.used - size,
-          });
+          if (application.archivesPath === 'archives') {
+            // default path (relative)
+            getFolderSize(path.join(__dirname, '../../archives'), (err2, size) => {
+              if (err2) {
+                res.status(500).send(err2);
+              } else {
+                res.json({
+                  total: formatBytes(result.total),
+                  used: formatBytes(result.used),
+                  free: formatBytes(result.free),
+                  astr: formatBytes(size),
+                  used_without_astr: formatBytes(result.used - size),
+                  total_bytes: result.total,
+                  used_bytes: result.used,
+                  free_bytes: result.free,
+                  astr_bytes: size,
+                  used_without_astr_bytes: result.used - size,
+                });
+              }
+            });
+          } else {
+            // custom path (absolute)
+            getFolderSize(application.archivesPath, (err2, size) => {
+              if (err2) {
+                res.status(500).send(err2);
+              } else {
+                res.json({
+                  total: formatBytes(result.total),
+                  used: formatBytes(result.used),
+                  free: formatBytes(result.free),
+                  astr: formatBytes(size),
+                  used_without_astr: formatBytes(result.used - size),
+                  total_bytes: result.total,
+                  used_bytes: result.used,
+                  free_bytes: result.free,
+                  astr_bytes: size,
+                  used_without_astr_bytes: result.used - size,
+                });
+              }
+            });
+          }
         }
       });
     }
