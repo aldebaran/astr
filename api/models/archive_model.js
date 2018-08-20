@@ -7,6 +7,7 @@ var ArchiveSchema = new Schema({
     unique: false,
     required: true,
     trim: true,
+    uppercase: true,
   },
   date: {
     type: Date,

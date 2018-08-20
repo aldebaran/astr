@@ -420,8 +420,9 @@
           if (data.name === 'Success') {
             // modify all the associated archives
             $.post('api/archives', {archiveCategoryId: $('#infoCategory').attr('val')}, function(archives) {
-              new Promise(function(resolve, reject) {
-                if (archives.length > 0) {
+              if (archives.length > 0) {
+                // FIRST, change the category name in all archives if it has changed
+                new Promise(function(resolve) {
                   if (categoryNameChanged(data.before, data.modified)) {
                     $.ajax({
                       method: 'POST',
@@ -430,49 +431,63 @@
                       data: {previousName: data.before.name, newName: data.modified.name},
                       success: function(data) {
                         console.log(data);
+                        resolve();
                       },
                     });
+                  } else {
+                    resolve();
                   }
-                  // handle changes on descriptors
-                  $('.inputDescriptorNameEdit').each(function() {
-                    if ($(this).hasClass('newDescriptor') && $(this).val().trim() !== '') {
-                      // add this descriptor to all archives with the associated category
-                      var body = {
-                        category: editedCategory.name,
-                        descriptor: {
-                          name: $(this).val().trim(),
-                          value: '',
-                        },
-                      };
-                      $.ajax({
-                        method: 'POST',
-                        url: 'api/archives/addDescriptor',
-                        headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
-                        data: body,
-                        success: function(data) {
-                          console.log(data);
-                        },
-                      });
-                    } else if ($(this).hasClass('nameChanged') && $(this).val().trim() !== '') {
-                      // change this descriptor name on all archives with the associated category
-                      var body = {
-                        category: editedCategory.name,
-                        previousName: $(this).attr('previousname'),
-                        newName: $(this).val().trim(),
-                      };
-                      $.ajax({
-                        method: 'POST',
-                        url: 'api/archives/changeDescriptorName',
-                        headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
-                        data: body,
-                        success: function(data) {
-                          console.log(data);
-                        },
-                      });
-                    }
+                }).then(function() {
+                  // THEN, handle changes on descriptors
+                  Promise.all($('.inputDescriptorNameEdit').map(function(idx) {
+                    return new Promise(function(resolve) {
+                      if ($('.inputDescriptorNameEdit').eq(idx).hasClass('newDescriptor') && $('.inputDescriptorNameEdit').eq(idx).val().trim() !== '') {
+                        // add this descriptor to all archives with the associated category
+                        var body = {
+                          category: editedCategory.name,
+                          descriptor: {
+                            name: $('.inputDescriptorNameEdit').eq(idx).val().trim(),
+                            value: '',
+                          },
+                        };
+                        $.ajax({
+                          method: 'POST',
+                          url: 'api/archives/addDescriptor',
+                          headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
+                          data: body,
+                          success: function(data) {
+                            console.log(data);
+                            resolve();
+                          },
+                        });
+                      } else if ($('.inputDescriptorNameEdit').eq(idx).hasClass('nameChanged') && $('.inputDescriptorNameEdit').eq(idx).val().trim() !== '') {
+                        // change this descriptor name on all archives with the associated category
+                        var body = {
+                          category: editedCategory.name,
+                          previousName: $('.inputDescriptorNameEdit').eq(idx).attr('previousname'),
+                          newName: $('.inputDescriptorNameEdit').eq(idx).val().trim(),
+                        };
+                        $.ajax({
+                          method: 'POST',
+                          url: 'api/archives/changeDescriptorName',
+                          headers: {'Authorization': 'Basic ' + btoa(getAuthentification())},
+                          data: body,
+                          success: function(data) {
+                            console.log(data);
+                            resolve();
+                          },
+                        });
+                      } else {
+                        resolve();
+                      }
+                    });
+                  })).then(function() {
+                    location.reload();
                   });
-                }
-              }).then(location.reload());
+                });
+              } else {
+                location.reload();
+              }
             });
           } else {
             showModal('Error', 'Someting went wrong.');
