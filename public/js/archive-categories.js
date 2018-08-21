@@ -188,7 +188,7 @@
           );
 
           $('#deleteArchiveCategory').click(function() {
-            var r = confirm('Please confirm that you want to delete this archive category.');
+            var r = confirm('⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️\nIf you delete this archive, all the links will be broken and not usable anymore. Are you sure you want to delete this archive category ?');
             if (r === true) {
               $.ajax({
                 type: 'DELETE',
