@@ -254,6 +254,13 @@
                 $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName">' + descriptor.name + ':</span><span class="value"> ' + descriptor.value + '</span></li>');
               }
             });
+          }).fail(function(e) {
+            if (e.status === 404) {
+              // case if the category has been deleted
+              archive.descriptors.forEach(function(descriptor) {
+                $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName">' + descriptor.name + ':</span><span class="value"> ' + descriptor.value + '</span></li>');
+              });
+            }
           });
 
           if (archive.comments) {
@@ -294,6 +301,13 @@
                 $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName">' + descriptor.name + ':</span><span class="value"> ' + descriptor.value + '</span></li>');
               }
             });
+          }).fail(function(e) {
+            if (e.status === 404) {
+              // case if the category has been deleted
+              archive.descriptors.forEach(function(descriptor) {
+                $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName">' + descriptor.name + ':</span><span class="value"> ' + descriptor.value + '</span></li>');
+              });
+            }
           });
 
           if (archive.comments) {
@@ -340,6 +354,13 @@
                 $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName">' + descriptor.name + ':</span><span class="value"> ' + descriptor.value + '</span></li>');
               }
             });
+          }).fail(function(e) {
+            if (e.status === 404) {
+              // case if the category has been deleted
+              archive.descriptors.forEach(function(descriptor) {
+                $('#body'+archive._id).append('<li class="descriptor"><span class="descriptorName">' + descriptor.name + ':</span><span class="value"> ' + descriptor.value + '</span></li>');
+              });
+            }
           });
 
           if (archive.comments) {

@@ -21,10 +21,10 @@
                 '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>' +
                 'Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>' +
                 '<strong>Example</strong><br>' +
-                'Descriptor name: <i>Issue ID</i><br>' +
-                'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
-                'Descriptor value: <i>42305</i><br>' +
-                'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
+                'Descriptor name: <i>wikipedia_article</i><br>' +
+                'Base URL: <i>https://en.wikipedia.org/wiki/</i><br>' +
+                'Descriptor value: <i>Database</i><br>' +
+                'Link: <i>https://en.wikipedia.org/wiki/Database</i><br><br>' +
                 '<i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don\'t forget the &quot;/&quot; at the end of the base URL.">' +
                 '</i>' +
               '</small>' +
@@ -38,7 +38,7 @@
                   '<button type="button" class="btn btn-warning deleteLink" id="deleteLink"><i class="fa fa-times" aria-hidden="true"></i></button>' +
                 '</div>' +
               '</div>' +
-              '<small class="form-text text-muted">Example: https://redmine.aldebaran.lan/issues/</small>' +
+              '<small class="form-text text-muted">Example: https://en.wikipedia.org/wiki/</small>' +
             '</div>' +
           '</div>' +
           '<div class="col">' +
@@ -188,7 +188,7 @@
           );
 
           $('#deleteArchiveCategory').click(function() {
-            var r = confirm('Please confirm that you want to delete this archive category.');
+            var r = confirm('⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️\nIf you delete this archive, all the links will be broken and not usable anymore. Are you sure you want to delete this archive category ?');
             if (r === true) {
               $.ajax({
                 type: 'DELETE',
@@ -229,10 +229,10 @@
                   '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>' +
                   'Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>' +
                   '<strong>Example</strong><br>' +
-                  'Descriptor name: <i>Issue ID</i><br>' +
-                  'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
-                  'Descriptor value: <i>42305</i><br>' +
-                  'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
+                  'Descriptor name: <i>wikipedia_article</i><br>' +
+                  'Base URL: <i>https://en.wikipedia.org/wiki/</i><br>' +
+                  'Descriptor value: <i>Database</i><br>' +
+                  'Link: <i>https://en.wikipedia.org/wiki/Database</i><br><br>' +
                   '<i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don\'t forget the &quot;/&quot; at the end of the base URL.">' +
                   '</i>' +
                 '</small>' +
@@ -304,10 +304,10 @@
                 '<i class="fa fa-question-circle infoLinkIcon tooltipInfoLink" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" data-html="true" title="You can turn this descriptor into a link.<br>' +
                 'Just specify the base URL, the value of the descriptor will be added automatically at the end to create the link.<br><br>' +
                 '<strong>Example</strong><br>' +
-                'Descriptor name: <i>Issue ID</i><br>' +
-                'Base URL: <i>https://redmine.aldebaran.lan/issues/</i><br>' +
-                'Descriptor value: <i>42305</i><br>' +
-                'Link: <i>https://redmine.aldebaran.lan/issues/42305</i><br><br>' +
+                'Descriptor name: <i>wikipedia_article</i><br>' +
+                'Base URL: <i>https://en.wikipedia.org/wiki/</i><br>' +
+                'Descriptor value: <i>Database</i><br>' +
+                'Link: <i>hhttps://en.wikipedia.org/wiki/Database</i><br><br>' +
                 '<i class=&quot;fa fa-warning&quot; aria-hidden=&quot;true&quot;></i> Don\'t forget the &quot;/&quot; at the end of the base URL.">' +
                 '</i>' +
               '</small>' +
