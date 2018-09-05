@@ -1,6 +1,6 @@
 {
   "name": "astr",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "Archiving System Truly Restful",
   "main": "server.js",
   "scripts": {
@@ -8,12 +8,8 @@
     "prod": "pm2 start server.js",
     "stop": "pm2 delete 0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab.aldebaran.lan:hardware-test/astr.git"
-  },
-  "author": "guillaume fradet",
-  "license": "ISC",
+  "author": "Softbank Robotics Europe",
+  "license": "MPL-2.0",
   "dependencies": {
     "archiver": "^2.1.1",
     "bcrypt": "^2.0.0",
