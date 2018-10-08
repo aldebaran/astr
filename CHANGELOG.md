@@ -29,7 +29,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - None
 
+## 3.2.1 - 2018-10-08
+
+### Fixed
+- Manage REGEX in saved searches
+
 ## 3.2.0 - 2018-09-05
+
+Make the project available for the outside world. Add a new license.
 
 ### Fixed
 - archive descriptors are not shown if the category was deleted
