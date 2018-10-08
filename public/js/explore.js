@@ -913,29 +913,28 @@
   }
 
   function descriptorsAreTheSame(firstDescriptorsArray, secondDescriptorsArray) {
-    if (firstDescriptorsArray.length === secondDescriptorsArray.length) {
-      if (firstDescriptorsArray.length === 0) {
-        return true;
-      } else {
-        var dict1 = {};
-        var dict2 = {};
-        firstDescriptorsArray.forEach(function(descriptor) {
-          dict1[descriptor.name] = descriptor.value;
-        });
-        secondDescriptorsArray.forEach(function(descriptor) {
-          dict2[descriptor.name] = descriptor.value;
-        });
-        for (var key in dict1) {
-          if (!dict2[key] || dict1[key] !== dict2[key]) {
-            return false;
+      var result = true;
+      if (firstDescriptorsArray.length === secondDescriptorsArray.length){
+        if (firstDescriptorsArray.length > 0){
+          firstDescriptorsArray.forEach(function(descriptor1) {
+            secondDescriptorsArray.forEach(function(descriptor2) {
+              if (descriptor1.name === descriptor2.name){
+                if (descriptor1.value !== descriptor2.value || descriptor1.regex !== descriptor2.regex){
+                  result = false;
+                  }
+                }
+              });
+            });
           }
+            // If the whole loops have been performed without returning false,
+            // it means that all descriptors are equal
         }
-      }
-    } else {
-      return false;
+      else{
+        result = false;
+        }
+    return result
     }
-    return true;
-  }
+
 
   function idsAreTheSame(firstIdsArray, secondIdsArray) {
     return new Promise(function(resolve) {
