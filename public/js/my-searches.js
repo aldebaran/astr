@@ -37,7 +37,12 @@
           '</tr>');
           if (search.descriptors.length > 0) {
             search.descriptors.forEach(function(descriptor) {
-              $('.descriptors:last').append('<div><span class="key">' + descriptor.name + ': </span><span class=value>' + descriptor.value + '</span></div>');
+              if( descriptor.value == '_RESERVED_REGEX'){
+                $('.descriptors:last').append('<div><span class="key">' + descriptor.name + ': </span><span class=value> Regex (' + descriptor.regex + ')</span></div>');
+                }
+              else{
+                $('.descriptors:last').append('<div><span class="key">' + descriptor.name + ': </span><span class=value>' + descriptor.value + '</span></div>');
+                }
             });
           } else {
             $('.descriptors:last').html('<span class="null">ALL</span>');
