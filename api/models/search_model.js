@@ -35,6 +35,7 @@ var SearchSchema = new Schema({
   descriptors: [{
     name: {type: String, lowercase: true, trim: true},
     value: {type: String, uppercase: true, trim: true},
+    regex: {type: String, uppercase: false, required: false}
   }],
   created: {
     type: Date,

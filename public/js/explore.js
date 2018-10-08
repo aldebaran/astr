@@ -66,7 +66,7 @@
     }
     // add the descriptors to the body request
     $('.inputDescriptor').each(function() {
-      if ($(this).val() === 'regex' && $(this).next().find('.inputDescriptorRegex').val() !== '') {
+      if ($(this).val() === '_RESERVED_REGEX' && $(this).next().find('.inputDescriptorRegex').val() !== '') {
         bodyRequest['$and'].push({
           'descriptors': {
             '$elemMatch': {
@@ -77,8 +77,7 @@
             },
           },
         });
-        console.log($(this).next().find('.inputDescriptorRegex').val());
-      } else if ($(this).val() !== '' && $(this).val() !== 'regex') {
+      } else if ($(this).val() !== '' && $(this).val() !== '_RESERVED_REGEX') {
         bodyRequest['$and'].push({
           'descriptors': {
             '$elemMatch': {
@@ -134,31 +133,9 @@
   $('#selectDescriptor').change(function() {
     if ($('#selectDescriptor').val() !== 'default' && !selectedDescriptor.includes($('#selectDescriptor').val())) {
       selectedDescriptor.push($('#selectDescriptor').val());
-      $('#form-search').append('' +
-      '<div class="form-group descriptor-group">' +
-        '<label class="labelDescriptor">' + $('#selectDescriptor').val() + '</label>' +
-        '<div class="row">' +
-          '<div class="col">' +
-            '<select class="form-control inputDescriptor">' +
-              '<option></option>' +
-            '</select>' +
-          '</div>' +
-          '<div class="col-2">' +
-            '<button type="button" class="btn btn-warning deleteDescriptor" id="deleteDescriptor"><i class="fa fa-times" aria-hidden="true"></i></button>' +
-          '</div>' +
-        '</div>' +
-      '</div>'
-      );
-      $.get('/api/archives/options/' + $('#selectDescriptor').val(), function(options) {
-        options.forEach(function(option) {
-          $('.inputDescriptor:last').append('<option>' + option + '</option>');
-        });
-        $('.inputDescriptor:last').append('<option value="regex">Use a regex</option>');
-        $('#selectDescriptor').val('default');
-      });
-    } else {
-      $('#selectDescriptor').val('default');
+      addDescriptorToForm($('#selectDescriptor').val())
     }
+    $('#selectDescriptor').val('default');
   });
 
   // delete descriptor input
@@ -172,14 +149,8 @@
 
   // add input for regex
   $('#form-search').on('change', '.inputDescriptor', function() {
-    if ($(this).val() === 'regex') {
-      $('' +
-      '<div class="input-group mb-3 regexGroup">' +
-        '<input type="text" class="form-control inputDescriptorRegex" placeholder="Regex">' +
-        '<div class="input-group-append">' +
-          '<a href="https://www.debuggex.com/cheatsheet/regex/pcre" target="_blank" rel="noopener noreferrer" class="btn btn-secondary"><i class="fa fa-question-circle" aria-hidden="true"></i></a>' +
-        '</div>' +
-      '</div>').insertAfter(this);
+    if ($(this).val() === '_RESERVED_REGEX') {
+      insertRegexField($(this));
     } else if ($(this).next().hasClass('regexGroup')) {
       $(this).next().remove();
     }
@@ -711,11 +682,21 @@
 
     $('.descriptor-group').each(function() {
       if ($(this).find('.inputDescriptor').val() !== '') {
-        search.descriptors.push({
-          name: $(this).find('.labelDescriptor').html(),
-          value: $(this).find('.inputDescriptor').val(),
-        });
-      }
+
+        // Save the name and the value of the descriptor
+        var descriptorObject = {
+            name: $(this).find('.labelDescriptor').html(),
+            value: $(this).find('.inputDescriptor').val()
+          };
+
+        // If there is a regex, store it
+        if (descriptorObject.value === '_RESERVED_REGEX'){
+          descriptorObject.regex = $(this).find('.inputDescriptorRegex').val();
+          }
+
+          // Save the descriptor into the search
+          search.descriptors.push(descriptorObject);
+        }
     });
 
     if (isConnected()) {
@@ -798,28 +779,8 @@
           if (search.descriptors.length > 0) {
             search.descriptors.forEach(function(descriptor) {
               selectedDescriptor.push(descriptor.name);
-              $('#form-search').append('' +
-              '<div class="form-group descriptor-group">' +
-                '<label class="labelDescriptor">' + descriptor.name + '</label>' +
-                '<div class="row">' +
-                  '<div class="col">' +
-                    '<select class="form-control inputDescriptor ' + descriptor.name + '">' +
-                      '<option></option>' +
-                    '</select>' +
-                  '</div>' +
-                  '<div class="col-2">' +
-                    '<button type="button" class="btn btn-warning deleteDescriptor" id="deleteDescriptor"><i class="fa fa-times" aria-hidden="true"></i></button>' +
-                  '</div>' +
-                '</div>' +
-              '</div>'
-              );
-              $.get('/api/archives/options/' + descriptor.name, function(options) {
-                options.forEach(function(option) {
-                  $('.inputDescriptor.' + descriptor.name).append('<option>' + option + '</option>');
-                });
-                $('.inputDescriptor.' + descriptor.name).val(descriptor.value);
+              addDescriptorToForm(descriptor.name, descriptor.value, descriptor.regex)
               });
-            });
           }
           if (search.ids.length > 0) {
             $('#inputIds').val(search.ids.join(', '));
@@ -863,27 +824,8 @@
       if (query['$and']) {
         query['$and'].forEach(function(specificFilter) {
           selectedDescriptor.push(specificFilter.descriptors['$elemMatch'].name);
-          $('#form-search').append('' +
-          '<div class="form-group descriptor-group">' +
-            '<label class="labelDescriptor">' + specificFilter.descriptors['$elemMatch'].name + '</label>' +
-            '<div class="row">' +
-              '<div class="col">' +
-                '<select class="form-control inputDescriptor" id="inputDescriptor' + specificFilter.descriptors['$elemMatch'].name + '">' +
-                  '<option></option>' +
-                '</select>' +
-              '</div>' +
-              '<div class="col-2">' +
-                '<button type="button" class="btn btn-warning deleteDescriptor" id="deleteDescriptor"><i class="fa fa-times" aria-hidden="true"></i></button>' +
-              '</div>' +
-            '</div>' +
-          '</div>'
-          );
-          $.get('/api/archives/options/' + specificFilter.descriptors['$elemMatch'].name, function(options) {
-            options.forEach(function(option) {
-              $('#inputDescriptor' + specificFilter.descriptors['$elemMatch'].name).append('<option>' + option + '</option>');
-            });
-            $('#inputDescriptor' + specificFilter.descriptors['$elemMatch'].name).val(specificFilter.descriptors['$elemMatch'].value);
-          });
+          addDescriptorToForm(specificFilter.descriptors['$elemMatch'].name,
+                              specificFilter.descriptors['$elemMatch'].value)
         });
       }
       search(query, page);
@@ -1020,4 +962,51 @@
     $('#myModal .modal-body').html('<p>' + message + '<p>');
     $('#myModal').modal('show');
   }
+
+  function addDescriptorToForm(descriptorName, descriptorValue, descriptorRegex) {
+    if (typeof(descriptorValue)==='undefined') descriptorValue = '';
+    if (typeof(descriptorRegex)==='undefined') descriptorRegex = '';
+
+    $('#form-search').append('' +
+      '<div class="form-group descriptor-group">' +
+        '<label class="labelDescriptor">' + descriptorName + '</label>' +
+        '<div class="row">' +
+          '<div class="col">' +
+            '<select class="form-control inputDescriptor ' + descriptorName + '">' +
+              '<option></option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="col-2">' +
+            '<button type="button" class="btn btn-warning deleteDescriptor" id="deleteDescriptor"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+      );
+
+    // insert all the options of this descriptor, but not the regex yet
+    $.get('/api/archives/options/' + descriptorName, function(options) {
+      options.forEach(function(option) {
+        $('.inputDescriptor.' + descriptorName).append('<option value="' + option + '">' + option + '</option>');
+        });
+      });
+    $('.inputDescriptor.' + descriptorName).append('<option value="_RESERVED_REGEX">Use a regex</option>')
+
+    $('.inputDescriptor.' + descriptorName).val(descriptorValue);
+    if (descriptorValue == '_RESERVED_REGEX'){
+      // insert the regex field.
+      insertRegexField($('.inputDescriptor.' + descriptorName), descriptorRegex);
+      }
+  }
+
+  function insertRegexField(inputDescriptorObject, regexValue){
+    if (typeof(regexValue)==='undefined') regexValue = '';
+    $('' +
+      '<div class="input-group mb-3 regexGroup">' +
+        '<input type="text" class="form-control inputDescriptorRegex" placeholder="Regex" value="' + regexValue + '">' +
+        '<div class="input-group-append">' +
+          '<a href="https://www.debuggex.com/cheatsheet/regex/pcre" target="_blank" rel="noopener noreferrer" class="btn btn-secondary"><i class="fa fa-question-circle" aria-hidden="true"></i></a>' +
+        '</div>' +
+      '</div>').insertAfter(inputDescriptorObject);
+  }
+
 })(jQuery);
