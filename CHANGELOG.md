@@ -29,6 +29,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - None
 
+## 3.2.2 - 2018-10-19
+
+### Enhanced
+- Display responsiveness of the Explore page
+
+### Fixed
+- Selected options of descriptors do not appear when loading a saved search.
+
+### Security
+- Remove dependencies to node module cryptiles v2.0.5 because of its security issues
+
+### Removed
+- Useless page "Links"
+
 ## 3.2.1 - 2018-10-08
 
 ### Fixed
