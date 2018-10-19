@@ -194,7 +194,7 @@
         // if the user is Master
         archives.forEach(function(archive) {
           matchedArchives.push(archive._id);
-          $('#archives-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + archive._id + '">' +
+          $('#archives-grid').append('<div class="col-xs-12 col-lg-4"><div class="card mb-3" id="' + archive._id + '">' +
             '<div class="card-header">'+ archive.category + ' <span class="archiveNumber"></span></div>' +
             '<div class="card-body archives" id="body' + archive._id + '">' +
               '<div><span class="key">Author: </span><span class="value">' + archive.author + '</span></div>' +
@@ -243,7 +243,7 @@
         const username = getUserName();
         archives.forEach(function(archive) {
           matchedArchives.push(archive._id);
-          $('#archives-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + archive._id + '">' +
+          $('#archives-grid').append('<div class="col-xs-12 col-lg-4"><div class="card mb-3" id="' + archive._id + '">' +
             '<div class="card-header">'+ archive.category + ' <span class="archiveNumber"></span></div>' +
             '<div class="card-body archives" id="body' + archive._id + '">' +
               '<div><span class="key">Author: </span><span class="value">' + archive.author + '</span></div>' +
@@ -296,7 +296,7 @@
         // if the user isn't logged
         archives.forEach(function(archive) {
           matchedArchives.push(archive._id);
-          $('#archives-grid').append('<div class="col-sm-4"><div class="card mb-3" id="' + archive._id + '">' +
+          $('#archives-grid').append('<div class="col-xs-12 col-lg-4"><div class="card mb-3" id="' + archive._id + '">' +
             '<div class="card-header">'+ archive.category + ' <span class="archiveNumber"></span></div>' +
             '<div class="card-body archives" id="body' + archive._id + '">' +
               '<div><span class="key">Author: </span><span class="value">' + archive.author + '</span></div>' +
@@ -350,20 +350,6 @@
                 '<div class="col-6">' +
                   '<h5>' + totalArchives.length + ' archives found</h5>' +
                   '<span id="itemOnPage"></span>' +
-                '</div>' +
-                '<div class="col-6">'+
-                  '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
-                '</div>' +
-              '</div>' +
-            '</div>' +
-          '</div>');
-        } else if (totalArchives.length === 1) {
-          $('#header-result').html('' +
-          '<div class="card mb-3">' +
-            '<div class="card-header">' +
-              '<div class="row">' +
-                '<div class="col-6">' +
-                  '<h5>' + totalArchives.length + ' archive found</h5>' +
                 '</div>' +
                 '<div class="col-6">'+
                   '<button id="buttonDownloadAll" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download All</button>' +
@@ -985,12 +971,18 @@
     // insert all the options of this descriptor, but not the regex yet
     $.get('/api/archives/options/' + descriptorName, function(options) {
       options.forEach(function(option) {
-        $('.inputDescriptor.' + descriptorName).append('<option value="' + option + '">' + option + '</option>');
+        var is_option_selected = (option === descriptorValue)
+        // Warning: This might not work on IE
+        $('.inputDescriptor.' + descriptorName).append(new Option(option, option, is_option_selected, is_option_selected));
         });
       });
-    $('.inputDescriptor.' + descriptorName).append('<option value="_RESERVED_REGEX">Use a regex</option>')
 
-    $('.inputDescriptor.' + descriptorName).val(descriptorValue);
+    // Add the regex option
+    var regex_value = "_RESERVED_REGEX"
+    var regex_text = "Use a regex"
+    var is_option_selected = (regex_value === descriptorValue)
+    $('.inputDescriptor.' + descriptorName).append(new Option(regex_text, regex_value, is_option_selected, is_option_selected));
+
     if (descriptorValue == '_RESERVED_REGEX'){
       // insert the regex field.
       insertRegexField($('.inputDescriptor.' + descriptorName), descriptorRegex);

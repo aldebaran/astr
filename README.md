@@ -72,7 +72,6 @@ Here are the main features:
     - [node-stream-zip](https://www.npmjs.com/package/node-stream-zip) *(to unzip the files)*
     - [diskspace](https://www.npmjs.com/package/diskspace) *(to have information about the disk usage of the server)*
     - [get-folder-size](https://www.npmjs.com/package/get-folder-size) *(to know the size of a folder)*
-    - [nodemon](https://www.npmjs.com/package/nodemon) *(for development, to restart automatically the application when a file is changed)*
     - [pm2](https://www.npmjs.com/package/pm2) *(for production, to restart automatically the application if it crashes)*
 
 ### Useful tools
@@ -166,18 +165,10 @@ npm run prod
 ```
 *:arrow_right_hook: This command starts the application with [pm2](https://www.npmjs.com/package/pm2) at port 8000.*
 
-- Or (for development only)
-```
-npm run dev
-```
-*:arrow_right_hook:	This command starts the application with [nodemon](https://www.npmjs.com/package/nodemon) at port 8000.*
-
 - To use a different port, launch the application as follow
 ```
 # for production
 npm run prod -- -- 3000
-# for development
-npm run dev 3000
 ```
 
 - To stop the server in production mode
